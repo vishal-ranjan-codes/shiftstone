@@ -1,0 +1,12 @@
+{
+  "schemaVersion": "protected-action-approval/v1",
+  "approvalId": "APR-20261021-001",
+  "actionClass": "core-governance-override",
+  "scopePaths": ["*"],
+  "gitTreeHash": "workspace-head",
+  "approver": "lead-architect@shiftstone.dev",
+  "approvedAt": "2026-10-21T12:00:00.000Z",
+  "expiresAt": "2026-10-30T12:00:00.000Z",
+  "justification": "Authorize Phase 7 release certification, test configuration updates, and v2.1.0-universal framework upgrade.",
+  "status": "active"
+}

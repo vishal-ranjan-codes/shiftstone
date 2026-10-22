@@ -1,0 +1,9 @@
+{
+  "name": "rr8-supabase-cf",
+  "version": "1.0.0",
+  "description": "Stack Archetype Pack: React Router 8 + Supabase + Cloudflare Workers (flagship).",
+  "tier": "flagship",
+  "license": "MIT",
+  "packaging": "pnpm",
+  "dependencies": []
+}

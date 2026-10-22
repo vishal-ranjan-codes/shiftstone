@@ -1,0 +1,51 @@
+{
+  "compaction": {
+    "auto": true,
+    "tail_turns": 15
+  },
+  "$schema": "https://opencode.ai/config.json",
+  "permission": {
+    "bash": {
+      "{{PACKAGE_MANAGER}} *": "allow",
+      "*": "ask",
+      "find *": "allow",
+      "rg *": "allow",
+      "ls *": "allow",
+      "git log *": "allow",
+      "git status": "allow",
+      "git diff": "allow"
+    },
+    "external_directory": {
+      "{{APP_PATH}}/**": "allow",
+      "docs/**": "allow",
+      "*": "deny"
+    },
+    "edit": "ask"
+  },
+  "mcp": {
+    "github": {
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_PERSONAL_ACCESS_TOKEN}"
+      },
+      "command": [
+        "npx",
+        "-y",
+        "@modelcontextprotocol/server-github"
+      ],
+      "type": "local",
+      "enabled": true
+    }
+  },
+  "instructions": [
+    "AGENTS.md",
+    "core/static-rules/global.md",
+    "core/static-rules/product.md",
+    "core/static-rules/security.md",
+    "core/static-rules/verification.md",
+    "core/path-scoped-rules/structure.md",
+    "core/path-scoped-rules/code-quality.md",
+    "core/path-scoped-rules/ui-rules.md",
+    "core/path-scoped-rules/bible-rules.md",
+    "core/path-scoped-rules/research-rules.md"
+  ]
+}

@@ -1,0 +1,153 @@
+{
+  "apiVersion": "governance/v1",
+  "kind": "ImplementationStatus",
+  "metadata": {
+    "version": "2.1.0-universal",
+    "updatedAt": "2026-10-20T23:15:30.000Z"
+  },
+  "phases": {
+    "phase-1": {
+      "planFile": "docs/plans/universal-workspace-v2.1-upgrade/phase-1-slim-routing-and-zero-duplication.md",
+      "status": "completed",
+      "units": ["U1", "U2", "U3", "U4"]
+    },
+    "phase-2": {
+      "planFile": "docs/plans/universal-workspace-v2.1-upgrade/phase-2-stage-contracts-and-plan-units.md",
+      "status": "completed",
+      "units": ["U5", "U6", "U7", "U8", "U9"]
+    },
+    "phase-3": {
+      "planFile": "docs/plans/universal-workspace-v2.1-upgrade/phase-3-preflight-gates-and-skill-completeness.md",
+      "status": "completed",
+      "units": ["U10", "U11", "U12", "U13", "U14", "U15"]
+    },
+    "phase-4": {
+      "planFile": "docs/plans/universal-workspace-v2.1-upgrade/phase-4-conditional-checker-lenses-and-anti-gaming.md",
+      "status": "completed",
+      "units": ["U16", "U17", "U18", "U19"]
+    },
+    "phase-5": {
+      "planFile": "docs/plans/universal-workspace-v2.1-upgrade/phase-5-curated-learning-and-sync-bible-proposals.md",
+      "status": "completed",
+      "units": ["U20", "U21", "U22", "U23"]
+    },
+    "phase-6": {
+      "planFile": "docs/plans/universal-workspace-v2.1-upgrade/phase-6-protected-actions-and-release-governance.md",
+      "status": "completed",
+      "units": ["U24", "U25", "U26", "U27"]
+    },
+    "phase-7": {
+      "planFile": "docs/plans/universal-workspace-v2.1-upgrade/phase-7-certification-trials-and-telemetry-flywheel.md",
+      "status": "completed",
+      "units": ["U28", "U29", "U30", "U31"]
+    }
+  },
+  "planUnits": {
+    "U1": {
+      "phase": "phase-1",
+      "status": "completed",
+      "requirementIds": ["UG-01", "UG-02"],
+      "requiredArtifacts": [
+        "core/scripts/validate-context-budgets.js",
+        "core/scripts/__tests__/validate-context-budgets.test.ts"
+      ]
+    },
+    "U2": {
+      "phase": "phase-1",
+      "status": "completed",
+      "requirementIds": ["UG-03"],
+      "requiredArtifacts": [
+        "core/governance/context-integrity-rules.yaml",
+        "packs/rr8-supabase-cf/pack.yaml",
+        "core/scripts/validate-context-integrity.js",
+        "core/scripts/__tests__/validate-context-integrity.test.ts"
+      ]
+    },
+    "U3": {
+      "phase": "phase-1",
+      "status": "completed",
+      "requirementIds": ["UG-04", "UG-05"],
+      "requiredArtifacts": [
+        "core/scripts/setup-ide-junctions.js",
+        "core/scripts/verify-ide-parity.ts",
+        "core/scripts/__tests__/setup-ide-junctions.test.ts"
+      ]
+    },
+    "U4": {
+      "phase": "phase-1",
+      "status": "completed",
+      "requirementIds": ["UG-06"],
+      "requiredArtifacts": [
+        "core/governance/schemas/workspace-manifest.schema.json",
+        "core/governance/schemas/implementation-status.schema.json",
+        "core/governance/workspace-manifest.json",
+        "core/governance/implementation-status.json",
+        "core/scripts/validate-manifest.js",
+        "core/scripts/__tests__/validate-manifest.test.ts"
+      ]
+    },
+    "U5": { "phase": "phase-2", "status": "completed", "requirementIds": ["UG-07"], "requiredArtifacts": ["core/governance/schemas/stage-contract.schema.json", "core/governance/stage-contract-template.md"] },
+    "U6": { "phase": "phase-2", "status": "completed", "requirementIds": ["UG-08"], "requiredArtifacts": ["core/governance/schemas/plan-unit-v1.schema.json", "core/governance/plan-unit-template.json"] },
+    "U7": { "phase": "phase-2", "status": "completed", "requirementIds": ["UG-09"], "requiredArtifacts": ["core/scripts/validate-stage-contracts.js", "core/harness/loop-runner/dag.ts", "core/scripts/__tests__/validate-stage-contracts.test.ts"] },
+    "U8": { "phase": "phase-2", "status": "completed", "requirementIds": ["UG-10"], "requiredArtifacts": ["core/scripts/validate-plan-units.js", "core/scripts/__tests__/validate-plan-units.test.ts"] },
+    "U9": { "phase": "phase-2", "status": "completed", "requirementIds": ["UG-32"], "requiredArtifacts": [".agents/skills/ss-plan/SKILL.md", ".agents/skills/ss-plan/instructions.md"] },
+    "U10": { "phase": "phase-3", "status": "completed", "requirementIds": ["UG-11"], "requiredArtifacts": ["core/scripts/agent-preflight.js"] },
+    "U11": { "phase": "phase-3", "status": "completed", "requirementIds": ["UG-12"], "requiredArtifacts": ["core/harness/hooks/pre-tool-use.ts"] },
+    "U12": { "phase": "phase-3", "status": "completed", "requirementIds": ["UG-31", "UG-34"], "requiredArtifacts": [".agents/skills/ss-init/SKILL.md", "core/scripts/validate-research.js"] },
+    "U13": { "phase": "phase-3", "status": "completed", "requirementIds": ["UG-33"], "requiredArtifacts": [".agents/skills/ss-brainstorm/SKILL.md", ".agents/skills/ss-brand-naming/SKILL.md"] },
+    "U14": { "phase": "phase-3", "status": "completed", "requirementIds": ["UG-13", "UG-34"], "requiredArtifacts": ["core/scripts/validate-skills-completeness.js"] },
+    "U15": { "phase": "phase-3", "status": "completed", "requirementIds": ["UG-14"], "requiredArtifacts": ["packs/rr8-supabase-cf/preflight-matrix.yaml"] },
+    "U16": { "phase": "phase-4", "status": "completed", "requirementIds": ["UG-15"], "requiredArtifacts": ["core/governance/schemas/checker-lens.schema.json", "core/scripts/validate-checker-lenses.js"] },
+    "U17": { "phase": "phase-4", "status": "completed", "requirementIds": ["UG-16"], "requiredArtifacts": ["core/governance/checker-lenses/security-invariants.lens.json", "core/governance/checker-lenses/architecture-boundaries.lens.json", "core/governance/checker-lenses/bible-alignment.lens.json", "packs/rr8-supabase-cf/checker-lenses/rls-security.lens.json", "packs/rr8-supabase-cf/checker-lenses/route-loader-action.lens.json", "packs/rr8-supabase-cf/checker-lenses/cloudflare-edge-runtime.lens.json", "packs/rr8-supabase-cf/checker-lenses/semantic-tokens.lens.json"] },
+    "U18": { "phase": "phase-4", "status": "completed", "requirementIds": ["UG-17"], "requiredArtifacts": ["core/governance/schemas/checker-report.schema.json", "core/scripts/validate-checker-report.js"] },
+    "U19": { "phase": "phase-4", "status": "completed", "requirementIds": ["UG-18", "UG-19"], "requiredArtifacts": ["core/scripts/check-anti-gaming.js", "core/harness/loop-runner/validator.ts", "core/harness/evals/checker/rubric-template.ts"] },
+    "U20": { "phase": "phase-5", "status": "completed", "requirementIds": ["UG-20"], "requiredArtifacts": ["core/governance/schemas/learning-record.schema.json", "core/scripts/validate-learning.js"] },
+    "U21": { "phase": "phase-5", "status": "completed", "requirementIds": ["UG-21"], "requiredArtifacts": ["core/scripts/validate-decisions.js"] },
+    "U22": { "phase": "phase-5", "status": "completed", "requirementIds": ["UG-21"], "requiredArtifacts": ["core/scripts/compile-decisions.js"] },
+    "U23": { "phase": "phase-5", "status": "completed", "requirementIds": ["UG-22"], "requiredArtifacts": ["core/scripts/sync-bible-proposal.js"] },
+    "U24": { "phase": "phase-6", "status": "completed", "requirementIds": ["UG-23"], "requiredArtifacts": ["core/governance/schemas/protected-action-approval.schema.json", "core/governance/protected-actions-policy.yaml", "core/governance/approvals/README.md"] },
+    "U25": { "phase": "phase-6", "status": "completed", "requirementIds": ["UG-24"], "requiredArtifacts": ["core/scripts/validate-protected-actions.js", "core/harness/hooks/pre-tool-use.ts", "core/harness/loop-runner/state-machine.ts"] },
+    "U26": { "phase": "phase-6", "status": "completed", "requirementIds": ["UG-25"], "requiredArtifacts": ["core/governance/schemas/release-evidence.schema.json", "core/scripts/validate-release-evidence.js", "docs/reports/release-evidence/README.md"] },
+    "U27": { "phase": "phase-6", "status": "completed", "requirementIds": ["UG-26"], "requiredArtifacts": [".agents/skills/ss-verify/SKILL.md", ".agents/skills/ss-new-migration/SKILL.md", ".agents/skills/ss-deploy/SKILL.md", "core/static-rules/verification.md"] },
+    "U28": { "phase": "phase-7", "status": "completed", "requirementIds": ["UG-27"], "requiredArtifacts": ["core/governance/schemas/trajectory.schema.json", "core/governance/schemas/telemetry.schema.json", "core/scripts/record-telemetry.js", "core/observability/otel-tracer.ts", "core/scripts/__tests__/record-telemetry.test.ts"] },
+    "U29": { "phase": "phase-7", "status": "completed", "requirementIds": ["UG-28"], "requiredArtifacts": ["core/harness/evals/trials/T1-context-and-stage-contract-gate.trial.json", "core/harness/evals/trials/T2-checker-collusion-and-anti-gaming-gate.trial.json", "core/harness/evals/trials/T3-protected-action-and-ssot-promotion-gate.trial.json", "core/scripts/run-certification-trials.js"] },
+    "U30": { "phase": "phase-7", "status": "completed", "requirementIds": ["UG-29"], "requiredArtifacts": ["packs/rr8-supabase-cf/trials/F1-route-loader-action-zod.trial.json", "packs/rr8-supabase-cf/trials/F2-supabase-rls-migration.trial.json", "packs/rr8-supabase-cf/trials/F3-cloudflare-worker-queue-cron.trial.json", "packs/rr8-supabase-cf/trials/F4-shadcn-tailwind-v4-tokens.trial.json", "packs/rr8-supabase-cf/trials/F5-graceful-degradation-rate-limit.trial.json", "packs/rr8-supabase-cf/trials/F6-playwright-e2e-release-gate.trial.json"] },
+    "U31": { "phase": "phase-7", "status": "completed", "requirementIds": ["UG-30"], "requiredArtifacts": ["core/scripts/validate-workspace.js", "docs/reports/release-evidence/REL-v2.1.0-universal.json"] }
+  },
+  "amendments": {
+    "UG-01": { "phase": "phase-1", "unit": "U1", "status": "completed" },
+    "UG-02": { "phase": "phase-1", "unit": "U1", "status": "completed" },
+    "UG-03": { "phase": "phase-1", "unit": "U2", "status": "completed" },
+    "UG-04": { "phase": "phase-1", "unit": "U3", "status": "completed" },
+    "UG-05": { "phase": "phase-1", "unit": "U3", "status": "completed" },
+    "UG-06": { "phase": "phase-1", "unit": "U4", "status": "completed" },
+    "UG-07": { "phase": "phase-2", "unit": "U5", "status": "completed" },
+    "UG-08": { "phase": "phase-2", "unit": "U6", "status": "completed" },
+    "UG-09": { "phase": "phase-2", "unit": "U7", "status": "completed" },
+    "UG-10": { "phase": "phase-2", "unit": "U8", "status": "completed" },
+    "UG-11": { "phase": "phase-3", "unit": "U10", "status": "completed" },
+    "UG-12": { "phase": "phase-3", "unit": "U11", "status": "completed" },
+    "UG-13": { "phase": "phase-3", "unit": "U14", "status": "completed" },
+    "UG-14": { "phase": "phase-3", "unit": "U15", "status": "completed" },
+    "UG-15": { "phase": "phase-4", "unit": "U16", "status": "completed" },
+    "UG-16": { "phase": "phase-4", "unit": "U17", "status": "completed" },
+    "UG-17": { "phase": "phase-4", "unit": "U18", "status": "completed" },
+    "UG-18": { "phase": "phase-4", "unit": "U19", "status": "completed" },
+    "UG-19": { "phase": "phase-4", "unit": "U19", "status": "completed" },
+    "UG-20": { "phase": "phase-5", "unit": "U20", "status": "completed" },
+    "UG-21": { "phase": "phase-5", "unit": "U21", "status": "completed" },
+    "UG-22": { "phase": "phase-5", "unit": "U23", "status": "completed" },
+    "UG-23": { "phase": "phase-6", "unit": "U24", "status": "completed" },
+    "UG-24": { "phase": "phase-6", "unit": "U25", "status": "completed" },
+    "UG-25": { "phase": "phase-6", "unit": "U26", "status": "completed" },
+    "UG-26": { "phase": "phase-6", "unit": "U27", "status": "completed" },
+    "UG-27": { "phase": "phase-7", "unit": "U28", "status": "completed" },
+    "UG-28": { "phase": "phase-7", "unit": "U29", "status": "completed" },
+    "UG-29": { "phase": "phase-7", "unit": "U30", "status": "completed" },
+    "UG-30": { "phase": "phase-7", "unit": "U31", "status": "completed" },
+    "UG-31": { "phase": "phase-3", "unit": "U12", "status": "completed" },
+    "UG-32": { "phase": "phase-2", "unit": "U9", "status": "completed" },
+    "UG-33": { "phase": "phase-3", "unit": "U13", "status": "completed" },
+    "UG-34": { "phase": "phase-3", "unit": "U12", "status": "completed" }
+  }
+}

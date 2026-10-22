@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "checker-lens/v1",
+  "lensId": "security-invariants",
+  "name": "Universal Security Invariants Lens",
+  "pack": "core",
+  "defaultMode": "focused",
+  "supportedModes": ["lite", "focused", "full"],
+  "triggerGlobs": [
+    "**/*"
+  ],
+  "mappedDimensions": [
+    "task_success",
+    "tool_use_quality",
+    "trajectory_compliance",
+    "hallucination",
+    "response_quality"
+  ],
+  "invariants": [
+    {
+      "ruleId": "SEC-NO-HARDCODED-SECRETS",
+      "severity": "critical",
+      "description": "Zero hardcoded secrets, private tokens, API keys, or service credentials in committed code",
+      "autofixClass": "manual"
+    },
+    {
+      "ruleId": "SEC-SAFE-DESERIALIZATION",
+      "severity": "high",
+      "description": "No unsafe deserialization, eval, dynamic code execution, or unvalidated DOM injection",
+      "autofixClass": "manual"
+    },
+    {
+      "ruleId": "SEC-LEAST-PRIVILEGE-ACCESS",
+      "severity": "critical",
+      "description": "All credential access and execution contexts must adhere to least-privilege scoping",
+      "autofixClass": "manual"
+    }
+  ]
+}

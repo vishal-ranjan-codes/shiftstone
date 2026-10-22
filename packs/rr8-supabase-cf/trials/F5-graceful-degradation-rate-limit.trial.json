@@ -1,0 +1,88 @@
+{
+  "trialId": "F5-graceful-degradation-rate-limit",
+  "name": "Graceful Degradation & Edge Rate Limiting Capability Trial",
+  "suite": "factory",
+  "pack": "rr8-supabase-cf",
+  "description": "Certifies resilient edge traffic handling with Cloudflare KV rate limiting, circuit breaker state, and graceful fallbacks.",
+  "stageContract": {
+    "type": "stage-contract",
+    "schemaVersion": "stage-contract/v1",
+    "stageId": "STAGE-05-f5-ratelimit",
+    "planId": "plan-factory-trials",
+    "title": "API Route Rate Limiter with Fallback Degradation",
+    "status": "planned",
+    "undeclaredInputPolicy": "amend-and-reload",
+    "verificationLevels": [1, 2, 4],
+    "exitCriteria": [
+      "AC-F5-01: Rate limiting middleware implemented with graceful fail-open"
+    ],
+    "inputs": [
+      {
+        "path": "docs/bible/README.md",
+        "description": "Rate limiting and circuit breaker architectural rules SSOT",
+        "role": "ssot-bible",
+        "requiredStatus": "active"
+      }
+    ],
+    "outputs": [
+      {
+        "path": "app/middleware/rate-limiter.ts",
+        "description": "Edge rate limiting middleware with graceful fallback",
+        "artifactType": "code"
+      }
+    ]
+  },
+  "preflight": {
+    "targetFiles": ["app/middleware/rate-limiter.ts"],
+    "requiredSkills": [
+      "graceful-degradation",
+      "rate-limiting"
+    ],
+    "requiredBibleChapters": [
+      "docs/bible/README.md"
+    ],
+    "suggestedVerifyCmd": "pnpm test"
+  },
+  "checkerLenses": [
+    "packs/rr8-supabase-cf/checker-lenses/cloudflare-edge-runtime.lens.json",
+    "core/governance/checker-lenses/architecture-boundaries.lens.json"
+  ],
+  "makerFixture": {
+    "files": [
+      {
+        "path": "app/middleware/rate-limiter.ts",
+        "content": "export async function checkRateLimit(ip: string, kv: KVNamespace, limit = 100): Promise<{ allowed: boolean; remaining: number }> {\n  try {\n    const current = Number(await kv.get(`rate:${ip}`)) || 0;\n    if (current >= limit) return { allowed: false, remaining: 0 };\n    await kv.put(`rate:${ip}`, String(current + 1), { expirationTtl: 60 });\n    return { allowed: true, remaining: limit - current - 1 };\n  } catch (err) {\n    // Graceful degradation: fail-open if KV is temporarily unavailable\n    console.warn('Rate limiter degraded, failing open:', err);\n    return { allowed: true, remaining: 1 };\n  }\n}\n"
+      }
+    ]
+  },
+  "checkerReport": {
+    "schemaVersion": "checker-report/v1",
+    "reportId": "CR-F5-RATELIMIT-001",
+    "timestamp": "2026-10-21T12:00:00.000Z",
+    "targetId": "STAGE-05-f5-ratelimit",
+    "makerAgentId": "agent-maker-f5",
+    "reviewerAgentId": "agent-checker-f5",
+    "contextIsolation": "disjoint",
+    "executionMode": "focused",
+    "autofixPolicy": "report-only",
+    "lensesApplied": ["architecture-boundaries", "cloudflare-edge-runtime"],
+    "dimensions": {
+      "task_success": { "score": 2, "raw": 2, "weight": 0.3, "weighted": 0.6, "rationale": "Implemented rate limiter with graceful fail-open policy" },
+      "tool_use_quality": { "score": 2, "raw": 2, "weight": 0.15, "weighted": 0.3, "rationale": "Optimal KV expiration TTL usage" },
+      "trajectory_compliance": { "score": 2, "raw": 2, "weight": 0.2, "weighted": 0.4, "rationale": "Complies with infrastructure resilience rules" },
+      "hallucination": { "score": 2, "raw": 2, "weight": 0.15, "weighted": 0.3, "rationale": "Standard Cloudflare KV method signatures" },
+      "response_quality": { "score": 2, "raw": 2, "weight": 0.2, "weighted": 0.4, "rationale": "Clean error handling and logging" }
+    },
+    "scoring": {
+      "weightedRawScore": 2.0,
+      "maxRawScore": 2.0,
+      "normalizedScore": 100,
+      "thresholdScore": 80,
+      "gateAPassed": true,
+      "gateBPassed": true
+    },
+    "findings": [],
+    "status": "APPROVED"
+  },
+  "expectedTerminalState": "success"
+}

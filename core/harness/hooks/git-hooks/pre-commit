@@ -1,0 +1,4 @@
+#!/bin/sh
+# Lifecycle hook (B6): pre-commit secret scanner.
+# Install once per clone:  git config core.hooksPath core/harness/hooks/git-hooks
+exec node "$(git rev-parse --show-toplevel)/core/harness/hooks/pre-commit.js" --staged

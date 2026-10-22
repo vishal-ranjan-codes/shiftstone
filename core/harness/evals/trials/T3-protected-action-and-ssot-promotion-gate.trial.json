@@ -1,0 +1,76 @@
+{
+  "trialId": "T3-protected-action-and-ssot-promotion-gate",
+  "name": "Protected Action, Jaccard Learning Deduplication & SSOT Promotion Gate Trial",
+  "suite": "harness",
+  "type": "synthetic-adversarial",
+  "description": "Verifies that unapproved destructive migrations halt as blocked, duplicate learning records (>=0.70 Jaccard) are refused, and valid learning generates clean proposals.",
+  "cases": [
+    {
+      "caseId": "T3.a-unapproved-destructive-migration",
+      "name": "Unapproved destructive schema migration halt",
+      "type": "negative",
+      "action": {
+        "toolName": "execute_sql",
+        "command": "DROP TABLE users CASCADE;",
+        "targetPath": "supabase/migrations/20261021_drop_users.sql"
+      },
+      "expectedOutcome": "blocked",
+      "expectedCode": "PROTECTED_ACTION_BLOCKED"
+    },
+    {
+      "caseId": "T3.b-duplicate-learning-jaccard",
+      "name": "Duplicate learning record (>=0.70 Jaccard) refusal",
+      "type": "negative",
+      "recordA": {
+        "schemaVersion": "learning-record/v1",
+        "learningId": "LR-20261021-001",
+        "timestamp": "2026-10-21T10:00:00.000Z",
+        "status": "validated",
+        "category": "security",
+        "pack": "rr8-supabase-cf",
+        "summary": "Always enforce row level security on postgres public tables",
+        "rootCause": "Discovered table without RLS exposed to anon key in client queries",
+        "lesson": "Enable row level security on all postgres tables in public schema with explicit tenant checks",
+        "evidencePaths": ["supabase/migrations/20261021_create_orgs.sql"],
+        "promotionTargets": ["docs/bible/02-database-and-migrations/rls-patterns.md"]
+      },
+      "recordB": {
+        "schemaVersion": "learning-record/v1",
+        "learningId": "LR-20261021-002",
+        "timestamp": "2026-10-21T11:00:00.000Z",
+        "status": "candidate",
+        "category": "security",
+        "pack": "rr8-supabase-cf",
+        "summary": "Always enforce row level security on postgres public tables",
+        "rootCause": "Discovered table without RLS exposed to anon key in client queries",
+        "lesson": "Enable row level security on all postgres tables in public schema with explicit tenant checks",
+        "evidencePaths": ["supabase/migrations/20261021_create_orgs.sql"],
+        "promotionTargets": ["docs/bible/02-database-and-migrations/rls-patterns.md"]
+      },
+      "expectedOutcome": "blocked",
+      "expectedCode": "DUPLICATE_LEARNING_CONTENT"
+    },
+    {
+      "caseId": "T3.c-valid-learning-proposal-generation",
+      "name": "Valid curated learning generates /ss-sync-bible proposal",
+      "type": "positive",
+      "record": {
+        "schemaVersion": "learning-record/v1",
+        "learningId": "LR-20261021-003",
+        "timestamp": "2026-10-21T10:00:00.000Z",
+        "status": "validated",
+        "category": "architecture",
+        "pack": "rr8-supabase-cf",
+        "summary": "Cloudflare Workers fetch timeout behavior requires explicit abort controller",
+        "rootCause": "Workers fetch subrequests abort after 30 seconds unless custom timeout provided",
+        "lesson": "Wrap external API fetches in AbortSignal with timeout to prevent hanging worker threads",
+        "evidencePaths": ["workers/notification-consumer.ts"],
+        "promotionTargets": ["docs/bible/07-infrastructure/cloudflare-workers-cron.md"]
+      },
+      "expectedOutcome": "passed",
+      "expectedCode": "PROPOSAL_GENERATED"
+    }
+  ],
+  "expectedTerminalState": "success",
+  "minimumAssertions": 3
+}

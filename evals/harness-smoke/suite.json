@@ -1,0 +1,5 @@
+{
+  "name": "harness-smoke",
+  "description": "Fast smoke evals for the loop harness and governance gates — the sample suite shipped with the framework.",
+  "min_pass_rate": 1.0
+}

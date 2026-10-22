@@ -1,0 +1,123 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://universal-workspace.local/schemas/checker-report.schema.json",
+  "title": "Consequence-Aware Checker Report (checker-report/v1)",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "reportId",
+    "timestamp",
+    "targetId",
+    "makerAgentId",
+    "reviewerAgentId",
+    "contextIsolation",
+    "executionMode",
+    "autofixPolicy",
+    "lensesApplied",
+    "dimensions",
+    "scoring",
+    "findings",
+    "status"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "checker-report/v1" },
+    "reportId": { "type": "string", "minLength": 5 },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "targetId": { "type": "string", "minLength": 2 },
+    "makerAgentId": { "type": "string", "minLength": 2 },
+    "reviewerAgentId": { "type": "string", "minLength": 2 },
+    "contextIsolation": { "const": "disjoint" },
+    "executionMode": { "enum": ["lite", "focused", "full"] },
+    "autofixPolicy": { "enum": ["report-only", "safe-auto-enabled"] },
+    "lensesApplied": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "pattern": "^[a-z0-9-]+$" }
+    },
+    "dimensions": {
+      "type": "object",
+      "required": [
+        "task_success",
+        "tool_use_quality",
+        "trajectory_compliance",
+        "hallucination",
+        "response_quality"
+      ],
+      "properties": {
+        "task_success": { "$ref": "#/$defs/dimensionScore" },
+        "tool_use_quality": { "$ref": "#/$defs/dimensionScore" },
+        "trajectory_compliance": { "$ref": "#/$defs/dimensionScore" },
+        "hallucination": { "$ref": "#/$defs/dimensionScore" },
+        "response_quality": { "$ref": "#/$defs/dimensionScore" }
+      },
+      "additionalProperties": false
+    },
+    "scoring": {
+      "type": "object",
+      "required": [
+        "weightedRawScore",
+        "maxRawScore",
+        "normalizedScore",
+        "thresholdScore",
+        "gateAPassed",
+        "gateBPassed"
+      ],
+      "properties": {
+        "weightedRawScore": { "type": "number", "minimum": 0, "maximum": 2.0 },
+        "maxRawScore": { "const": 2.0 },
+        "normalizedScore": { "type": "number", "minimum": 0, "maximum": 100 },
+        "thresholdScore": { "type": "number", "minimum": 80, "maximum": 100 },
+        "gateAPassed": { "type": "boolean" },
+        "gateBPassed": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "findingId",
+          "lensId",
+          "ruleId",
+          "severity",
+          "confidence",
+          "autofixClass",
+          "file",
+          "message",
+          "remediation",
+          "resolved"
+        ],
+        "properties": {
+          "findingId": { "type": "string", "pattern": "^FND-[0-9]{3,}$" },
+          "lensId": { "type": "string" },
+          "ruleId": { "type": "string" },
+          "severity": { "enum": ["critical", "high", "medium", "low"] },
+          "confidence": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
+          "autofixClass": { "enum": ["safe_auto", "gated_auto", "manual", "advisory"] },
+          "file": { "type": "string" },
+          "line": { "type": "integer", "minimum": 1 },
+          "message": { "type": "string", "minLength": 5 },
+          "remediation": { "type": "string", "minLength": 5 },
+          "resolved": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "status": { "enum": ["APPROVED", "REVISE", "REJECTED", "ESCALATED"] }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "dimensionScore": {
+      "type": "object",
+      "required": ["raw", "weight", "weighted", "rationale"],
+      "properties": {
+        "raw": { "type": "integer", "enum": [0, 1, 2] },
+        "weight": { "type": "number", "minimum": 0.05, "maximum": 0.6 },
+        "weighted": { "type": "number", "minimum": 0, "maximum": 1.2 },
+        "rationale": { "type": "string", "minLength": 5 }
+      },
+      "additionalProperties": false
+    }
+  }
+}

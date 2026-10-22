@@ -1,0 +1,48 @@
+# packs/nextjs-prisma-pg — starter archetype placeholder (task 4.9).
+# Declares a conflict with rr8-supabase-cf: both archetypes own the web
+# frontend at apps/web (blueprint section 10.4 decision D).
+apiVersion: workspace/v1
+kind: StackArchetype
+metadata:
+  name: nextjs-prisma-pg
+  displayName: Next.js + Prisma + PostgreSQL
+  version: 0.1.0
+  tier: starter
+  tags: [typescript, nextjs, prisma, postgresql]
+spec:
+  languages: [typescript]
+  runtimes: [node]
+  frameworks: [nextjs, prisma]
+  databases: [postgresql]
+  testRunners: [vitest]
+  folderLayout: monorepo
+  defaultAppPath: apps/web
+  packaging: pnpm
+  variables:
+    - name: "{{PRODUCT_IDENTITY}}"
+      type: string
+      default: "a Next.js + Prisma SaaS application"
+      description: One-line product identity injected into core/static-rules/product.md.
+    - name: "{{STACK_IDENTITY}}"
+      type: string
+      default: "Next.js (App Router), Prisma ORM, PostgreSQL, TypeScript strict, Tailwind CSS v4"
+      description: Stack identity line injected into core/static-rules/product.md.
+composition:
+  skills:
+    include:
+      - "nextjs-app-router"
+      - "nextjs-data-fetching"
+      - "prisma-schema"
+      - "prisma-migrations"
+      - "server-actions"
+      - "vitest-testing"
+    exclude: []
+  scaffold_script: ./scaffold-script.js
+hooks:
+  pre_init: ./scaffold-script.js
+compatibility:
+  core_min_version: 2.0.0
+  peer_packs: []
+conflicts:
+  with:
+    - rr8-supabase-cf

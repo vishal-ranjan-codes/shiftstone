@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(.dev.vars)",
+      "Read(.env*)",
+      "Read(secrets/**)"
+    ],
+    "ask": [
+      "Shell(git push:*)",
+      "Shell(git commit:*)"
+    ],
+    "allow": [
+      "Shell({{PACKAGE_MANAGER}} *)",
+      "Shell(git status:*)",
+      "Shell(git diff:*)",
+      "Shell(git log:*)",
+      "Shell(rg:*)",
+      "Shell(find:*)",
+      "Shell(ls:*)",
+      "Shell(git:*)",
+      "Shell(mkdir:*)",
+      "powershell",
+      "Shell(powershell -NoProfile -Command \"Get-Content AGENTS.md -Tail 25; '==='; Get-Content README.md -Tail 25; '==='; (Get-Content AGENTS.md).Count; (Get-Content README.md).Count\")",
+      "Shell(powershell -NoProfile -Command \" $folder = 'docs\\plans\\universal-ai-workspace-framework' '--- FILES ---' Get-ChildItem $folder | Select-Object -ExpandProperty Name '--- GAP ID COVERAGE (must appear in exactly 1 phase file) ---' $phaseFiles = Get-ChildItem $folder -Filter 'phase-*.md' $missing = @(); $dupes = @() $ids = @(); foreach($p in 'A','B','C'){ foreach($n in 1..12){ $ids += \\\"$p$n\\\" } }; foreach($n in 1..4){ $ids += \\\"D$n\\\" } foreach($id in $ids){ $hits = @($phaseFiles | Where-Object { (Get-Content $_.FullName -Raw) -match [regex]::Escape($id) }) if($hits.Count -eq 0){ $missing += $id } if($hits.Count -gt 1){ $dupes += \\\"$id in $($hits.Name -join ',')\\\" } } 'Missing: ' + $(if($missing){$missing -join ','}else{'NONE'}) 'Dupes: ' + $(if($dupes){$dupes -join ' | '}else{'NONE'}) '--- README LINKS ---' $readme = Get-Content \\\"$folder\\README.md\\\" -Raw [regex]::Matches($readme,'\\(\\./([^)]+\\.md)\\)') | ForEach-Object { $f = $_.Groups[1].Value; \\\"$f -> $(Test-Path \\\"$folder\\$f\\\")\\\" } '--- OLD PATH REFS (blueprint self-refs to docs/reports) ---' Select-String -Path \\\"$folder\\universal-ai-workspace-framework-blueprint.md\\\" -Pattern 'reports/universal-ai-workspace' | ForEach-Object { $_.LineNumber } '--- 40 COUNT IN AMENDMENTS ---' (Select-String -Path \\\"$folder\\blueprint-amendments.md\\\" -Pattern '\\*\\*(A|B|C|D)\\d+\\*\\*' -AllMatches).Matches.Count \")"
+    ]
+  }
+}

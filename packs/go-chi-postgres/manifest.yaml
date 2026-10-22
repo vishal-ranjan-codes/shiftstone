@@ -1,0 +1,46 @@
+# packs/go-chi-postgres — starter archetype placeholder (task 7.5).
+# Alternative-stack journey: a Go + Chi API service. Owns apps/api-go, so it
+# composes with fastapi-pg (apps/api) in a polyglot monorepo without conflict.
+apiVersion: workspace/v1
+kind: StackArchetype
+metadata:
+  name: go-chi-postgres
+  displayName: Go + Chi + PostgreSQL
+  version: 0.1.0
+  tier: starter
+  tags: [go, chi, postgresql, api]
+spec:
+  languages: [go]
+  runtimes: [go]
+  frameworks: [chi]
+  databases: [postgresql]
+  testRunners: [go-test]
+  deployTargets: [docker]
+  folderLayout: monorepo
+  defaultAppPath: apps/api-go
+  packaging: go
+  variables:
+    - name: "{{PRODUCT_IDENTITY}}"
+      type: string
+      default: "a Go + Chi + PostgreSQL service"
+      description: One-line product identity injected into core/static-rules/product.md.
+    - name: "{{STACK_IDENTITY}}"
+      type: string
+      default: "Go 1.23, chi router, pgx, PostgreSQL, go test"
+      description: Stack identity line injected into core/static-rules/product.md.
+composition:
+  skills:
+    include:
+      - "chi-routing"
+      - "go-postgres"
+      - "go-migrations"
+      - "go-testing"
+    exclude: []
+  scaffold_script: ./scaffold-script.js
+hooks:
+  pre_init: ./scaffold-script.js
+compatibility:
+  core_min_version: 2.0.0
+  peer_packs: []
+conflicts:
+  with: []

@@ -1,0 +1,98 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "docs/loops/.schema.json",
+  "title": "Loop runtime state (.loops/<loop>/state.json)",
+  "description": "On-disk LoopState written by core/harness/loop-runner/runner.ts after every turn and at terminal exit (blueprint §7.1, Family D). Validated against docs/loops/_template/state.json.",
+  "type": "object",
+  "required": [
+    "loop",
+    "run_id",
+    "attempt",
+    "success_streak",
+    "tokens_used",
+    "dollars_used",
+    "started_at",
+    "updated_at",
+    "yardstick",
+    "last_yardstick_delta",
+    "barren_turns",
+    "addressed",
+    "waived",
+    "accepted_changes",
+    "red_green",
+    "notes",
+    "scratch"
+  ],
+  "properties": {
+    "loop": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*-loop$",
+      "description": "Loop name — must match the spec's name."
+    },
+    "run_id": { "type": "string", "minLength": 1 },
+    "attempt": { "type": "integer", "minimum": 0, "description": "Turns executed so far." },
+    "success_streak": { "type": "integer", "minimum": 0 },
+    "tokens_used": { "type": "number", "minimum": 0 },
+    "dollars_used": { "type": "number", "minimum": 0 },
+    "started_at": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2})?(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$"
+    },
+    "updated_at": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2})?(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$"
+    },
+    "yardstick": { "type": "number", "description": "Frozen yardstick reading (Family A)." },
+    "last_yardstick_delta": { "type": "number" },
+    "barren_turns": { "type": "integer", "minimum": 0 },
+    "output_hash": { "type": "string" },
+    "enumerated": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "A4: full target surface, recorded at run start."
+    },
+    "addressed": { "type": "array", "items": { "type": "string" } },
+    "waived": { "type": "array", "items": { "type": "string" } },
+    "accepted_changes": { "type": "integer", "minimum": 0 },
+    "red_green": {
+      "type": "object",
+      "required": ["required", "proven", "baseline", "current"],
+      "properties": {
+        "required": { "type": "boolean" },
+        "proven": { "type": "boolean" },
+        "baseline": { "enum": ["red", "green", "unknown"] },
+        "current": { "enum": ["red", "green", "unknown"] }
+      },
+      "additionalProperties": false
+    },
+    "notes": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Gate/oversight/rollback events surfaced by /status."
+    },
+    "scratch": {
+      "type": "object",
+      "description": "A12 per-turn scratchpad — cleared at persistence, never trusted across turns."
+    },
+    "trajectory": {
+      "type": "array",
+      "description": "B3 per-turn trajectory summaries (full traces rotate in .loops/<id>/runs/).",
+      "items": {
+        "type": "object",
+        "required": ["turn", "claimed_checks", "executed_checks", "passed"],
+        "properties": {
+          "turn": { "type": "integer", "minimum": 1 },
+          "claimed_checks": { "type": "array", "items": { "type": "string" } },
+          "executed_checks": { "type": "array", "items": { "type": "string" } },
+          "passed": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "terminal": {
+      "enum": ["success", "no_op", "blocked", "stalled", "exhausted", "error"],
+      "description": "Set only at terminal exit — error ≠ success (§7.7)."
+    }
+  },
+  "additionalProperties": false
+}

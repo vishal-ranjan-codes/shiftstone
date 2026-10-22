@@ -1,0 +1,32 @@
+{
+  "name": "shiftstone",
+  "version": "2.1.0",
+  "private": true,
+  "description": "ShiftStone — Universal Autonomous AI Development Workspace Framework (monorepo configuration only; application code lives in apps/, harness code in core/).",
+  "scripts": {
+    "test": "pnpm -C core test",
+    "typecheck": "pnpm -C core typecheck",
+    "lint": "pnpm -C core lint",
+    "parity": "node core/scripts/check-md-duplication.js --strict && node core/scripts/link-ide-folders.js --check && node core/scripts/validate-manifest-budgets.js --strict && node core/scripts/validate-loop-specs.js --strict && node core/scripts/validate-okf-frontmatter.js --strict && node core/scripts/check-link-integrity.js --strict && node core/governance/index.js --check && node core/governance/bible/index.js --check && node core/scripts/compile-changelog.js --check && node core/scripts/check-backlog-signoff.js --strict && node core/scripts/check-harness-ownership.js --strict && node core/scripts/check-rule-budget.js --ci",
+    "manifest": "node core/scripts/generate-skills-manifest.js",
+    "validate:budgets": "node core/scripts/validate-context-budgets.js",
+    "validate:integrity": "node core/scripts/validate-context-integrity.js",
+    "validate:junctions": "node core/scripts/setup-ide-junctions.js --verify",
+    "validate:parity": "npx tsx core/scripts/verify-ide-parity.ts",
+    "validate:manifest": "node core/scripts/validate-manifest.js",
+    "validate:contracts": "node core/scripts/validate-stage-contracts.js",
+    "validate:plans": "node core/scripts/validate-plan-units.js",
+    "validate:lenses": "node core/scripts/validate-checker-lenses.js",
+    "validate:reports": "node core/scripts/validate-checker-report.js --self-test",
+    "validate:anti-gaming": "node core/scripts/check-anti-gaming.js --self-test",
+    "validate:learning": "node core/scripts/validate-learning.js",
+    "validate:decisions": "node core/scripts/validate-decisions.js",
+    "compile:decisions": "node core/scripts/compile-decisions.js",
+    "sync:bible:proposal": "node core/scripts/sync-bible-proposal.js --dry-run",
+    "validate:protected": "node core/scripts/validate-protected-actions.js --self-test",
+    "validate:release": "node core/scripts/validate-release-evidence.js --self-test",
+    "trials": "node core/scripts/run-certification-trials.js --suite all",
+    "validate:telemetry": "node core/scripts/record-telemetry.js --validate",
+    "validate:workspace": "node core/scripts/validate-workspace.js"
+  }
+}

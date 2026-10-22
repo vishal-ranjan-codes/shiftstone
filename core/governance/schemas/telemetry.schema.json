@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://universal-workspace.local/schemas/telemetry.schema.json",
+  "title": "Continuous Quality Flywheel Telemetry Record (telemetry/v1)",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "timestamp",
+    "runId",
+    "pack",
+    "loopPattern",
+    "iterations",
+    "terminalState",
+    "brakeTriggered",
+    "totalTokens",
+    "costUsd",
+    "durationMs"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "telemetry/v1"
+    },
+    "timestamp": {
+      "type": "string"
+    },
+    "runId": {
+      "type": "string",
+      "minLength": 3
+    },
+    "trialId": {
+      "type": "string"
+    },
+    "pack": {
+      "type": "string",
+      "minLength": 1
+    },
+    "loopPattern": {
+      "type": "string",
+      "minLength": 1
+    },
+    "iterations": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "terminalState": {
+      "enum": ["success", "no_op", "blocked", "stalled", "exhausted", "failed"]
+    },
+    "brakeTriggered": {
+      "type": ["boolean", "string", "null"]
+    },
+    "checkerNormalizedScore": {
+      "type": ["number", "null"],
+      "minimum": 0,
+      "maximum": 100
+    },
+    "totalTokens": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "costUsd": {
+      "type": "number",
+      "minimum": 0
+    },
+    "durationMs": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "metadata": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": true
+}

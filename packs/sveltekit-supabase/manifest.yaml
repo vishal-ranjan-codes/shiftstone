@@ -1,0 +1,49 @@
+# packs/sveltekit-supabase — starter archetype placeholder (task 7.5).
+# Alternative-stack journey: a SvelteKit web frontend on Supabase. Declares
+# conflicts with the packs that own the web frontend at apps/web
+# (blueprint section 10.4 decision D).
+apiVersion: workspace/v1
+kind: StackArchetype
+metadata:
+  name: sveltekit-supabase
+  displayName: SvelteKit + Supabase
+  version: 0.1.0
+  tier: starter
+  tags: [svelte, sveltekit, supabase, typescript]
+spec:
+  languages: [typescript]
+  runtimes: [node]
+  frameworks: [sveltekit, supabase-js]
+  databases: [supabase-postgres]
+  testRunners: [vitest]
+  deployTargets: [cloudflare-workers]
+  folderLayout: monorepo
+  defaultAppPath: apps/web
+  packaging: pnpm
+  variables:
+    - name: "{{PRODUCT_IDENTITY}}"
+      type: string
+      default: "a SvelteKit + Supabase application"
+      description: One-line product identity injected into core/static-rules/product.md.
+    - name: "{{STACK_IDENTITY}}"
+      type: string
+      default: "SvelteKit, Supabase (PostgreSQL + Auth + RLS), TypeScript strict, Tailwind CSS v4"
+      description: Stack identity line injected into core/static-rules/product.md.
+composition:
+  skills:
+    include:
+      - "sveltekit-routing"
+      - "sveltekit-forms"
+      - "sveltekit-supabase"
+      - "vitest-testing"
+    exclude: []
+  scaffold_script: ./scaffold-script.js
+hooks:
+  pre_init: ./scaffold-script.js
+compatibility:
+  core_min_version: 2.0.0
+  peer_packs: []
+conflicts:
+  with:
+    - rr8-supabase-cf
+    - nextjs-prisma-pg

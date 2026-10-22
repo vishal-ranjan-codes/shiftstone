@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "checker-lens/v1",
+  "lensId": "route-loader-action",
+  "name": "React Router Loader, Action & Zod Validation Lens",
+  "pack": "rr8-supabase-cf",
+  "defaultMode": "focused",
+  "supportedModes": ["lite", "focused", "full"],
+  "triggerGlobs": [
+    "app/routes/**",
+    "apps/web/app/routes/**",
+    "app/routes.ts",
+    "apps/web/app/routes.ts"
+  ],
+  "mappedDimensions": [
+    "task_success",
+    "tool_use_quality",
+    "response_quality"
+  ],
+  "invariants": [
+    {
+      "ruleId": "RR-ACTION-ZOD-VALIDATION",
+      "severity": "high",
+      "description": "All route form actions must validate mutation payloads against explicit Zod schemas",
+      "autofixClass": "manual"
+    },
+    {
+      "ruleId": "RR-ROUTE-ERROR-BOUNDARY",
+      "severity": "high",
+      "description": "Every major route module or layout must export an ErrorBoundary component to prevent crashes",
+      "autofixClass": "safe_auto"
+    },
+    {
+      "ruleId": "RR-LOADER-TYPE-SAFETY",
+      "severity": "medium",
+      "description": "Route loader and action returns must use strictly typed Route module types and interfaces",
+      "autofixClass": "manual"
+    }
+  ]
+}

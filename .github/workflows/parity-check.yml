@@ -1,0 +1,72 @@
+name: parity-check
+
+# Zero-drift parity + OKF lineage gate (blueprint §8.2, amendments C5/C7).
+# Fails on: duplicated content across IDE folders, over-budget shims, missing
+# OKF frontmatter, broken relative links, missing/stale docs indexes, and any
+# typecheck/test regression.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  parity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Install harness dependencies
+        run: pnpm install --frozen-lockfile
+        working-directory: core
+
+      - name: Anti-duplication (shims, junctions, copied content)
+        run: node core/scripts/check-md-duplication.js --strict
+
+      - name: IDE folders are junctions, not copies
+        run: node core/scripts/link-ide-folders.js --check
+
+      - name: Skill manifest budgets
+        run: node core/scripts/validate-manifest-budgets.js --strict
+
+      - name: Loop specs pass the refusal gate
+        run: node core/scripts/validate-loop-specs.js --strict
+
+      - name: OKF frontmatter (type + ISO-8601 timestamp)
+        run: node core/scripts/validate-okf-frontmatter.js --strict
+
+      - name: Relative link integrity
+        run: node core/scripts/check-link-integrity.js --strict
+
+      - name: docs/** index freshness
+        run: node core/governance/index.js --check
+
+      - name: bible README ToC freshness (generated from chapter frontmatter)
+        run: node core/governance/bible/index.js --check
+
+      - name: Bundle logs compiled into the changelog
+        run: node core/scripts/compile-changelog.js --check
+
+      - name: Backlog closures carry /verify signatures
+        run: node core/scripts/check-backlog-signoff.js --strict
+
+      - name: Harness-as-code ownership coverage (CODEOWNERS)
+        run: node core/scripts/check-harness-ownership.js --strict
+
+      - name: Static context budget (always-on rules + AGENTS + worst shim <= 200)
+        run: node core/scripts/check-rule-budget.js --ci
+
+      - name: Typecheck
+        run: pnpm -C core typecheck
+
+      - name: Tests
+        run: pnpm -C core test

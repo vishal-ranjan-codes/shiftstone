@@ -1,0 +1,38 @@
+name: validate-packs
+
+# Archetype manifest gate (task 7.4, blueprint §5.2): every pack manifest in
+# packs/ must validate against packs/_schema.json — referenced files exist,
+# names match directories, budgets hold — on every PR and push. Nothing is
+# written; this is the same path `node core/init.js --validate` runs locally.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Install harness dependencies (yaml parser)
+        run: pnpm install --frozen-lockfile
+        working-directory: core
+
+      - name: Validate all pack manifests
+        run: node core/init.js --validate
+
+      - name: Composition conflicts are declared, not silent
+        run: |
+          node core/init.js --archetype=rr8-supabase-cf,fastapi-pg --validate
+          node core/init.js --archetype=rr8-supabase-cf,expo-react-native,go-chi-postgres --validate

@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://universal-workspace.local/schemas/trajectory.schema.json",
+  "title": "Execution Trajectory Provenance Record (trajectory/v1)",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "runId",
+    "trialId",
+    "timestamp",
+    "steps",
+    "verificationLevel",
+    "tokensUsed",
+    "terminalState"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "trajectory/v1"
+    },
+    "runId": {
+      "type": "string",
+      "minLength": 3
+    },
+    "trialId": {
+      "type": "string",
+      "minLength": 2
+    },
+    "stageId": {
+      "type": "string"
+    },
+    "pack": {
+      "type": "string"
+    },
+    "timestamp": {
+      "type": "string"
+    },
+    "verificationLevel": {
+      "type": ["string", "integer"]
+    },
+    "tokensUsed": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "durationMs": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "terminalState": {
+      "enum": ["success", "no_op", "blocked", "stalled", "exhausted", "failed"]
+    },
+    "status": {
+      "enum": ["passed", "failed", "blocked"]
+    },
+    "steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "stepIndex",
+          "toolName",
+          "outcome",
+          "tokensUsed"
+        ],
+        "properties": {
+          "stepIndex": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "toolName": {
+            "type": "string",
+            "minLength": 1
+          },
+          "targetPath": {
+            "type": ["string", "null"]
+          },
+          "verificationLevel": {
+            "type": ["string", "integer"]
+          },
+          "outcome": {
+            "enum": ["passed", "failed", "blocked", "skipped", "no_op"]
+          },
+          "tokensUsed": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "durationMs": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "notes": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "metadata": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": true
+}

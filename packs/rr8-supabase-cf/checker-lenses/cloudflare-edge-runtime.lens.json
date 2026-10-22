@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "checker-lens/v1",
+  "lensId": "cloudflare-edge-runtime",
+  "name": "Cloudflare Edge Runtime Compatibility Lens",
+  "pack": "rr8-supabase-cf",
+  "defaultMode": "focused",
+  "supportedModes": ["lite", "focused", "full"],
+  "triggerGlobs": [
+    "workers/**",
+    "worker/**",
+    "app/entry.server.tsx",
+    "apps/web/app/entry.server.tsx",
+    "apps/web/server.ts"
+  ],
+  "mappedDimensions": [
+    "task_success",
+    "tool_use_quality",
+    "response_quality"
+  ],
+  "invariants": [
+    {
+      "ruleId": "CF-EDGE-NO-NODE-BUILTINS",
+      "severity": "critical",
+      "description": "Cloudflare Workers environment forbids unsupported Node built-in APIs without polyfills",
+      "autofixClass": "manual"
+    },
+    {
+      "ruleId": "CF-EDGE-CPU-LIMIT-COMPLIANCE",
+      "severity": "high",
+      "description": "Worker execution must not block event loop synchronously exceeding edge execution quotas",
+      "autofixClass": "manual"
+    },
+    {
+      "ruleId": "CF-ENV-BINDINGS-ACCESS",
+      "severity": "medium",
+      "description": "Cloudflare KV, R2, D1, and Secret bindings must be accessed via context.cloudflare.env",
+      "autofixClass": "manual"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+# packs/expo-react-native — starter archetype placeholder (task 7.5).
+# Mobile leg of the additive polyglot monorepo journey: owns apps/mobile,
+# so it composes with the web/api packs without conflict (blueprint 1.3/5.3).
+apiVersion: workspace/v1
+kind: StackArchetype
+metadata:
+  name: expo-react-native
+  displayName: Expo + React Native
+  version: 0.1.0
+  tier: starter
+  tags: [typescript, expo, react-native, mobile]
+spec:
+  languages: [typescript]
+  runtimes: [node]
+  frameworks: [expo, react-native]
+  testRunners: [jest]
+  deployTargets: [eas]
+  folderLayout: monorepo
+  defaultAppPath: apps/mobile
+  packaging: pnpm
+  variables:
+    - name: "{{PRODUCT_IDENTITY}}"
+      type: string
+      default: "an Expo + React Native mobile application"
+      description: One-line product identity injected into core/static-rules/product.md.
+    - name: "{{STACK_IDENTITY}}"
+      type: string
+      default: "Expo (React Native), TypeScript strict, Expo Router, Jest"
+      description: Stack identity line injected into core/static-rules/product.md.
+composition:
+  skills:
+    include:
+      - "expo-router"
+      - "expo-notifications"
+      - "expo-secure-store"
+      - "react-native-testing"
+    exclude: []
+  scaffold_script: ./scaffold-script.js
+hooks:
+  pre_init: ./scaffold-script.js
+compatibility:
+  core_min_version: 2.0.0
+  peer_packs: []
+conflicts:
+  with: []

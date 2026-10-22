@@ -1,0 +1,88 @@
+{
+  "trialId": "F6-playwright-e2e-release-gate",
+  "name": "Playwright E2E Integration & Release Gate Capability Trial",
+  "suite": "factory",
+  "pack": "rr8-supabase-cf",
+  "description": "Certifies end-to-end browser user journey verification with Playwright, enforcing zero test skipping and production release readiness.",
+  "stageContract": {
+    "type": "stage-contract",
+    "schemaVersion": "stage-contract/v1",
+    "stageId": "STAGE-06-f6-playwright",
+    "planId": "plan-factory-trials",
+    "title": "Authentication Journey Playwright E2E Test Suite",
+    "status": "planned",
+    "undeclaredInputPolicy": "amend-and-reload",
+    "verificationLevels": [1, 2, 4],
+    "exitCriteria": [
+      "AC-F6-01: Full user journey authentication test passing with Playwright"
+    ],
+    "inputs": [
+      {
+        "path": "docs/bible/README.md",
+        "description": "E2E testing standards and quality gates SSOT",
+        "role": "ssot-bible",
+        "requiredStatus": "active"
+      }
+    ],
+    "outputs": [
+      {
+        "path": "tests/e2e/auth-flow.spec.ts",
+        "description": "Playwright E2E spec verifying login, profile view, and logout",
+        "artifactType": "test"
+      }
+    ]
+  },
+  "preflight": {
+    "targetFiles": ["tests/e2e/auth-flow.spec.ts"],
+    "requiredSkills": [
+      "playwright-e2e",
+      "vitest-testing"
+    ],
+    "requiredBibleChapters": [
+      "docs/bible/README.md"
+    ],
+    "suggestedVerifyCmd": "pnpm test"
+  },
+  "checkerLenses": [
+    "core/governance/checker-lenses/architecture-boundaries.lens.json",
+    "core/governance/checker-lenses/security-invariants.lens.json"
+  ],
+  "makerFixture": {
+    "files": [
+      {
+        "path": "tests/e2e/auth-flow.spec.ts",
+        "content": "import { test, expect } from '@playwright/test';\n\ntest.describe('Authentication Journey', () => {\n  test('user can sign in and navigate to settings', async ({ page }) => {\n    await page.goto('/login');\n    await page.getByLabel('Email').fill('user@example.com');\n    await page.getByLabel('Password').fill('SecurePassword123!');\n    await page.getByRole('button', { name: 'Sign in' }).click();\n    await expect(page).toHaveURL('/settings/profile');\n    await expect(page.getByRole('heading', { level: 1 })).toContainText('Profile');\n  });\n});\n"
+      }
+    ]
+  },
+  "checkerReport": {
+    "schemaVersion": "checker-report/v1",
+    "reportId": "CR-F6-E2E-001",
+    "timestamp": "2026-10-21T12:00:00.000Z",
+    "targetId": "STAGE-06-f6-playwright",
+    "makerAgentId": "agent-maker-f6",
+    "reviewerAgentId": "agent-checker-f6",
+    "contextIsolation": "disjoint",
+    "executionMode": "focused",
+    "autofixPolicy": "report-only",
+    "lensesApplied": ["security-invariants", "architecture-boundaries"],
+    "dimensions": {
+      "task_success": { "score": 2, "raw": 2, "weight": 0.3, "weighted": 0.6, "rationale": "Auth flow E2E test covers full user path" },
+      "tool_use_quality": { "score": 2, "raw": 2, "weight": 0.15, "weighted": 0.3, "rationale": "Uses accessible locators (getByRole, getByLabel)" },
+      "trajectory_compliance": { "score": 2, "raw": 2, "weight": 0.2, "weighted": 0.4, "rationale": "Zero test skips, follows E2E standards" },
+      "hallucination": { "score": 2, "raw": 2, "weight": 0.15, "weighted": 0.3, "rationale": "Valid Playwright test syntax" },
+      "response_quality": { "score": 2, "raw": 2, "weight": 0.2, "weighted": 0.4, "rationale": "Clear and maintainable spec" }
+    },
+    "scoring": {
+      "weightedRawScore": 2.0,
+      "maxRawScore": 2.0,
+      "normalizedScore": 100,
+      "thresholdScore": 80,
+      "gateAPassed": true,
+      "gateBPassed": true
+    },
+    "findings": [],
+    "status": "APPROVED"
+  },
+  "expectedTerminalState": "success"
+}

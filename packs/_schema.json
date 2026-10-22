@@ -1,0 +1,162 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://universal-ai-workspace-framework.dev/packs/_schema.json",
+  "title": "Stack Archetype Pack Manifest",
+  "description": "Registration contract for packs/<name>/manifest.yaml (blueprint section 5.2). Validated by core/init/schema-validate.js.",
+  "type": "object",
+  "required": ["apiVersion", "kind", "metadata", "spec", "composition"],
+  "additionalProperties": false,
+  "properties": {
+    "apiVersion": { "const": "workspace/v1" },
+    "kind": { "const": "StackArchetype" },
+    "metadata": {
+      "type": "object",
+      "required": ["name", "displayName", "version", "tier"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]*$",
+          "description": "Must match the pack directory name under packs/."
+        },
+        "displayName": { "type": "string", "minLength": 1 },
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+(-[a-z0-9.-]+)?$"
+        },
+        "tier": { "enum": ["flagship", "starter", "community"] },
+        "tags": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "icon": { "type": "string" },
+        "remoteUrl": {
+          "type": "string",
+          "pattern": "^https?://",
+          "description": "Default git remote for the archetype's app repository (blueprint section 8.3)."
+        }
+      }
+    },
+    "spec": {
+      "type": "object",
+      "required": ["languages", "folderLayout", "defaultAppPath", "packaging"],
+      "additionalProperties": false,
+      "properties": {
+        "languages": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+        "runtimes": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "frameworks": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "databases": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "storage": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "testRunners": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "deployTargets": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "folderLayout": { "enum": ["monorepo", "single"] },
+        "defaultAppPath": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(\\.|[^:*/?\"<>|]+)(/[^:*/?\"<>|]+)*$",
+          "description": "Workspace-relative path of the archetype's app (e.g. apps/web, apps/api)."
+        },
+        "packaging": { "enum": ["pnpm", "npm", "yarn", "bun", "uv", "pip", "poetry", "cargo", "go", "none"] },
+        "variables": {
+          "type": "array",
+          "description": "Archetype-declared placeholders with type validation (blueprint section 5.4, key change 3).",
+          "items": {
+            "type": "object",
+            "required": ["name", "type"],
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string",
+                "pattern": "^\\{\\{[A-Z0-9_]+\\}\\}$",
+                "description": "Placeholder token, e.g. {{SUPABASE_TYPES_CMD}}."
+              },
+              "type": { "enum": ["string", "enum", "path"] },
+              "enum": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+              "default": { "type": "string" },
+              "description": { "type": "string" }
+            }
+          }
+        },
+        "workspace": {
+          "type": "object",
+          "description": "Monorepo root files this pack expects (root package.json for JS packagings).",
+          "required": ["rootScripts"],
+          "additionalProperties": false,
+          "properties": {
+            "rootScripts": {
+              "type": "object",
+              "additionalProperties": { "type": "string" }
+            },
+            "onlyBuiltDependencies": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "composition": {
+      "type": "object",
+      "required": ["skills"],
+      "additionalProperties": false,
+      "description": "What this pack contributes when composed into a workspace (blueprint section 5.2).",
+      "properties": {
+        "skills": {
+          "type": "object",
+          "required": ["include"],
+          "additionalProperties": false,
+          "properties": {
+            "include": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+            "exclude": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+          }
+        },
+        "bible_overlays": { "type": "string" },
+        "decisions_seed": { "type": "string" },
+        "folder_hooks": { "type": "string" },
+        "scaffold_script": { "type": "string" },
+        "path_scoped_rules": {
+          "type": "string",
+          "description": "Pack-owned path-scoped rule files layered into core/path-scoped-rules/ at composition."
+        },
+        "workflows": {
+          "type": "string",
+          "description": "Pack-owned workflow files layered over core/workflows/ at composition."
+        },
+        "commandcode": {
+          "type": "object",
+          "description": "Pack-owned .commandcode/settings.json fragment merged at composition.",
+          "additionalProperties": true
+        },
+        "opencode": {
+          "type": "object",
+          "description": "Pack-owned opencode.json fragment (mcp servers, permissions) merged at composition.",
+          "additionalProperties": true
+        }
+      }
+    },
+    "hooks": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "pre_init": { "type": "string" },
+        "post_init": { "type": "string" }
+      }
+    },
+    "compatibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "core_min_version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+        "peer_packs": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+      }
+    },
+    "conflicts": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "with": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "description": "Packs that cannot coexist with this one (blueprint section 10.4 decision D)."
+        }
+      }
+    }
+  }
+}

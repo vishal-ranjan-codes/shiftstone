@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "checker-lens/v1",
+  "lensId": "architecture-boundaries",
+  "name": "Universal Architecture Boundaries Lens",
+  "pack": "core",
+  "defaultMode": "focused",
+  "supportedModes": ["lite", "focused", "full"],
+  "triggerGlobs": [
+    "**/*"
+  ],
+  "mappedDimensions": [
+    "task_success",
+    "trajectory_compliance",
+    "response_quality"
+  ],
+  "invariants": [
+    {
+      "ruleId": "ARCH-NO-ROOT-APP-CODE",
+      "severity": "critical",
+      "description": "Never put application source code in workspace root; root is for governance and configs only",
+      "autofixClass": "manual"
+    },
+    {
+      "ruleId": "ARCH-CORE-STACK-AGNOSTIC",
+      "severity": "high",
+      "description": "Framework engine code in core/ must remain 100% stack-agnostic with zero direct pack imports",
+      "autofixClass": "manual"
+    },
+    {
+      "ruleId": "ARCH-ACYCLIC-DEPENDENCIES",
+      "severity": "high",
+      "description": "Cross-module dependencies and plan unit relationships must form an acyclic directed graph",
+      "autofixClass": "manual"
+    }
+  ]
+}

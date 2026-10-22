@@ -1,0 +1,24 @@
+{
+  "loop": "example-loop",
+  "run_id": "00000000-0000-4000-8000-000000000000",
+  "attempt": 0,
+  "success_streak": 0,
+  "tokens_used": 0,
+  "dollars_used": 0,
+  "started_at": "2026-10-14T00:00:00.000Z",
+  "updated_at": "2026-10-14T00:00:00.000Z",
+  "yardstick": 0,
+  "last_yardstick_delta": 0,
+  "barren_turns": 0,
+  "addressed": [],
+  "waived": [],
+  "accepted_changes": 0,
+  "red_green": {
+    "required": true,
+    "proven": false,
+    "baseline": "unknown",
+    "current": "unknown"
+  },
+  "notes": [],
+  "scratch": {}
+}

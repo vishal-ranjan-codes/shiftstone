@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://universal-workspace.local/schemas/checker-lens.schema.json",
+  "title": "Consequence-Aware Conditional Checker Lens (checker-lens/v1)",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "lensId",
+    "name",
+    "pack",
+    "defaultMode",
+    "supportedModes",
+    "triggerGlobs",
+    "mappedDimensions",
+    "invariants"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "checker-lens/v1" },
+    "lensId": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+    "name": { "type": "string", "minLength": 3 },
+    "pack": { "type": "string", "minLength": 2 },
+    "defaultMode": { "enum": ["lite", "focused", "full"] },
+    "supportedModes": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "enum": ["lite", "focused", "full"] }
+    },
+    "triggerGlobs": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "mappedDimensions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "enum": [
+          "task_success",
+          "tool_use_quality",
+          "trajectory_compliance",
+          "hallucination",
+          "response_quality"
+        ]
+      }
+    },
+    "invariants": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["ruleId", "severity", "description", "autofixClass"],
+        "properties": {
+          "ruleId": { "type": "string", "pattern": "^[A-Z0-9_-]+$" },
+          "severity": { "enum": ["critical", "high", "medium", "low"] },
+          "description": { "type": "string", "minLength": 10 },
+          "autofixClass": { "enum": ["safe_auto", "gated_auto", "manual", "advisory"] }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

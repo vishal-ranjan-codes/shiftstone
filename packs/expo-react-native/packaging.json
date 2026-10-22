@@ -1,0 +1,9 @@
+{
+  "name": "expo-react-native",
+  "version": "0.1.0",
+  "description": "Stack Archetype Pack: Expo + React Native (starter placeholder).",
+  "tier": "starter",
+  "license": "MIT",
+  "packaging": "pnpm",
+  "dependencies": []
+}

@@ -1,0 +1,138 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://universal-workspace.local/schemas/release-evidence.schema.json",
+  "title": "Release Evidence Certification Bundle (release-evidence/v1)",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "releaseVersion",
+    "gitCommitHash",
+    "timestamp",
+    "verificationLadder",
+    "trialsSummary",
+    "openCriticalBugs",
+    "status"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "release-evidence/v1"
+    },
+    "releaseVersion": {
+      "type": "string",
+      "pattern": "^v?[0-9]+\\.[0-9]+\\.[0-9]+(-[a-z0-9.]+)?$"
+    },
+    "gitCommitHash": {
+      "type": "string",
+      "minLength": 7
+    },
+    "timestamp": {
+      "type": "string"
+    },
+    "verificationLadder": {
+      "type": "object",
+      "required": [
+        "L1",
+        "L1_5_antiGaming",
+        "L2",
+        "L3",
+        "L4_checkerReportId",
+        "L5_approvalId"
+      ],
+      "properties": {
+        "L1": {
+          "type": "object",
+          "required": ["status"],
+          "properties": {
+            "status": {
+              "enum": ["passed", "failed"]
+            },
+            "command": {
+              "type": "string"
+            },
+            "details": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "L1_5_antiGaming": {
+          "type": "object",
+          "required": ["status"],
+          "properties": {
+            "status": {
+              "enum": ["passed", "failed"]
+            },
+            "details": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "L2": {
+          "type": "object",
+          "required": ["status"],
+          "properties": {
+            "status": {
+              "enum": ["passed", "failed"]
+            },
+            "command": {
+              "type": "string"
+            },
+            "details": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "L3": {
+          "type": "object",
+          "required": ["status"],
+          "properties": {
+            "status": {
+              "enum": ["passed", "failed"]
+            },
+            "command": {
+              "type": "string"
+            },
+            "details": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "L4_checkerReportId": {
+          "type": "string",
+          "pattern": "^(CR|RPT)-[0-9A-Za-z_-]+$"
+        },
+        "L5_approvalId": {
+          "type": "string",
+          "pattern": "^APR-[0-9]{8}-[0-9]{3}$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "trialsSummary": {
+      "type": "object",
+      "required": ["harnessTrialsPassed", "factoryTrialsPassed"],
+      "properties": {
+        "harnessTrialsPassed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "factoryTrialsPassed": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "openCriticalBugs": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "status": {
+      "enum": ["CERTIFIED", "DRAFT", "REJECTED"]
+    }
+  },
+  "additionalProperties": false
+}

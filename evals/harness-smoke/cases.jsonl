@@ -1,0 +1,3 @@
+{"id":"loop-specs-pass-refusal-gate","kind":"command","command":"node core/scripts/validate-loop-specs.js --strict","cluster":"loop-spec-validation"}
+{"id":"okf-frontmatter-intact","kind":"command","command":"node core/scripts/validate-okf-frontmatter.js --strict","cluster":"governance-okf"}
+{"id":"terminal-state-vocabulary-is-stable","kind":"contains","input":"success no_op blocked stalled exhausted","expected":"stalled","cluster":"harness-vocabulary"}

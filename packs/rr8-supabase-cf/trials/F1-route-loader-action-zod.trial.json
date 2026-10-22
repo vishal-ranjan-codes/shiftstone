@@ -1,0 +1,90 @@
+{
+  "trialId": "F1-route-loader-action-zod",
+  "name": "Route Loader, Form Action & Zod Validation Capability Trial",
+  "suite": "factory",
+  "pack": "rr8-supabase-cf",
+  "description": "Certifies end-to-end vertical-slice capability for type-safe route modules with data loaders, mutations, and Zod input validation.",
+  "stageContract": {
+    "type": "stage-contract",
+    "schemaVersion": "stage-contract/v1",
+    "stageId": "STAGE-01-f1-routes",
+    "planId": "plan-factory-trials",
+    "title": "User Profile Route with Loader and Validated Action",
+    "status": "planned",
+    "undeclaredInputPolicy": "amend-and-reload",
+    "verificationLevels": [1, 2, 4],
+    "exitCriteria": [
+      "AC-F1-01: Type-safe route loader and Zod action implemented"
+    ],
+    "inputs": [
+      {
+        "path": "docs/bible/README.md",
+        "description": "Route contract and conventions SSOT",
+        "role": "ssot-bible",
+        "requiredStatus": "active"
+      }
+    ],
+    "outputs": [
+      {
+        "path": "app/routes/settings/profile.tsx",
+        "description": "Settings profile route module with loader and action",
+        "artifactType": "code"
+      }
+    ]
+  },
+  "preflight": {
+    "targetFiles": ["app/routes/settings/profile.tsx"],
+    "requiredSkills": [
+      "react-router-routing",
+      "react-router-data-loading",
+      "react-router-actions-forms",
+      "zod-validation"
+    ],
+    "requiredBibleChapters": [
+      "docs/bible/README.md"
+    ],
+    "suggestedVerifyCmd": "pnpm test"
+  },
+  "checkerLenses": [
+    "packs/rr8-supabase-cf/checker-lenses/route-loader-action.lens.json",
+    "core/governance/checker-lenses/security-invariants.lens.json"
+  ],
+  "makerFixture": {
+    "files": [
+      {
+        "path": "app/routes/settings/profile.tsx",
+        "content": "import { z } from 'zod';\nimport type { Route } from './+types/profile';\n\nconst ProfileSchema = z.object({ username: z.string().min(3).max(30), bio: z.string().max(160).optional() });\nexport async function loader({ request }: Route.LoaderArgs) { return { user: { id: 'u1', username: 'alice' } }; }\nexport async function action({ request }: Route.ActionArgs) { const data = await request.formData(); const parsed = ProfileSchema.safeParse(Object.fromEntries(data)); if (!parsed.success) return { errors: parsed.error.flatten() }; return { ok: true }; }\nexport default function Profile({ loaderData }: Route.ComponentProps) { return <div><h1>Profile {loaderData.user.username}</h1></div>; }\n"
+      }
+    ]
+  },
+  "checkerReport": {
+    "schemaVersion": "checker-report/v1",
+    "reportId": "CR-F1-PROFILE-001",
+    "timestamp": "2026-10-21T12:00:00.000Z",
+    "targetId": "STAGE-01-f1-routes",
+    "makerAgentId": "agent-maker-f1",
+    "reviewerAgentId": "agent-checker-f1",
+    "contextIsolation": "disjoint",
+    "executionMode": "focused",
+    "autofixPolicy": "report-only",
+    "lensesApplied": ["security-invariants", "route-loader-action"],
+    "dimensions": {
+      "task_success": { "raw": 2, "weight": 0.3, "weighted": 0.6, "rationale": "Complete loader, action, and validation implemented" },
+      "tool_use_quality": { "raw": 2, "weight": 0.15, "weighted": 0.3, "rationale": "Optimal standard React Router 8 exports used" },
+      "trajectory_compliance": { "raw": 2, "weight": 0.2, "weighted": 0.4, "rationale": "Followed route contract specification" },
+      "hallucination": { "raw": 2, "weight": 0.15, "weighted": 0.3, "rationale": "No hallucinated dependencies" },
+      "response_quality": { "raw": 2, "weight": 0.2, "weighted": 0.4, "rationale": "Clean type-safe code" }
+    },
+    "scoring": {
+      "weightedRawScore": 2.0,
+      "maxRawScore": 2.0,
+      "normalizedScore": 100,
+      "thresholdScore": 80,
+      "gateAPassed": true,
+      "gateBPassed": true
+    },
+    "findings": [],
+    "status": "APPROVED"
+  },
+  "expectedTerminalState": "success"
+}

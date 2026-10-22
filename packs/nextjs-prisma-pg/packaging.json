@@ -1,0 +1,9 @@
+{
+  "name": "nextjs-prisma-pg",
+  "version": "0.1.0",
+  "description": "Stack Archetype Pack: Next.js + Prisma + PostgreSQL (starter placeholder).",
+  "tier": "starter",
+  "license": "MIT",
+  "packaging": "pnpm",
+  "dependencies": []
+}

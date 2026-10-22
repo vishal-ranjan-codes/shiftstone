@@ -1,0 +1,89 @@
+{
+  "trialId": "F3-cloudflare-worker-queue-cron",
+  "name": "Cloudflare Worker Queue Consumer & Cron Trigger Capability Trial",
+  "suite": "factory",
+  "pack": "rr8-supabase-cf",
+  "description": "Certifies edge runtime compliance for scheduled cron triggers and asynchronous queue batch processing in Cloudflare Workers.",
+  "stageContract": {
+    "type": "stage-contract",
+    "schemaVersion": "stage-contract/v1",
+    "stageId": "STAGE-03-f3-worker",
+    "planId": "plan-factory-trials",
+    "title": "Email Notification Queue Worker with Daily Digest Cron",
+    "status": "planned",
+    "undeclaredInputPolicy": "amend-and-reload",
+    "verificationLevels": [1, 2, 4],
+    "exitCriteria": [
+      "AC-F3-01: Cloudflare Worker implements valid queue and scheduled handlers"
+    ],
+    "inputs": [
+      {
+        "path": "docs/bible/README.md",
+        "description": "Edge infrastructure and workers guidelines SSOT",
+        "role": "ssot-bible",
+        "requiredStatus": "active"
+      }
+    ],
+    "outputs": [
+      {
+        "path": "workers/notification-consumer.ts",
+        "description": "Edge worker implementing scheduled cron and queue consumers",
+        "artifactType": "code"
+      }
+    ]
+  },
+  "preflight": {
+    "targetFiles": ["workers/notification-consumer.ts"],
+    "requiredSkills": [
+      "cloudflare-workers",
+      "cloudflare-cron",
+      "cloudflare-queues"
+    ],
+    "requiredBibleChapters": [
+      "docs/bible/README.md"
+    ],
+    "suggestedVerifyCmd": "pnpm test"
+  },
+  "checkerLenses": [
+    "packs/rr8-supabase-cf/checker-lenses/cloudflare-edge-runtime.lens.json",
+    "core/governance/checker-lenses/security-invariants.lens.json"
+  ],
+  "makerFixture": {
+    "files": [
+      {
+        "path": "workers/notification-consumer.ts",
+        "content": "export interface Env { NOTIFICATION_QUEUE: Queue; }\nexport default {\n  async queue(batch: MessageBatch<any>, env: Env): Promise<void> {\n    for (const message of batch.messages) {\n      console.log('Processing message', message.id);\n      message.ack();\n    }\n  },\n  async scheduled(controller: ScheduledController, env: Env, ctx: ExecutionContext): Promise<void> {\n    ctx.waitUntil(console.log('Running daily digest cron at', controller.scheduledTime));\n  }\n};\n"
+      }
+    ]
+  },
+  "checkerReport": {
+    "schemaVersion": "checker-report/v1",
+    "reportId": "CR-F3-WORKER-001",
+    "timestamp": "2026-10-21T12:00:00.000Z",
+    "targetId": "STAGE-03-f3-worker",
+    "makerAgentId": "agent-maker-f3",
+    "reviewerAgentId": "agent-checker-f3",
+    "contextIsolation": "disjoint",
+    "executionMode": "focused",
+    "autofixPolicy": "report-only",
+    "lensesApplied": ["security-invariants", "cloudflare-edge-runtime"],
+    "dimensions": {
+      "task_success": { "score": 2, "raw": 2, "weight": 0.3, "weighted": 0.6, "rationale": "Implemented queue batching and cron handler" },
+      "tool_use_quality": { "score": 2, "raw": 2, "weight": 0.15, "weighted": 0.3, "rationale": "Zero Node.js runtime globals in edge code" },
+      "trajectory_compliance": { "score": 2, "raw": 2, "weight": 0.2, "weighted": 0.4, "rationale": "Complies with Cloudflare Workers standard interfaces" },
+      "hallucination": { "score": 2, "raw": 2, "weight": 0.15, "weighted": 0.3, "rationale": "Accurate MessageBatch and ScheduledController APIs" },
+      "response_quality": { "score": 2, "raw": 2, "weight": 0.2, "weighted": 0.4, "rationale": "Type-safe worker handler" }
+    },
+    "scoring": {
+      "weightedRawScore": 2.0,
+      "maxRawScore": 2.0,
+      "normalizedScore": 100,
+      "thresholdScore": 80,
+      "gateAPassed": true,
+      "gateBPassed": true
+    },
+    "findings": [],
+    "status": "APPROVED"
+  },
+  "expectedTerminalState": "success"
+}

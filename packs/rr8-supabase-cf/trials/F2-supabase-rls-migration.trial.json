@@ -1,0 +1,89 @@
+{
+  "trialId": "F2-supabase-rls-migration",
+  "name": "Supabase PostgreSQL Schema Migration & RLS Security Capability Trial",
+  "suite": "factory",
+  "pack": "rr8-supabase-cf",
+  "description": "Certifies vertical-slice capability for database schema migration with mandatory Row-Level Security policies and tenant isolation.",
+  "stageContract": {
+    "type": "stage-contract",
+    "schemaVersion": "stage-contract/v1",
+    "stageId": "STAGE-02-f2-rls",
+    "planId": "plan-factory-trials",
+    "title": "Organizations Table Migration with Tenant RLS",
+    "status": "planned",
+    "undeclaredInputPolicy": "amend-and-reload",
+    "verificationLevels": [1, 2, 4],
+    "exitCriteria": [
+      "AC-F2-01: Organizations table created with enabled RLS and authenticated policies"
+    ],
+    "inputs": [
+      {
+        "path": "docs/bible/README.md",
+        "description": "RLS security patterns SSOT",
+        "role": "ssot-bible",
+        "requiredStatus": "active"
+      }
+    ],
+    "outputs": [
+      {
+        "path": "supabase/migrations/20261021_create_organizations.sql",
+        "description": "SQL migration creating organizations table with enabled RLS",
+        "artifactType": "migration"
+      }
+    ]
+  },
+  "preflight": {
+    "targetFiles": ["supabase/migrations/20261021_create_organizations.sql"],
+    "requiredSkills": [
+      "supabase-migrations",
+      "supabase-rls",
+      "supabase-postgres"
+    ],
+    "requiredBibleChapters": [
+      "docs/bible/README.md"
+    ],
+    "suggestedVerifyCmd": "pnpm test"
+  },
+  "checkerLenses": [
+    "packs/rr8-supabase-cf/checker-lenses/rls-security.lens.json",
+    "core/governance/checker-lenses/security-invariants.lens.json"
+  ],
+  "makerFixture": {
+    "files": [
+      {
+        "path": "supabase/migrations/20261021_create_organizations.sql",
+        "content": "CREATE TABLE IF NOT EXISTS public.organizations (\n  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n  name TEXT NOT NULL,\n  owner_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,\n  created_at TIMESTAMPTZ NOT NULL DEFAULT now()\n);\n\nALTER TABLE public.organizations ENABLE ROW LEVEL SECURITY;\n\nCREATE POLICY \"Users can view own organizations\" ON public.organizations\n  FOR SELECT TO authenticated\n  USING (owner_id = auth.uid());\n\nCREATE POLICY \"Users can insert own organizations\" ON public.organizations\n  FOR INSERT TO authenticated\n  WITH CHECK (owner_id = auth.uid());\n"
+      }
+    ]
+  },
+  "checkerReport": {
+    "schemaVersion": "checker-report/v1",
+    "reportId": "CR-F2-RLS-001",
+    "timestamp": "2026-10-21T12:00:00.000Z",
+    "targetId": "STAGE-02-f2-rls",
+    "makerAgentId": "agent-maker-f2",
+    "reviewerAgentId": "agent-checker-f2",
+    "contextIsolation": "disjoint",
+    "executionMode": "focused",
+    "autofixPolicy": "report-only",
+    "lensesApplied": ["security-invariants", "rls-security"],
+    "dimensions": {
+      "task_success": { "raw": 2, "weight": 0.3, "weighted": 0.6, "rationale": "Created table with explicit RLS and authenticated policies" },
+      "tool_use_quality": { "raw": 2, "weight": 0.15, "weighted": 0.3, "rationale": "Optimal idempotent SQL syntax" },
+      "trajectory_compliance": { "raw": 2, "weight": 0.2, "weighted": 0.4, "rationale": "Zero table exposure without RLS" },
+      "hallucination": { "raw": 2, "weight": 0.15, "weighted": 0.3, "rationale": "Valid Supabase auth.uid() function references" },
+      "response_quality": { "raw": 2, "weight": 0.2, "weighted": 0.4, "rationale": "Clean SQL migration" }
+    },
+    "scoring": {
+      "weightedRawScore": 2.0,
+      "maxRawScore": 2.0,
+      "normalizedScore": 100,
+      "thresholdScore": 80,
+      "gateAPassed": true,
+      "gateBPassed": true
+    },
+    "findings": [],
+    "status": "APPROVED"
+  },
+  "expectedTerminalState": "success"
+}

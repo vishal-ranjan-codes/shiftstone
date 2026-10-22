@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/claude-code-settings.json",
+  "permissions": {
+    "bash": {
+      "{{PACKAGE_MANAGER}} *": "allow",
+      "git *": "ask",
+      "find *": "allow",
+      "rg *": "allow",
+      "ls *": "allow",
+      "git status": "allow",
+      "git diff": "allow"
+    }
+  }
+}

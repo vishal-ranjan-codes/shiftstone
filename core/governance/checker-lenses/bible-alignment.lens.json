@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "checker-lens/v1",
+  "lensId": "bible-alignment",
+  "name": "Universal Bible Alignment & SSOT Lens",
+  "pack": "core",
+  "defaultMode": "focused",
+  "supportedModes": ["lite", "focused", "full"],
+  "triggerGlobs": [
+    "docs/bible/**",
+    "core/**",
+    "packs/**",
+    "apps/**"
+  ],
+  "mappedDimensions": [
+    "task_success",
+    "trajectory_compliance",
+    "hallucination",
+    "response_quality"
+  ],
+  "invariants": [
+    {
+      "ruleId": "BIBLE-SSOT-ALIGNMENT",
+      "severity": "high",
+      "description": "Code changes and architecture implementations must conform to docs/bible/ SSOT specifications",
+      "autofixClass": "manual"
+    },
+    {
+      "ruleId": "BIBLE-NO-SILENT-DRIFT",
+      "severity": "critical",
+      "description": "All mutations altering public contracts or system architecture must include proposal updates to docs/bible/",
+      "autofixClass": "manual"
+    },
+    {
+      "ruleId": "BIBLE-LOG-RECORD-INTEGRITY",
+      "severity": "medium",
+      "description": "Any change to architecture must append an entry to docs/bible/log.md with explicit rationale",
+      "autofixClass": "advisory"
+    }
+  ]
+}

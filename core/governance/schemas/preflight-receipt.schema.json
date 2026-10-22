@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://universal-workspace.local/schemas/preflight-receipt.schema.json",
+  "title": "Agent Pre-Flight Receipt (preflight-receipt/v1)",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "timestamp",
+    "expiresAt",
+    "targetGlobs",
+    "verifiedSkills",
+    "verifiedBibleDocs",
+    "verifyCmd",
+    "receiptHash"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "preflight-receipt/v1" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "expiresAt": { "type": "string", "format": "date-time" },
+    "targetGlobs": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "verifiedSkills": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "verifiedBibleDocs": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "verifyCmd": { "type": "string", "minLength": 1 },
+    "receiptHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "priorLessons": {
+      "type": "array",
+      "items": { "type": "object" }
+    }
+  }
+}

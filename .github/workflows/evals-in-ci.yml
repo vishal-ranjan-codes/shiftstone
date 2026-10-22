@@ -1,0 +1,32 @@
+name: evals-in-ci
+
+# Evals gate (blueprint §9.1 Phase 3, amendment B1): tests verify the
+# deterministic parts, evals verify the non-deterministic parts. A regressed
+# eval blocks the merge exactly like a failing test.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  evals:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Install harness dependencies
+        run: pnpm install --frozen-lockfile
+        working-directory: core
+
+      - name: Run eval suites (strict — regression blocks merge)
+        run: node core/harness/evals/run.js --strict

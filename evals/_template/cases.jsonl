@@ -1,0 +1,3 @@
+{"id":"template-exact-match","kind":"exact","input":"hello world","expected":"hello world","cluster":"unlabeled","tags":["template"]}
+{"id":"template-command-exit-code","kind":"command","command":"node --version","exit_code":0,"cluster":"unlabeled","tags":["template"]}
+{"id":"template-trajectory-proves-checks-ran","kind":"trajectory","claimed_checks":["pnpm test"],"trajectory":[{"tool":"shell","command":"pnpm test","ok":true}],"cluster":"unlabeled","tags":["template"]}

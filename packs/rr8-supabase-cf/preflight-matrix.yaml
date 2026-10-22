@@ -1,0 +1,88 @@
+apiVersion: governance/v1
+kind: PreflightMatrix
+metadata:
+  pack: rr8-supabase-cf
+  description: Domain-to-skills and Bible pre-flight gate reference matrix for React Router 8 + Supabase + Cloudflare
+rules:
+  - id: routes-and-data-loading
+    description: Route modules and data loading
+    globs:
+      - "app/routes/**"
+      - "apps/web/app/routes/**"
+      - "app/routes.ts"
+      - "apps/web/app/routes.ts"
+    skills:
+      - react-router-routing
+      - react-router-data-loading
+    bible:
+      - docs/bible/08-api-contracts/route-contracts.md
+    suggestedVerifyCmd: "pnpm test"
+
+  - id: form-actions-and-validation
+    description: Form actions, mutations, and input validation
+    globs:
+      - "app/routes/**/action.ts"
+      - "apps/web/app/routes/**/action.ts"
+      - "app/schemas/**"
+      - "apps/web/app/schemas/**"
+    skills:
+      - react-router-actions-forms
+      - zod-validation
+    bible:
+      - docs/bible/08-api-contracts/route-contracts.md
+    suggestedVerifyCmd: "pnpm test"
+
+  - id: server-middleware-and-auth
+    description: Server middleware, authentication, and session handling
+    globs:
+      - "app/middleware/**"
+      - "apps/web/app/middleware/**"
+      - "app/entry.server.tsx"
+      - "apps/web/app/entry.server.tsx"
+    skills:
+      - react-router-middleware
+      - supabase-auth
+    bible:
+      - docs/bible/04-auth-and-rbac/auth-overview.md
+    suggestedVerifyCmd: "pnpm test"
+
+  - id: database-migrations-and-rls
+    description: Database schemas, migrations, and row-level security
+    globs:
+      - "supabase/**"
+      - "db/**"
+    skills:
+      - supabase-migrations
+      - supabase-postgres
+      - supabase-rls
+    bible:
+      - docs/bible/03-database/schema-reference.md
+    suggestedVerifyCmd: "pnpm test"
+
+  - id: frontend-ui-and-styling
+    description: UI components, design tokens, and Tailwind styling
+    globs:
+      - "app/components/**"
+      - "apps/web/app/components/**"
+      - "app/styles/**"
+      - "apps/web/app/styles/**"
+      - "**/*.css"
+    skills:
+      - ui
+      - shadcn-ui
+      - theme-management
+      - tailwind-v4
+    bible:
+      - docs/bible/07-frontend/ui-architecture.md
+    suggestedVerifyCmd: "pnpm test"
+
+  - id: scheduled-workers-and-cron
+    description: Background jobs and Cloudflare Workers cron execution
+    globs:
+      - "workers/**"
+    skills:
+      - cloudflare-cron
+      - jobs
+    bible:
+      - docs/bible/01-architecture/architecture-overview.md
+    suggestedVerifyCmd: "pnpm test"

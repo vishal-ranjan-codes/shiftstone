@@ -1,0 +1,8 @@
+#!/bin/sh
+# Sample git hook (post-commit) that actuates an event-triggered loop.
+# Install: cp core/harness/loop-runner/triggers/git-hook.sample .git/hooks/post-commit
+# Webhook receivers follow the same convention: POST received → invoke
+#   node core/harness/cli.js trigger <loop-id>
+LOOP_ID="${1:-schema-sync-loop}"
+ROOT="$(git rev-parse --show-toplevel)"
+exec node "$ROOT/core/harness/cli.js" trigger "$LOOP_ID" --event "git:post-commit"

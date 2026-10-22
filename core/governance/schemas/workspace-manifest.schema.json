@@ -1,0 +1,74 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "workspace-manifest/v1",
+  "title": "WorkspaceManifest",
+  "type": "object",
+  "required": [
+    "apiVersion",
+    "kind",
+    "metadata",
+    "spec"
+  ],
+  "properties": {
+    "apiVersion": { "type": "string", "enum": ["workspace/v1"] },
+    "kind": { "type": "string", "enum": ["WorkspaceManifest"] },
+    "metadata": {
+      "type": "object",
+      "required": ["workspaceName", "frameworkName", "version", "updatedAt"],
+      "properties": {
+        "workspaceName": { "type": "string" },
+        "frameworkName": { "type": "string" },
+        "version": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      }
+    },
+    "spec": {
+      "type": "object",
+      "required": ["activePacks", "budgets", "schemas", "validators"],
+      "properties": {
+        "activePacks": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "budgets": {
+          "type": "object",
+          "required": [
+            "agentsMaxLines",
+            "agentsMaxBytes",
+            "ruleMaxLines",
+            "ruleMaxBytes",
+            "alwaysOnMaxBytes",
+            "skillManifestMaxLines",
+            "skillInstructionsMaxLines"
+          ],
+          "properties": {
+            "agentsMaxLines": { "type": "integer" },
+            "agentsMaxBytes": { "type": "integer" },
+            "ruleMaxLines": { "type": "integer" },
+            "ruleMaxBytes": { "type": "integer" },
+            "alwaysOnMaxBytes": { "type": "integer" },
+            "skillManifestMaxLines": { "type": "integer" },
+            "skillInstructionsMaxLines": { "type": "integer" }
+          }
+        },
+        "schemas": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        },
+        "validators": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "scriptPath", "phase"],
+            "properties": {
+              "id": { "type": "string" },
+              "scriptPath": { "type": "string" },
+              "phase": { "type": "string" },
+              "description": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

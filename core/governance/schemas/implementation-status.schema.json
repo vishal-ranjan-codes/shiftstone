@@ -1,0 +1,63 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "implementation-status/v1",
+  "title": "ImplementationStatus",
+  "type": "object",
+  "required": [
+    "apiVersion",
+    "kind",
+    "metadata",
+    "phases",
+    "planUnits",
+    "amendments"
+  ],
+  "properties": {
+    "apiVersion": { "type": "string", "enum": ["governance/v1"] },
+    "kind": { "type": "string", "enum": ["ImplementationStatus"] },
+    "metadata": {
+      "type": "object",
+      "required": ["version", "updatedAt"],
+      "properties": {
+        "version": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      }
+    },
+    "phases": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["planFile", "status", "units"],
+        "properties": {
+          "planFile": { "type": "string" },
+          "status": { "type": "string", "enum": ["planned", "in-progress", "completed"] },
+          "units": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "planUnits": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["phase", "status", "requirementIds", "requiredArtifacts"],
+        "properties": {
+          "phase": { "type": "string" },
+          "status": { "type": "string", "enum": ["planned", "in-progress", "completed"] },
+          "requirementIds": { "type": "array", "items": { "type": "string" } },
+          "requiredArtifacts": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "amendments": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["phase", "unit", "status"],
+        "properties": {
+          "phase": { "type": "string" },
+          "unit": { "type": "string" },
+          "status": { "type": "string", "enum": ["planned", "in-progress", "completed"] }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,90 @@
+{
+  "trialId": "F4-shadcn-tailwind-v4-tokens",
+  "name": "Shadcn UI, Tailwind CSS v4 & Semantic Design Tokens Capability Trial",
+  "suite": "factory",
+  "pack": "rr8-supabase-cf",
+  "description": "Certifies semantic token adherence, dark mode theme management, and zero hardcoded color values in Tailwind v4 components.",
+  "stageContract": {
+    "type": "stage-contract",
+    "schemaVersion": "stage-contract/v1",
+    "stageId": "STAGE-04-f4-tokens",
+    "planId": "plan-factory-trials",
+    "title": "Alert Banner Component with Semantic Token Styling",
+    "status": "planned",
+    "undeclaredInputPolicy": "amend-and-reload",
+    "verificationLevels": [1, 2, 4],
+    "exitCriteria": [
+      "AC-F4-01: Alert banner component built with 100% semantic tokens"
+    ],
+    "inputs": [
+      {
+        "path": "docs/bible/README.md",
+        "description": "Design tokens and semantic color mapping SSOT",
+        "role": "ssot-bible",
+        "requiredStatus": "active"
+      }
+    ],
+    "outputs": [
+      {
+        "path": "app/components/ui/alert-banner.tsx",
+        "description": "Alert banner component styled exclusively with semantic design tokens",
+        "artifactType": "code"
+      }
+    ]
+  },
+  "preflight": {
+    "targetFiles": ["app/components/ui/alert-banner.tsx"],
+    "requiredSkills": [
+      "shadcn-ui",
+      "tailwind-v4",
+      "design-tokens",
+      "theme-management"
+    ],
+    "requiredBibleChapters": [
+      "docs/bible/README.md"
+    ],
+    "suggestedVerifyCmd": "pnpm test"
+  },
+  "checkerLenses": [
+    "packs/rr8-supabase-cf/checker-lenses/semantic-tokens.lens.json",
+    "core/governance/checker-lenses/architecture-boundaries.lens.json"
+  ],
+  "makerFixture": {
+    "files": [
+      {
+        "path": "app/components/ui/alert-banner.tsx",
+        "content": "import * as React from 'react';\nimport { cva, type VariantProps } from 'class-variance-authority';\n\nconst alertVariants = cva(\n  'relative w-full rounded-lg border p-4 bg-background text-foreground',\n  {\n    variants: {\n      variant: {\n        default: 'border-border text-foreground',\n        destructive: 'border-destructive/50 text-destructive dark:border-destructive',\n        success: 'border-emerald-500/50 text-emerald-600 dark:text-emerald-400'\n      }\n    },\n    defaultVariants: { variant: 'default' }\n  }\n);\n\nexport function AlertBanner({ title, children, variant }: { title: string; children: React.ReactNode; variant?: 'default' | 'destructive' | 'success'; }) {\n  return (\n    <div role=\"alert\" className={alertVariants({ variant })}>\n      <h5 className=\"font-medium leading-none tracking-tight\">{title}</h5>\n      <div className=\"text-sm text-muted-foreground mt-2\">{children}</div>\n    </div>\n  );\n}\n"
+      }
+    ]
+  },
+  "checkerReport": {
+    "schemaVersion": "checker-report/v1",
+    "reportId": "CR-F4-TOKENS-001",
+    "timestamp": "2026-10-21T12:00:00.000Z",
+    "targetId": "STAGE-04-f4-tokens",
+    "makerAgentId": "agent-maker-f4",
+    "reviewerAgentId": "agent-checker-f4",
+    "contextIsolation": "disjoint",
+    "executionMode": "focused",
+    "autofixPolicy": "report-only",
+    "lensesApplied": ["architecture-boundaries", "semantic-tokens"],
+    "dimensions": {
+      "task_success": { "score": 2, "raw": 2, "weight": 0.3, "weighted": 0.6, "rationale": "Created accessible alert banner component" },
+      "tool_use_quality": { "score": 2, "raw": 2, "weight": 0.15, "weighted": 0.3, "rationale": "Utilized class-variance-authority and tailwind v4 classes" },
+      "trajectory_compliance": { "score": 2, "raw": 2, "weight": 0.2, "weighted": 0.4, "rationale": "Used 100% semantic tokens (bg-background, text-foreground, etc.)" },
+      "hallucination": { "score": 2, "raw": 2, "weight": 0.15, "weighted": 0.3, "rationale": "Zero hardcoded hex values" },
+      "response_quality": { "score": 2, "raw": 2, "weight": 0.2, "weighted": 0.4, "rationale": "Well-structured reusable component" }
+    },
+    "scoring": {
+      "weightedRawScore": 2.0,
+      "maxRawScore": 2.0,
+      "normalizedScore": 100,
+      "thresholdScore": 80,
+      "gateAPassed": true,
+      "gateBPassed": true
+    },
+    "findings": [],
+    "status": "APPROVED"
+  },
+  "expectedTerminalState": "success"
+}

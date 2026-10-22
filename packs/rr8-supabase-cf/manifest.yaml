@@ -1,0 +1,119 @@
+# packs/rr8-supabase-cf — flagship archetype (blueprint section 5.2).
+# Validated against packs/_schema.json by core/init/validate-manifest.js.
+apiVersion: workspace/v1
+kind: StackArchetype
+metadata:
+  name: rr8-supabase-cf
+  displayName: React Router 8 + Supabase + Cloudflare Workers
+  version: 1.0.0
+  tier: flagship
+  tags: [react, supabase, cloudflare, edge, typescript]
+  icon: rr8
+spec:
+  languages: [typescript]
+  runtimes: [cloudflare-workers]
+  frameworks: [react-router-8, supabase-js, tailwind-v4, shadcn-ui]
+  databases: [supabase-postgres]
+  storage: [cloudflare-r2, cloudflare-kv]
+  testRunners: [vitest, playwright]
+  deployTargets: [cloudflare-workers]
+  folderLayout: monorepo
+  defaultAppPath: apps/web
+  packaging: pnpm
+  variables:
+    - name: "{{PRODUCT_IDENTITY}}"
+      type: string
+      default: "a full-stack React Router 8 + Supabase + Cloudflare application"
+      description: One-line product identity injected into core/static-rules/product.md.
+    - name: "{{STACK_IDENTITY}}"
+      type: string
+      default: "React Router 8 (framework mode), Supabase (PostgreSQL + Auth + RLS), Cloudflare Workers (Edge runtime), TypeScript strict, {{MONOREPO_OR_SINGLE}}, Tailwind CSS v4, shadcn/ui"
+      description: Stack identity line injected into core/static-rules/product.md.
+    - name: "{{SUPABASE_TYPES_CMD}}"
+      type: string
+      default: "{{PACKAGE_MANAGER}} --filter {{NPM_PACKAGE_NAME}} supabase:types"
+      description: Command that regenerates the typed database schema bindings.
+    - name: "{{LOCAL_SECRETS_FILE}}"
+      type: string
+      default: ".dev.vars"
+      description: Local development secrets file (pack-provided override of the core default).
+    - name: "{{SECRET_PUT_CMD}}"
+      type: string
+      default: "npx wrangler secret put <KEY>"
+      description: Command that sets a production secret on the deployment platform.
+    - name: "{{PAYLOAD_VALIDATOR}}"
+      type: string
+      default: "Zod"
+      description: Schema-validation library used for payload validation.
+    - name: "{{TYPED_RESPONSE}}"
+      type: string
+      default: "ActionResult<T>"
+      description: Typed response contract returned from route actions.
+  workspace:
+    rootScripts:
+      dev: "pnpm -C {{APP_PATH}} dev"
+      build: "pnpm -C {{APP_PATH}} build"
+      start: "pnpm -C {{APP_PATH}} start"
+      typecheck: "pnpm -C {{APP_PATH}} typecheck"
+      lint: "pnpm -C {{APP_PATH}} lint"
+      test: "pnpm -C {{APP_PATH}} test"
+      test:ui: "pnpm -C {{APP_PATH}} test:ui"
+      test:e2e: "pnpm -C {{APP_PATH}} test:e2e"
+      deploy: "pnpm -C {{APP_PATH}} deploy"
+      supabase:types: "pnpm -C {{APP_PATH}} supabase:types"
+    onlyBuiltDependencies: [esbuild, workerd]
+composition:
+  skills:
+    include:
+      - "stack"
+      - "react-router-*"
+      - "supabase-*"
+      - "cloudflare-*"
+      - "tailwind-v4"
+      - "shadcn-ui"
+      - "ui"
+      - "zod-validation"
+      - "security-headers"
+      - "rate-limiting"
+      - "graceful-degradation"
+      - "vitest-testing"
+      - "playwright-e2e"
+      - "ci-cd-cloudflare"
+      - "theme-management"
+      - "web-design-guidelines"
+      - "design-tokens"
+      - "backlog"
+      - "research-methodology"
+      - "jobs"
+      - "storage"
+      - "swarm"
+    exclude: []
+  bible_overlays: ./bible-overlays/
+  decisions_seed: ./decisions-seed.yaml
+  folder_hooks: ./folder-hooks/
+  scaffold_script: ./scaffold-script.js
+  path_scoped_rules: ./path-rules/
+  workflows: ./workflows/
+  commandcode:
+    permissions:
+      ask:
+        - "Shell(wrangler deploy:*)"
+  opencode:
+    mcp:
+      supabase:
+        command:
+          - npx
+          - "-y"
+          - "@supabase/mcp-server-supabase@latest"
+          - "--access-token"
+          - "${SUPABASE_ACCESS_TOKEN}"
+        type: local
+        enabled: true
+hooks:
+  pre_init: ./scaffold-script.js
+  post_init: ./post-init.js
+compatibility:
+  core_min_version: 2.0.0
+  peer_packs: []
+conflicts:
+  with: []

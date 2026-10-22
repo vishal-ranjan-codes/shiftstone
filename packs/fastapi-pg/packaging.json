@@ -1,0 +1,9 @@
+{
+  "name": "fastapi-pg",
+  "version": "0.1.0",
+  "description": "Stack Archetype Pack: FastAPI + PostgreSQL (starter placeholder).",
+  "tier": "starter",
+  "license": "MIT",
+  "packaging": "uv",
+  "dependencies": []
+}

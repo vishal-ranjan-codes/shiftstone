@@ -1,0 +1,32 @@
+apiVersion: workspace/v1
+kind: PackConfig
+metadata:
+  name: rr8-supabase-cf
+  description: Pack configuration and forbidden legacy directives for React Router 8 + Supabase + Cloudflare
+spec:
+  scanTargets:
+    - "docs/bible/**/*.md"
+    - ".agents/skills/**/*.md"
+    - "packs/rr8-supabase-cf/skills/**/*.md"
+  forbiddenDirectives:
+    - pattern: "@supabase/auth-helpers"
+      reason: "Deprecated auth helpers library; use @supabase/ssr instead"
+      replacement: "@supabase/ssr"
+      severity: error
+    - pattern: "tailwind\\.config\\.(?:js|ts|mjs|cjs)"
+      allowedPattern: "(?:do not|no|deprecated|replaces|omitting|legacy)"
+      reason: "Tailwind CSS v4 uses CSS-first configuration via @theme in app/app.css, not tailwind.config.js"
+      replacement: "@theme in app.css"
+      severity: error
+    - pattern: "(?<!Response\\.)\\bjson\\(\\s*\\{"
+      reason: "React Router v7/v8 no longer uses json() response helper; return bare objects or Response.json()"
+      replacement: "Response.json() or bare object"
+      severity: error
+    - pattern: "createClientComponentClient"
+      reason: "Legacy Supabase auth helper; use createBrowserClient from @supabase/ssr"
+      replacement: "createBrowserClient"
+      severity: error
+    - pattern: "createServerComponentClient"
+      reason: "Legacy Supabase auth helper; use createServerClient from @supabase/ssr"
+      replacement: "createServerClient"
+      severity: error

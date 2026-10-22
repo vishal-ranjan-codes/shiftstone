@@ -1,0 +1,8 @@
+# Installed packs + active composition (blueprint Appendix C).
+# Rewritten by core/init/seed-governance.js on every composition.
+# Consumed by core/context/skill-paths.ts (skill discovery) and
+# core/scripts/generate-skills-manifest.js (metadata.activePacks).
+apiVersion: workspace/v1
+kind: PackRegistry
+activePacks:
+  - rr8-supabase-cf

@@ -1,0 +1,9 @@
+{
+  "name": "go-chi-postgres",
+  "version": "0.1.0",
+  "description": "Stack Archetype Pack: Go + Chi + PostgreSQL (starter placeholder).",
+  "tier": "starter",
+  "license": "MIT",
+  "packaging": "go",
+  "dependencies": []
+}

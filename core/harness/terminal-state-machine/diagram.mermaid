@@ -1,0 +1,19 @@
+stateDiagram-v2
+    [*] --> TRIGGER
+    TRIGGER --> PRECHECK
+    PRECHECK --> NO_OP : Goal already satisfied
+    PRECHECK --> EXECUTE : Goal not yet satisfied
+    PRECHECK --> EXHAUSTED : Budget ceiling hit at loop top
+    EXECUTE --> VERIFY
+    VERIFY --> SUCCESS : L1-L5 pass + streak met + enumeration satisfied
+    VERIFY --> EXECUTE : Fail but progress made, budget remains
+    VERIFY --> PRECHECK : Pass but streak not yet confirmed
+    VERIFY --> STALLED : No progress for K turns (stagnation detector fired)
+    VERIFY --> BLOCKED : External dependency / human decision required
+    VERIFY --> EXHAUSTED : Budget ceiling hit
+    SUCCESS --> [*]
+    NO_OP --> [*]
+    STALLED --> [*] : Preserve last-known-good state
+    BLOCKED --> [*] : Escalate to human, park on disk
+    EXHAUSTED --> [*] : Abort, partial artifact only if verified
+    ERROR --> [*] : Never counted as success (error ≠ success)

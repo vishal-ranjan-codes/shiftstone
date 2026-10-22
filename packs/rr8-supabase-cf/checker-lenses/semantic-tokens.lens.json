@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "checker-lens/v1",
+  "lensId": "semantic-tokens",
+  "name": "Tailwind v4 & Semantic Design Tokens Lens",
+  "pack": "rr8-supabase-cf",
+  "defaultMode": "lite",
+  "supportedModes": ["lite", "focused", "full"],
+  "triggerGlobs": [
+    "app/components/**",
+    "apps/web/app/components/**",
+    "app/styles/**",
+    "apps/web/app/styles/**",
+    "**/*.css",
+    "**/*.tsx"
+  ],
+  "mappedDimensions": [
+    "tool_use_quality",
+    "response_quality"
+  ],
+  "invariants": [
+    {
+      "ruleId": "UI-SEMANTIC-DESIGN-TOKENS",
+      "severity": "medium",
+      "description": "Use semantic tokens (--background, --foreground, --primary) instead of hardcoded hex values",
+      "autofixClass": "safe_auto"
+    },
+    {
+      "ruleId": "UI-TAILWIND-V4-CSS-THEME",
+      "severity": "high",
+      "description": "Follow Tailwind CSS v4 CSS-first theme configuration and avoid legacy JS config files",
+      "autofixClass": "manual"
+    },
+    {
+      "ruleId": "UI-ACCESSIBLE-CONTRAST-RATIO",
+      "severity": "high",
+      "description": "Interactive elements must maintain accessible contrast ratios and support dark themes",
+      "autofixClass": "manual"
+    }
+  ]
+}

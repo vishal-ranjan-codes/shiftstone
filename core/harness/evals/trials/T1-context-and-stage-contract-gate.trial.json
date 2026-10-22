@@ -1,0 +1,57 @@
+{
+  "trialId": "T1-context-and-stage-contract-gate",
+  "name": "Context Budget, Pre-Flight Receipt & Superseded Input Gate Trial",
+  "suite": "harness",
+  "type": "synthetic-negative",
+  "description": "Verifies that context budget overflow, missing pre-flight receipts, and superseded ADR stage inputs are deterministically blocked by the harness.",
+  "cases": [
+    {
+      "caseId": "T1.a-context-budget-overflow",
+      "name": "Context budget line/byte overflow refusal",
+      "type": "negative",
+      "targetFile": "AGENTS.md",
+      "payload": {
+        "overflowLines": 85,
+        "overflowBytes": 5200
+      },
+      "expectedOutcome": "blocked",
+      "expectedCode": "BUDGET_EXCEEDED"
+    },
+    {
+      "caseId": "T1.b-missing-preflight-receipt",
+      "name": "Missing pre-flight receipt gate blocking",
+      "type": "negative",
+      "targetFile": "app/routes/billing.tsx",
+      "receipt": null,
+      "expectedOutcome": "blocked",
+      "expectedCode": "MISSING_RECEIPT"
+    },
+    {
+      "caseId": "T1.c-superseded-adr-reference",
+      "name": "Superseded ADR reference in stage contract refusal",
+      "type": "negative",
+      "contract": {
+        "schemaVersion": "stage-contract/v1",
+        "stageId": "stage-test-superseded",
+        "title": "Stage referring to superseded decision",
+        "inputs": [
+          {
+            "path": "docs/decisions/DEC-002-state-management.md",
+            "decisionStatus": "superseded",
+            "description": "Legacy state management decision"
+          }
+        ],
+        "outputs": [
+          {
+            "path": "app/stores/user.ts",
+            "description": "User store implementation"
+          }
+        ]
+      },
+      "expectedOutcome": "blocked",
+      "expectedCode": "SUPERSEDED_DECISION_REFERENCED"
+    }
+  ],
+  "expectedTerminalState": "success",
+  "minimumAssertions": 3
+}

@@ -1,0 +1,58 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "core/harness/evals/rubric-schema.json",
+  "title": "L4 Rubric — five required scoring dimensions (amendment B2 / LOCK-03)",
+  "description": "Every L4 rubric must declare exactly these five dimensions (each scored 0-2 by the Checker), weights summing to 1, and a weighted-total threshold on the 0-2 scale. Enforced by core/harness/loop-runner/validator.ts and core/governance/schemas/checker-report.schema.json (LOCK-03); helpers live in checker/rubric-template.ts.",
+  "type": "object",
+  "required": ["dimensions", "threshold"],
+  "additionalProperties": false,
+  "properties": {
+    "dimensions": {
+      "type": "object",
+      "description": "Exactly the 5 dimensions from Osmani et al. 06 leader rec #2.",
+      "required": [
+        "task_success",
+        "tool_use_quality",
+        "trajectory_compliance",
+        "hallucination",
+        "response_quality"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "task_success": { "$ref": "#/definitions/dimension" },
+        "tool_use_quality": { "$ref": "#/definitions/dimension" },
+        "trajectory_compliance": { "$ref": "#/definitions/dimension" },
+        "hallucination": { "$ref": "#/definitions/dimension" },
+        "response_quality": { "$ref": "#/definitions/dimension" }
+      }
+    },
+    "threshold": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 2,
+      "description": "Pass = weighted total (sum of score 0-2 x weight) >= threshold. 1.6 == the 0.8 verdict gate."
+    },
+    "guidance": {
+      "type": "string",
+      "description": "Overall judging instructions prepended to the judge prompt."
+    }
+  },
+  "definitions": {
+    "dimension": {
+      "type": "object",
+      "required": ["weight"],
+      "additionalProperties": false,
+      "properties": {
+        "weight": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "All five weights must sum to 1."
+        },
+        "guidance": {
+          "type": "string",
+          "description": "What a 2 looks like for this dimension."
+        }
+      }
+    }
+  }
+}

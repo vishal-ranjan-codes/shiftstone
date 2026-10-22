@@ -1,0 +1,66 @@
+# ShiftStone Protected Actions Policy (Level 5 Human Gate — UG-23)
+# Maps file globs, SQL statements, and CLI commands to mandatory action classes.
+# Actions matching any rule require an active approval in core/governance/approvals/APR-*.json.
+
+version: 1
+policyName: "ShiftStone Level 5 Protected Actions Policy"
+
+rules:
+  - actionClass: "db-migration-destructive"
+    description: "Destructive database mutations: drop table/column, truncate table, or destructive reset"
+    filePatterns:
+      - "supabase/migrations/*"
+      - "apps/**/migrations/*"
+      - "migrations/*"
+    sqlPatterns:
+      - '(?i)\bDROP\s+TABLE\b'
+      - '(?i)\bDROP\s+COLUMN\b'
+      - '(?i)\bTRUNCATE(\s+TABLE)?\b'
+      - '(?i)\bDROP\s+SCHEMA\b'
+      - '(?i)\bDROP\s+DATABASE\b'
+    commands:
+      - "supabase db reset"
+      - "pnpm db:reset"
+      - "npm run db:reset"
+
+  - actionClass: "rls-policy-mutation"
+    description: "Row Level Security policy mutations: alter/drop policy, disable RLS"
+    filePatterns:
+      - "supabase/migrations/*"
+      - "apps/**/migrations/*"
+      - "migrations/*"
+    sqlPatterns:
+      - '(?i)\bALTER\s+POLICY\b'
+      - '(?i)\bDROP\s+POLICY\b'
+      - '(?i)\bDISABLE\s+ROW\s+LEVEL\s+SECURITY\b'
+
+  - actionClass: "auth-secret-rotation"
+    description: "Production secret management, auth keys, and token rotations"
+    filePatterns:
+      - ".env.production"
+      - ".env.production.*"
+      - "core/secrets/**"
+    commands:
+      - "supabase secrets set"
+      - "wrangler secret put"
+      - "wrangler secret delete"
+
+  - actionClass: "ssot-bible-mutation"
+    description: "Direct modifications to SSOT Bible documentation outside approved sync-bible proposals"
+    filePatterns:
+      - "docs/bible/**"
+
+  - actionClass: "production-deploy"
+    description: "Production deployments and live infrastructure publication"
+    commands:
+      - "wrangler deploy"
+      - "supabase db push"
+      - "pnpm deploy:prod"
+      - "npm run deploy"
+      - "pnpm deploy"
+
+  - actionClass: "core-governance-override"
+    description: "Modifications to core governance rules, schema overrides, or test suite deletions"
+    filePatterns:
+      - "core/governance/**"
+      - "core/static-rules/**"

@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "checker-lens/v1",
+  "lensId": "rls-security",
+  "name": "Supabase Row Level Security & Isolation Lens",
+  "pack": "rr8-supabase-cf",
+  "defaultMode": "full",
+  "supportedModes": ["lite", "focused", "full"],
+  "triggerGlobs": [
+    "supabase/**",
+    "db/**",
+    "**/supabase/**",
+    "**/migrations/**",
+    "**/schema.sql"
+  ],
+  "mappedDimensions": [
+    "task_success",
+    "trajectory_compliance",
+    "hallucination"
+  ],
+  "invariants": [
+    {
+      "ruleId": "RLS-AUTH-UID-SUBQUERY",
+      "severity": "high",
+      "description": "Always use (select auth.uid()) instead of auth.uid() in RLS policies for Postgres query plan caching",
+      "autofixClass": "safe_auto"
+    },
+    {
+      "ruleId": "RLS-ENABLED-BY-DEFAULT",
+      "severity": "critical",
+      "description": "Every table in the public schema must have row level security enabled with explicit policies",
+      "autofixClass": "manual"
+    },
+    {
+      "ruleId": "RLS-SERVICE-ROLE-ISOLATION",
+      "severity": "critical",
+      "description": "Service role secret key must never be used or bundled in browser-facing code or public assets",
+      "autofixClass": "manual"
+    }
+  ]
+}

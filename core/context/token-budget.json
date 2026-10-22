@@ -1,0 +1,13 @@
+{
+  "$comment": "Context budgets (blueprint §6.1). Canonical source: generate-skills-manifest.js copies these into skills-manifest.yaml spec.budget; the skills loader enforces them.",
+  "static_max_lines": 200,
+  "dynamic_max_tokens": 8000,
+  "stage_min_tokens": 2000,
+  "stage_max_tokens": 8000,
+  "shim_max_lines": {
+    "AGENTS.md": 50,
+    "ANTIGRAVITY.md": 50,
+    "CLAUDE.md": 50,
+    "COMMANDCODE.md": 50
+  }
+}
