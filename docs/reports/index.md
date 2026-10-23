@@ -10,6 +10,8 @@ timestamp: 2026-10-22T00:00:00.000Z
 **Subdirectories**
 
 - [learning/](./learning/index.md)
+- [status/](./status/index.md)
+- [sync/](./sync/index.md)
 
 **Files**
 

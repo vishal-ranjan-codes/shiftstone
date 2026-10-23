@@ -8,4 +8,4 @@
 | **Owner** | AI agent (per command) + developer review. |
 | **Lifecycle** | Created → sealed on loop terminal state. |
 
-**Anti-pattern guardrail:** do not put reports here (→ `docs/reports/`), status snapshots (→ `docs/status-reports/`), or bug logs (→ `docs/bugs/`).
+**Anti-pattern guardrail:** do not put reports here (→ `docs/reports/`), status snapshots (→ `docs/reports/status/`), or bug logs (→ `docs/bugs/`).

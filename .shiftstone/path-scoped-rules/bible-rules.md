@@ -16,7 +16,7 @@ Before any `docs/bible/` update check, identify the current mode from the file p
 | `docs/research/` | Research Mode | Skip `docs/bible/` checks; verify `docs/research/README.md` index is updated |
 | `docs/bible/` | Direct Bible Edit | Skip — bible is already being updated |
 | `.agent/`, `.agents/`, `.claude/`, `.opencode/` | Config Mode | Skip — no `docs/bible/` update needed |
-| `docs/sync-reports/`, `docs/bugs/`, `docs/plans/`, `docs/reports/`, `docs/status-reports/` | Docs Artifact | Skip — no `docs/bible/` update needed |
+| `docs/bugs/`, `docs/plans/`, `docs/reports/` (incl. `status/`, `sync/`) | Docs Artifact | Skip — no `docs/bible/` update needed |
 
 When the path is ambiguous, ask the user before proceeding.
 

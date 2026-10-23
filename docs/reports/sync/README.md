@@ -1,4 +1,4 @@
-# docs/sync-reports/
+# docs/reports/sync/
 
 | Field | Declaration |
 |---|---|

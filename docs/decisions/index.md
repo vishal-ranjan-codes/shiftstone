@@ -21,4 +21,5 @@ timestamp: 2026-10-21T11:28:35.606Z
 - [Canonical Individual OKF ADR Storage and Auto-Compiled Ledger Index](./DEC-010-adr-storage-and-compiled-index.md)
 - [Two-Gate Consequence-Aware Maker-Checker Contract and Lens Resolver](./DEC-011-two-gate-consequence-aware-checker.md)
 - [1-to-1 Legacy Workflow-to-Skill Migration and Universal Skills Unification](./DEC-012-workflow-to-skill-migration.md)
-- [docs/decisions/ — Architecture Decision Records (ADRs)](./README.md)
+- [Documentation Directory Consolidation (13 → 9 Folders)](./DEC-013-docs-directory-consolidation.md)
+- [docs/decisions/ — Architecture Decision Records (ADRs) & Open Questions](./README.md)

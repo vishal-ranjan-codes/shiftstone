@@ -8,6 +8,13 @@ All notable changes to {{PROJECT_NAME}} will be documented in this file.
 
 ---
 
+## [2026-10-24] — Synced from log.md
+
+### Changed
+- [core] Docs directory consolidation (DEC-013, mirrors hub DEC-016): 13 to 9 top-level docs folders; roadmap removed (backlog/MOC.md is SSOT), open-questions merged into decisions, status/sync reports nested under reports/; steering, rules, and skills repointed
+
+---
+
 ## [2026-10-23] — Synced from log.md
 
 ### Added

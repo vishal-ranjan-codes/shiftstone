@@ -16,7 +16,7 @@ Stable, cross-cutting conventions for this workspace (ICM Layer 3).
 
 - Application code lives in `{{APP_PATH}}/` — never in the workspace root.
 - Plans → `docs/plans/<id>/`; bugs → `docs/bugs/open-bugs.md`; research → `docs/research/`.
-- Reports → `docs/reports/`; periodic snapshots → `docs/status-reports/`; drift outputs → `docs/sync-reports/`.
+- Reports → `docs/reports/`; periodic snapshots → `docs/reports/status/`; drift outputs → `docs/reports/sync/`.
 - Stage folders carry a `CONTEXT.md` contract (template:
   `.shiftstone/governance/stage-contract-template.md`).
 

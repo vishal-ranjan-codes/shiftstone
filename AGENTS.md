@@ -17,7 +17,8 @@ Universal entry point for every AI IDE (ICM Layer 0 identity + Layer 1 task rout
 | Feature / implementation plan | `docs/plans/<id>/` (backlog state: `docs/backlog/`) |
 | Bug | `docs/bugs/` (`open-bugs.md` — never delete) |
 | Technology research | `docs/research/` (read its `README.md` first) |
-| Audit, progress, sync report | `docs/reports/` · `docs/status-reports/` · `docs/sync-reports/` |
+| Audit, progress, sync report | `docs/reports/` (incl. `status/` · `sync/` · `learning/`) |
+| Decision / open question (ADR) | `docs/decisions/` (`DEC-XXX` · `OQ-XXX`) — compiled into `docs/bible/DECISIONS.md` |
 | Architecture change (SSOT) | `docs/bible/` (read before code, update after code) |
 | New automation loop | `docs/loops/` — author with the `loop-author` skill |
 | Harness / framework engine code · stack archetype packs (skills, bible overlays, scaffolds) | `.shiftstone/` · `.shiftstone/packs/<pack>/` |

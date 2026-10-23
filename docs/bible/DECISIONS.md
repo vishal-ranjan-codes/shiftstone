@@ -27,6 +27,7 @@ This ledger is auto-compiled from individual OKF decision files in `docs/decisio
 | DEC-010 | Canonical Individual OKF ADR Storage and Auto-Compiled Ledger Index | accepted | core | 2026-10-19 | [DEC-010](../decisions/DEC-010-adr-storage-and-compiled-index.md) |
 | DEC-011 | Two-Gate Consequence-Aware Maker-Checker Contract and Lens Resolver | accepted | core | 2026-10-19 | [DEC-011](../decisions/DEC-011-two-gate-consequence-aware-checker.md) |
 | DEC-012 | 1-to-1 Legacy Workflow-to-Skill Migration and Universal Skills Unification | accepted | core | 2026-10-19 | [DEC-012](../decisions/DEC-012-workflow-to-skill-migration.md) |
+| DEC-013 | Documentation Directory Consolidation (13 → 9 Folders) | accepted | core | 2026-10-24 | [DEC-013](../decisions/DEC-013-docs-directory-consolidation.md) |
 
 ## Open Questions Ledger
 

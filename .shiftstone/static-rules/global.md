@@ -46,4 +46,4 @@ Before running any `docs/bible/` update check, identify the current mode:
 
 - **Research Mode**: files being written to `docs/research/` → skip `docs/bible/` checks; only verify `docs/research/README.md` index is updated.
 - **Development Mode**: files being written to `{{APP_PATH}}/` → run full `docs/bible/` check using the mapping table in `.shiftstone/path-scoped-rules/bible-rules.md`.
-- **Config/Workspace Mode**: files in `core/`, `.agent/`, `.agents/`, `.claude/`, `docs/sync-reports/`, `docs/bugs/`, `docs/plans/`, `docs/reports/`, `docs/status-reports/` → skip `docs/bible/` checks entirely.
+- **Config/Workspace Mode**: files in `core/`, `.agent/`, `.agents/`, `.claude/`, `docs/bugs/`, `docs/plans/`, `docs/reports/` (incl. `status/`, `sync/`) → skip `docs/bible/` checks entirely.

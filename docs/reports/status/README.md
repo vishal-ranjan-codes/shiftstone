@@ -1,4 +1,4 @@
-# docs/status-reports/
+# docs/reports/status/
 
 | Field | Declaration |
 |---|---|

@@ -1,6 +1,6 @@
 ---
 name: ss-status
-description: Session orientation & development status audit — scan roadmap progress in docs/backlog/, detect code gaps, evaluate health, and output reports to docs/status-reports/.
+description: Session orientation & development status audit — scan roadmap progress in docs/backlog/, detect code gaps, evaluate health, and output reports to docs/reports/status/.
 pack: core
 tier: manual-load
 type: skill
@@ -10,7 +10,7 @@ version: 2.1.0
 
 # ss-status
 
-Development status audit and session orientation engine. Audits roadmap progress against codebase reality and generates structured status reports in `docs/status-reports/`.
+Development status audit and session orientation engine. Audits roadmap progress against codebase reality and generates structured status reports in `docs/reports/status/`.
 
 - Invocation: `/ss-status`
 - Procedural knowledge: [instructions.md](./instructions.md)

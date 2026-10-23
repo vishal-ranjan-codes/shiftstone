@@ -8,7 +8,7 @@ Procedure for auditing database schema consistency across Bible documentation, S
 
 1. **3-Way Consistency:** All 3 representations (Bible documentation, SQL migration files, generated TypeScript types) MUST agree. If any one differs, the system is in an unverified state.
 2. **Automated Detection First:** Run `node .shiftstone/scripts/schema-sync.js` before manual inspection.
-3. **Physical Sync Receipt:** Output audit results directly to `docs/sync-reports/<YYYY-MM-DD>-schema-sync.md`. Never output to temporary IDE brain artifacts.
+3. **Physical Sync Receipt:** Output audit results directly to `docs/reports/sync/<YYYY-MM-DD>-schema-sync.md`. Never output to temporary IDE brain artifacts.
 4. **Remediation Order:** Fix missing migrations via `/ss-new-migration`, regenerate types via the pack typegen script (e.g. `npm run db:types`), and update `docs/bible/03-database/schema-reference.md`.
 
 ---
@@ -38,7 +38,7 @@ node .shiftstone/scripts/schema-sync.js
 3. **Generated Types:** Inspect generated TypeScript interfaces.
 
 ### Step 3: Emit Sync Receipt
-Write report to `docs/sync-reports/<YYYY-MM-DD>-schema-sync.md`:
+Write report to `docs/reports/sync/<YYYY-MM-DD>-schema-sync.md`:
 ```markdown
 # Schema Sync Report — [Date]
 
@@ -61,7 +61,7 @@ Write report to `docs/sync-reports/<YYYY-MM-DD>-schema-sync.md`:
 - **L2 (Typecheck):** `pnpm typecheck` exits 0 with active schema types.
 - **L3 (Script Check):** `node .shiftstone/scripts/schema-sync.js` reports all 3 sources match.
 - **L4 (Checker Review):** Disjoint check confirms zero undocumented columns.
-- **L5 (Receipt):** Sync report saved to `docs/sync-reports/`.
+- **L5 (Receipt):** Sync report saved to `docs/reports/sync/`.
 
 ---
 

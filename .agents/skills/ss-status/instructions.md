@@ -6,7 +6,7 @@ Procedure for auditing roadmap progress, detecting codebase implementation gaps,
 
 ## Iron Law
 
-1. **Physical Status Report on Disk:** Always write status reports to `docs/status-reports/<YYYY-MM-DD>-status.md`. Never output to temporary IDE brain artifacts.
+1. **Physical Status Report on Disk:** Always write status reports to `docs/reports/status/<YYYY-MM-DD>-status.md`. Never output to temporary IDE brain artifacts.
 2. **Reality-Grounded Progress:** A task is only considered implemented if the corresponding routes, components, migrations, or tests exist physically on disk. Do not trust unchecked assumptions.
 3. **Docs-Only Invariant:** `/ss-status` is strictly an audit and orientation operation. Never modify source code during status inspection.
 
@@ -16,7 +16,7 @@ Procedure for auditing roadmap progress, detecting codebase implementation gaps,
 
 | Excuse / Rationalization | Reality & Anti-Bypass Rule |
 |---|---|
-| *"I'll output a status_report.md artifact in chat."* | **Forbidden.** Brain/chat artifacts are ephemeral. Write directly to `docs/status-reports/<YYYY-MM-DD>-status.md`. |
+| *"I'll output a status_report.md artifact in chat."* | **Forbidden.** Brain/chat artifacts are ephemeral. Write directly to `docs/reports/status/<YYYY-MM-DD>-status.md`. |
 | *"The backlog says [x], so I don't need to check if code exists."* | **Forbidden.** Discrepancy checks uncover accidental regressions or missing implementations. |
 | *"I'll fix this small bug while checking status."* | **Forbidden.** Keep audit turns pure. Log defects to `docs/bugs/open-bugs.md` and transition to `/ss-diagnose`. |
 
@@ -49,7 +49,7 @@ For tasks in the active sub-phase, cross-reference the filesystem:
    ```
 
 ### Phase 4: Output Status Report
-Write to `docs/status-reports/<YYYY-MM-DD>-status.md`:
+Write to `docs/reports/status/<YYYY-MM-DD>-status.md`:
 ```markdown
 # Development Status Report — [Date]
 
@@ -73,7 +73,7 @@ Write to `docs/status-reports/<YYYY-MM-DD>-status.md`:
 ## Verification Ladder
 
 - **L1 (Syntax):** Valid markdown formatting and link integrity.
-- **L2 (Disk Verification):** Physical report exists in `docs/status-reports/`.
+- **L2 (Disk Verification):** Physical report exists in `docs/reports/status/`.
 - **L3 (Accuracy):** Task counts match actual checkboxes in `docs/backlog/`.
 - **L4 (Checker Review):** Disjoint check verifies identified gaps exist on disk.
 - **L5 (User Handoff):** Link presented to user with clear next immediate task.
@@ -82,6 +82,6 @@ Write to `docs/status-reports/<YYYY-MM-DD>-status.md`:
 
 ## Terminal States
 
-- `success`: Status report generated, saved to `docs/status-reports/`, next task identified.
+- `success`: Status report generated, saved to `docs/reports/status/`, next task identified.
 - `no_op`: Workspace clean and idle.
 - `blocked`: Missing backlog files preventing milestone progress calculation.
