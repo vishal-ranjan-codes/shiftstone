@@ -9,9 +9,9 @@ import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 import { parse as parseYaml } from 'yaml';
 
-/** Every directory under packs/ that carries a manifest.yaml. */
+/** Every directory under .shiftstone/packs/ that carries a manifest.yaml. */
 export function listPackNames(root) {
-  const packsDir = path.join(root, 'packs');
+  const packsDir = path.join(root, '.shiftstone', 'packs');
   if (!existsSync(packsDir)) return [];
   return readdirSync(packsDir, { withFileTypes: true })
     .filter((entry) => entry.isDirectory())
@@ -26,10 +26,10 @@ export function listPackNames(root) {
  * @returns {{ name: string, dir: string, manifestPath: string, manifest: any, resolve: (rel: string) => string }}
  */
 export function loadPack(root, name) {
-  const dir = path.join(root, 'packs', name);
+  const dir = path.join(root, '.shiftstone', 'packs', name);
   const manifestPath = path.join(dir, 'manifest.yaml');
   if (!existsSync(manifestPath)) {
-    throw new Error(`pack "${name}" not found (expected ${path.join('packs', name, 'manifest.yaml')})`);
+    throw new Error(`pack "${name}" not found (expected ${path.join('.shiftstone', 'packs', name, 'manifest.yaml')})`);
   }
   let manifest;
   try {
@@ -47,9 +47,9 @@ export function loadPacks(root, names) {
   return names.map((name) => loadPack(root, name));
 }
 
-/** Read the manifest JSON Schema (packs/_schema.json). */
+/** Read the manifest JSON Schema (.shiftstone/packs/_schema.json). */
 export function loadSchema(root) {
-  const schemaPath = path.join(root, 'packs', '_schema.json');
-  if (!existsSync(schemaPath)) throw new Error('packs/_schema.json missing');
+  const schemaPath = path.join(root, '.shiftstone', 'packs', '_schema.json');
+  if (!existsSync(schemaPath)) throw new Error('.shiftstone/packs/_schema.json missing');
   return JSON.parse(readFileSync(schemaPath, 'utf8'));
 }

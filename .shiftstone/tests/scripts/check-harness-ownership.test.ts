@@ -20,7 +20,7 @@ const FULL_CODEOWNERS = [
   '/.shiftstone/static-rules/        @maintainer',
   '/evals/                    @maintainer',
   '/.agents/skills/           @maintainer',
-  '/packs/*/skills/           @maintainer',
+  '/.shiftstone/packs/*/skills/ @maintainer',
   '',
 ].join('\n');
 

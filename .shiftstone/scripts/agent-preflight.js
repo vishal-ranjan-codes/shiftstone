@@ -96,7 +96,7 @@ export function getActivePacks(root = ROOT) {
       }
     } catch {}
   }
-  const regPath = path.join(root, 'packs', '_registry.yaml');
+  const regPath = path.join(root, '.shiftstone', 'packs', '_registry.yaml');
   if (existsSync(regPath)) {
     try {
       const reg = parseYamlContent(readFileSync(regPath, 'utf8'), regPath);
@@ -111,7 +111,7 @@ export function loadPreflightMatrices(root = ROOT) {
   const packs = getActivePacks(root);
   const matrices = [];
   for (const pack of packs) {
-    const matrixPath = path.join(root, 'packs', pack, 'preflight-matrix.yaml');
+    const matrixPath = path.join(root, '.shiftstone', 'packs', pack, 'preflight-matrix.yaml');
     if (existsSync(matrixPath)) {
       const parsed = parseYamlContent(readFileSync(matrixPath, 'utf8'), matrixPath);
       matrices.push({ pack, matrixPath, rules: parsed?.rules || [] });
@@ -183,7 +183,7 @@ export function resolveRequirements(targets, root = ROOT) {
 export function verifySkill(skillName, root = ROOT) {
   const candidates = [
     path.join(root, '.agents', 'skills', skillName),
-    ...getActivePacks(root).map((p) => path.join(root, 'packs', p, 'skills', skillName)),
+    ...getActivePacks(root).map((p) => path.join(root, '.shiftstone', 'packs', p, 'skills', skillName)),
   ];
 
   let foundDir = null;
@@ -221,7 +221,7 @@ export function verifyBibleDoc(docRelPath, root = ROOT) {
   let fullPath = path.join(root, docRelPath);
   if (!existsSync(fullPath)) {
     const sub = docRelPath.replace(/^docs[\/\\]bible[\/\\]/, '');
-    const packsDir = path.join(root, 'packs');
+    const packsDir = path.join(root, '.shiftstone', 'packs');
     if (existsSync(packsDir)) {
       for (const pack of readdirSync(packsDir, { withFileTypes: true })) {
         if (!pack.isDirectory()) continue;

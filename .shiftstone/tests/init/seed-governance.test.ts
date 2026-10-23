@@ -7,7 +7,7 @@
  *   map instead of printing the literal placeholder.
  */
 
-import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -75,9 +75,10 @@ describe('settings fragment merge (composition.commandcode over the generic base
 describe('rr8 post-init hook (WS-A item 5)', () => {
   it('resolves {{SUPABASE_TYPES_CMD}} from the variables map — never prints the literal', async () => {
     const root = mkdtempSync(path.join(tmpdir(), 'post-init-'));
-    const hookUrl = pathToFileURL(
-      path.join(REPO_ROOT, 'packs', 'rr8-supabase-cf', 'post-init.js'),
-    ).href;
+    const hookRel = existsSync(path.join(REPO_ROOT, '.shiftstone', 'packs', 'rr8-supabase-cf', 'post-init.js'))
+      ? path.join(REPO_ROOT, '.shiftstone', 'packs', 'rr8-supabase-cf', 'post-init.js')
+      : path.join(REPO_ROOT, 'packs', 'rr8-supabase-cf', 'post-init.js');
+    const hookUrl = pathToFileURL(hookRel).href;
     const mod = (await import(hookUrl)) as { run: (ctx: unknown) => { typesDir: string } };
     const archetype = {
       name: 'rr8-supabase-cf',

@@ -31,7 +31,7 @@ export const HARNESS_PATHS = [
   '.agents/skills/ss-verify/SKILL.md',
   'evals/README.md',
   '.agents/skills/ss-loop-author/SKILL.md',
-  'packs/rr8-supabase-cf/skills/stack/SKILL.md',
+  '.shiftstone/packs/rr8-supabase-cf/skills/stack/SKILL.md',
 ];
 
 /** CODEOWNERS pattern -> glob usable by matchGlob ('dir/' covers everything below). */

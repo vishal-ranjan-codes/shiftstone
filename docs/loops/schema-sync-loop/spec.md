@@ -1,4 +1,4 @@
-﻿name: schema-sync-loop
+name: schema-sync-loop
 description: Detect and resolve drift between bible schema, migrations, and generated TypeScript types.
 use_when: Database schema, migrations, or generated types may be out of sync.
 trigger:
@@ -22,7 +22,7 @@ execution:
     - supabase-migrations
     - supabase-postgres
     - ss-docs
-  enumerate: "node .shiftstone/scripts/schema-sync.js --check"
+  enumerate: "node .shiftstone/scripts/schema-sync.js --enumerate"
   turn_command: "node .shiftstone/scripts/schema-sync.js --apply"
   incremental:
     state: .loops/schema-sync-loop/stage-deps.json

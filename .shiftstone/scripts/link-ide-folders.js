@@ -88,7 +88,7 @@ export function linkTable(root) {
     const slot = namespacedSkills.has(skill.name) ? `${skill.pack}--${skill.name}` : skill.name;
     links.push({
       link: `.agents/skills/${slot}`,
-      target: `packs/${skill.pack}/skills/${skill.name}`,
+      target: `.shiftstone/packs/${skill.pack}/skills/${skill.name}`,
       alsoIn: [],
     });
   }

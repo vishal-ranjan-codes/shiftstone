@@ -142,7 +142,7 @@ export function detectState(root) {
     apps,
     v1RuleFolders: V1_RULE_FOLDERS.filter((rel) => existsIn(root, rel)),
     rootInitJs: existsIn(root, 'init.js'),
-    packsRegistry: existsIn(root, 'packs/_registry.yaml'),
+    packsRegistry: existsIn(root, '.shiftstone/packs/_registry.yaml') || existsIn(root, 'packs/_registry.yaml'),
     harness: existsIn(root, '.shiftstone/harness') || existsIn(root, 'core/harness'),
     core: existsIn(root, '.shiftstone') || existsIn(root, 'core'),
   };
@@ -184,7 +184,8 @@ export function buildPlan({ root, framework, archetypeOverride }) {
 
   const errors = [];
   if (archetypeOverride && !available.includes(archetypeOverride)) {
-    errors.push(`--archetype=${archetypeOverride} not found in ${path.join(framework, 'packs')} (available: ${available.join(', ') || 'none'})`);
+    const packRel = existsIn(framework, '.shiftstone/packs') ? '.shiftstone/packs' : 'packs';
+    errors.push(`--archetype=${archetypeOverride} not found in ${path.join(framework, packRel)} (available: ${available.join(', ') || 'none'})`);
   }
 
   // RR8-coupled vs custom skills (blueprint section 10.14 step 3).
@@ -194,8 +195,11 @@ export function buildPlan({ root, framework, archetypeOverride }) {
   } catch {
     rr8Include = [];
   }
-  const packSkillNames = existsIn(framework, 'packs/rr8-supabase-cf/skills')
-    ? new Set(realSkillDirs(path.join(framework, 'packs/rr8-supabase-cf/skills')))
+  const packSkillsRel = existsIn(framework, '.shiftstone/packs/rr8-supabase-cf/skills')
+    ? '.shiftstone/packs/rr8-supabase-cf/skills'
+    : 'packs/rr8-supabase-cf/skills';
+  const packSkillNames = existsIn(framework, packSkillsRel)
+    ? new Set(realSkillDirs(path.join(framework, packSkillsRel)))
     : new Set();
 
   const moves = [];
@@ -265,7 +269,7 @@ export function applyPlan(plan, { root, framework }) {
   }
 
   if (!plan.detected.packsRegistry) {
-    const registryPath = path.join(root, 'packs', '_registry.yaml');
+    const registryPath = path.join(root, '.shiftstone', 'packs', '_registry.yaml');
     mkdirSync(path.dirname(registryPath), { recursive: true });
     writeFileSync(
       registryPath,
@@ -281,7 +285,7 @@ export function applyPlan(plan, { root, framework }) {
       continue;
     }
     const src = path.join(root, '.agents', 'skills', move.skill);
-    const dst = path.join(root, 'packs', 'rr8-supabase-cf', 'skills', move.skill);
+    const dst = path.join(root, '.shiftstone', 'packs', 'rr8-supabase-cf', 'skills', move.skill);
     if (!existsSync(src) || existsSync(dst)) {
       applied.leftInPlace.push(move.skill);
       continue;
@@ -372,7 +376,7 @@ export function run({ root, framework = DEFAULT_FRAMEWORK, apply = false, report
   if (!existsSync(root)) {
     return { code: 1, lines: [`error: workspace root not found: ${root}`] };
   }
-  if (!existsSync(path.join(framework, 'packs'))) {
+  if (!existsSync(path.join(framework, '.shiftstone', 'packs')) && !existsSync(path.join(framework, 'packs'))) {
     return { code: 1, lines: [`error: framework source has no packs/ directory: ${framework}`] };
   }
 
@@ -383,7 +387,7 @@ export function run({ root, framework = DEFAULT_FRAMEWORK, apply = false, report
 
   const state = plan.detected;
   if (!state.isV1 && state.alreadyMigrated) {
-    lines.push('already a v2.0 workspace (packs/_registry.yaml + .shiftstone/harness present) — nothing to migrate.');
+    lines.push('already a v2.0 workspace (_registry.yaml + .shiftstone/harness present) — nothing to migrate.');
     return { code: 0, lines, plan };
   }
   if (!state.isV1) {

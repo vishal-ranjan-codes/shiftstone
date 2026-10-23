@@ -177,7 +177,9 @@ export function validateContextBudgets(options = {}) {
   // 5. Skills budget (SKILL.md <= 180 lines, instructions.md <= 450 lines)
   const skillsRoots = [
     path.join(root, '.agents', 'skills'),
-    path.join(root, 'packs', 'rr8-supabase-cf', 'skills'),
+    existsSync(path.join(root, '.shiftstone', 'packs', 'rr8-supabase-cf', 'skills'))
+      ? path.join(root, '.shiftstone', 'packs', 'rr8-supabase-cf', 'skills')
+      : path.join(root, 'packs', 'rr8-supabase-cf', 'skills'),
   ];
 
   for (const sRoot of skillsRoots) {

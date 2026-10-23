@@ -4,7 +4,7 @@
  * D refuse by default, C --force-namespace escape hatch).
  */
 
-import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { tmpdir } from 'node:os';
 import { describe, expect, it } from 'vitest';
@@ -52,12 +52,15 @@ describe('4.7 — archetype selection', () => {
 /** Two throwaway packs that both provide a `routing` skill and both claim apps/web. */
 function makeConflictingFixturePacks(): string {
   const root = mkdtempSync(path.join(tmpdir(), 'init-conflict-'));
-  mkdirSync(path.join(root, 'packs'), { recursive: true });
-  const schema = path.join(REPO_ROOT, 'packs', '_schema.json');
-  writeFileSync(path.join(root, 'packs', '_schema.json'), readFileSync(schema, 'utf8'));
+  const packsDir = path.join(root, '.shiftstone', 'packs');
+  mkdirSync(packsDir, { recursive: true });
+  const schema = existsSync(path.join(REPO_ROOT, '.shiftstone', 'packs', '_schema.json'))
+    ? path.join(REPO_ROOT, '.shiftstone', 'packs', '_schema.json')
+    : path.join(REPO_ROOT, 'packs', '_schema.json');
+  writeFileSync(path.join(packsDir, '_schema.json'), readFileSync(schema, 'utf8'));
 
   for (const name of ['pack-a', 'pack-b']) {
-    const dir = path.join(root, 'packs', name);
+    const dir = path.join(packsDir, name);
     mkdirSync(path.join(dir, 'skills', 'routing'), { recursive: true });
     writeFileSync(
       path.join(dir, 'skills', 'routing', 'SKILL.md'),

@@ -89,7 +89,10 @@ describe('exit criterion — --archetype=fastapi-pg produces zero RR8/Supabase/C
     expect(fastSettings.permissions.ask.join('\n')).not.toMatch(STACK_TOKENS);
 
     // Registry + generated manifest reflect only the active pack
-    const registry = readFileSync(path.join(root, 'packs', '_registry.yaml'), 'utf8');
+    const regPath = existsSync(path.join(root, '.shiftstone', 'packs', '_registry.yaml'))
+      ? path.join(root, '.shiftstone', 'packs', '_registry.yaml')
+      : path.join(root, 'packs', '_registry.yaml');
+    const registry = readFileSync(regPath, 'utf8');
     expect(registry).toContain('fastapi-pg');
     expect(registry).not.toContain('rr8-supabase-cf');
     const manifest = readFileSync(path.join(root, '.shiftstone', 'context', 'skills-manifest.yaml'), 'utf8');
@@ -179,7 +182,9 @@ describe('exit criterion — default flagship init preserves pre-refactor UX', (
       answers: { projectName: 'ParityApp', layout: 'monorepo', packageManager: 'pnpm' },
       composition,
     });
-    const overlayRel = path.join('packs', 'rr8-supabase-cf', 'bible-overlays');
+    const overlayRel = existsSync(path.join(root, '.shiftstone', 'packs'))
+      ? path.join('.shiftstone', 'packs', 'rr8-supabase-cf', 'bible-overlays')
+      : path.join('packs', 'rr8-supabase-cf', 'bible-overlays');
     const overlayFiles = walkFiles(path.join(root, overlayRel));
     expect(overlayFiles.length).toBe(10);
     for (const rel of overlayFiles) {
@@ -196,7 +201,9 @@ describe('exit criterion — default flagship init preserves pre-refactor UX', (
       workflows: 'workflows',
     };
     for (const [packRel, coreRel] of Object.entries(overlayTargets)) {
-      const packDir = path.join(root, 'packs', 'rr8-supabase-cf', packRel);
+      const packDir = existsSync(path.join(root, '.shiftstone', 'packs'))
+        ? path.join(root, '.shiftstone', 'packs', 'rr8-supabase-cf', packRel)
+        : path.join(root, 'packs', 'rr8-supabase-cf', packRel);
       const targetDir = path.join(root, '.shiftstone', coreRel);
       const files = walkFiles(packDir);
       expect(files.length).toBeGreaterThan(0);

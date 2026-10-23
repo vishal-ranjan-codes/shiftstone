@@ -47,5 +47,5 @@ standard** declared in blueprint §10.18.
    subagent (`/verify`) and the harness spawn interfaces.
 
 **See also:** [blueprint §10.18](../../../docs/bible/01-architecture/architecture-overview.md) ·
-[rr8 manifest MCP fragment](../../../packs/rr8-supabase-cf/manifest.yaml) ·
+[rr8 manifest MCP fragment](../../packs/rr8-supabase-cf/manifest.yaml) ·
 [OpenCode walkthrough](../../../docs/videos/opencode-walkthrough.md)

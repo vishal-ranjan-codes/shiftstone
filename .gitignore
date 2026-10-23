@@ -30,8 +30,8 @@ coverage/
 /.commandcode/skills
 /.commandcode/skills/
 
-# Pack skill junctions (created locally by core/scripts/link-ide-folders.js
-# from packs/<pack>/skills/; only core skills + the bundle's own record files
+# Pack skill junctions (created locally by .shiftstone/scripts/link-ide-folders.js
+# from .shiftstone/packs/<pack>/skills/; only core skills + the bundle's own record files
 # are tracked in .agents/skills)
 /.agents/skills/*
 !/.agents/skills/ss-*/

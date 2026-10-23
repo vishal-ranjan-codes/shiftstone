@@ -266,7 +266,7 @@ function writeRegistry(root, composition) {
   ].sort();
   if (namespaced.length > 0) doc.namespacedSkills = namespaced;
   writeFileSync(
-    path.join(root, 'packs', '_registry.yaml'),
+    path.join(root, '.shiftstone', 'packs', '_registry.yaml'),
     `${stringifyYaml(doc)}`,
     'utf8',
   );
@@ -495,7 +495,7 @@ export function seedGovernance({ root, composition, answers, quiet = false }) {
     mkdirSync(path.dirname(linkAbs), { recursive: true });
     const target = process.platform === 'win32' ? 'junction' : 'dir';
     symlinkSync(skill.dir, linkAbs, target);
-    log(`   🔗 skill ${skill.as} -> packs/${skill.pack}/skills/${skill.name}`);
+    log(`   🔗 skill ${skill.as} -> .shiftstone/packs/${skill.pack}/skills/${skill.name}`);
   }
   linkIdeFolders({ root, quiet: true });
 

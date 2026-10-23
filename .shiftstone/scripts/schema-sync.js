@@ -8,13 +8,15 @@
  *   types      apps/web/app/types/database.types.ts        (generated row types)
  *
  * Modes:
- *   --check   exit 0 only when all 3 sources exist and describe the same
- *             table set; exit 1 otherwise (drift or missing source).
- *   --apply   exit 78 (EX_CONFIG) when a source is missing — "Supabase not
- *             configured → escalate" (the loop's blocked terminal state);
- *             exit 0 when everything already matches; exit 1 when drift
- *             still needs agent work.
- *   --report  print the 3-way diff as JSON (used by tests/debugging).
+ *   --check      exit 0 only when all 3 sources exist and describe the same
+ *                table set; exit 1 otherwise (drift or missing source).
+ *   --apply      exit 78 (EX_CONFIG) when a source is missing — "Supabase not
+ *                configured → escalate" (the loop's blocked terminal state);
+ *                exit 0 when everything already matches; exit 1 when drift
+ *                still needs agent work.
+ *   --enumerate  print one line per target work item (missing source or drift);
+ *                prints nothing and exits 0 when sources match.
+ *   --report     print the 3-way diff as JSON (used by tests/debugging).
  */
 
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
@@ -107,6 +109,16 @@ function compare(loaded) {
 const mode = process.argv[2] ?? '--check';
 const loaded = loadSources();
 const missing = SOURCES.filter((s) => !loaded.some((l) => l.id === s.id)).map((s) => s.id);
+
+if (mode === '--enumerate') {
+  for (const m of missing) {
+    console.log(`missing: ${m}`);
+  }
+  for (const d of compare(loaded)) {
+    console.log(`drift: ${d.between.join('<->')} diff: ${[...d.only_in_first, ...d.only_in_other].join(',')}`);
+  }
+  process.exit(0);
+}
 
 if (mode === '--report') {
   console.log(

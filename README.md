@@ -81,14 +81,14 @@ Conflicting packs (two packs owning the same folder) are **refused with an expla
 
 | Pack | Tier | Stack | App path | Status | Notes |
 |---|---|---|---|---|---|
-| [`rr8-supabase-cf`](./packs/rr8-supabase-cf/manifest.yaml) | **flagship** | React Router 8 · Supabase · Cloudflare Workers | `apps/web` | **full** — 38 skills, bible overlays, 9 ADRs, scaffold | Default; ships MCP `supabase` server |
-| [`nextjs-prisma-pg`](./packs/nextjs-prisma-pg/manifest.yaml) | starter | Next.js · Prisma · PostgreSQL | `apps/web` | scaffolded (manifest + scaffold; skills later) | Conflicts with `rr8-supabase-cf` (owns `apps/web`) |
-| [`sveltekit-supabase`](./packs/sveltekit-supabase/manifest.yaml) | starter | SvelteKit · Supabase | `apps/web` | scaffolded (manifest + scaffold; skills later) | Conflicts with `rr8-supabase-cf`, `nextjs-prisma-pg` |
-| [`fastapi-pg`](./packs/fastapi-pg/manifest.yaml) | starter | FastAPI · PostgreSQL | `apps/api` | scaffolded (manifest + scaffold; skills later) | Polyglot-ready |
-| [`expo-react-native`](./packs/expo-react-native/manifest.yaml) | starter | Expo · React Native | `apps/mobile` | scaffolded (manifest + scaffold; skills later) | Mobile leg of a polyglot monorepo |
-| [`go-chi-postgres`](./packs/go-chi-postgres/manifest.yaml) | starter | Go · chi · PostgreSQL | `apps/api-go` | scaffolded (manifest + scaffold; skills later) | Polyglot-ready alongside `fastapi-pg` |
+| [`rr8-supabase-cf`](./.shiftstone/packs/rr8-supabase-cf/manifest.yaml) | **flagship** | React Router 8 · Supabase · Cloudflare Workers | `apps/web` | **full** — 38 skills, bible overlays, 9 ADRs, scaffold | Default; ships MCP `supabase` server |
+| [`nextjs-prisma-pg`](./.shiftstone/packs/nextjs-prisma-pg/manifest.yaml) | starter | Next.js · Prisma · PostgreSQL | `apps/web` | scaffolded (manifest + scaffold; skills later) | Conflicts with `rr8-supabase-cf` (owns `apps/web`) |
+| [`sveltekit-supabase`](./.shiftstone/packs/sveltekit-supabase/manifest.yaml) | starter | SvelteKit · Supabase | `apps/web` | scaffolded (manifest + scaffold; skills later) | Conflicts with `rr8-supabase-cf`, `nextjs-prisma-pg` |
+| [`fastapi-pg`](./.shiftstone/packs/fastapi-pg/manifest.yaml) | starter | FastAPI · PostgreSQL | `apps/api` | scaffolded (manifest + scaffold; skills later) | Polyglot-ready |
+| [`expo-react-native`](./.shiftstone/packs/expo-react-native/manifest.yaml) | starter | Expo · React Native | `apps/mobile` | scaffolded (manifest + scaffold; skills later) | Mobile leg of a polyglot monorepo |
+| [`go-chi-postgres`](./.shiftstone/packs/go-chi-postgres/manifest.yaml) | starter | Go · chi · PostgreSQL | `apps/api-go` | scaffolded (manifest + scaffold; skills later) | Polyglot-ready alongside `fastapi-pg` |
 
-**Labels:** *full* = skills + overlays shipped; *scaffolded* = valid manifest + working app skeleton, skills/bible overlays authored incrementally (the [contributor checklist](./CONTRIBUTING.md) covers graduating a pack). Every manifest validates against [`packs/_schema.json`](./packs/_schema.json) in CI (`.github/workflows/validate-packs.yml`).
+**Labels:** *full* = skills + overlays shipped; *scaffolded* = valid manifest + working app skeleton, skills/bible overlays authored incrementally (the [contributor checklist](./CONTRIBUTING.md) covers graduating a pack). Every manifest validates against [`.shiftstone/packs/_schema.json`](./.shiftstone/packs/_schema.json) in CI (`.github/workflows/validate-packs.yml`).
 
 ---
 
@@ -229,12 +229,11 @@ Full reference: [`.agents/skills/`](./.agents/skills/) · Loop CLI: `node .shift
 ```
 Your Project Workspace (Local Filesystem)
 │
-├── [Root Workspace Git Repository]           ← Tracks: docs/, core/, packs/, .agent/, .agents/skills/, .claude/, .commandcode/
+├── [Root Workspace Git Repository]           ← Tracks: docs/, .shiftstone/, .agent/, .agents/skills/, .claude/, .commandcode/
 │   │                                            Remote: github.com/<user>/<project>-workspace.git
 │   ├── .git/                                 ← Root Git database
 │   ├── docs/                                 ← Living architecture bible & backlog
-│   ├── core/                                 ← Harness engine: loop runner, context, governance, composer
-│   ├── packs/                                ← Stack archetype packs (manifests, skills, overlays, scaffolds)
+│   ├── .shiftstone/                          ← Harness engine: loop runner, context, governance, composer, packs
 │   ├── .agents/skills/                       ← 42 skills (junctioned from packs + core) + synthesized project skills
 │   ├── pnpm-workspace.yaml · package.json    ← Monorepo config + root script orchestrator
 │   └── .workspace-git.json                   ← Staging metadata (gitignored)
@@ -289,7 +288,7 @@ The AI harness — steering files, rules, workflows, evals and skills — is tre
 | Orientation & prompts | `AGENTS.md`, `ANTIGRAVITY.md`, `CLAUDE.md`, `COMMANDCODE.md` | `@vishal-ranjan-codes` |
 | Rules | `.shiftstone/static-rules/`, `.shiftstone/path-scoped-rules/` | `@vishal-ranjan-codes` |
 | Evals | `evals/` | `@vishal-ranjan-codes` |
-| Skills (core + pack bundles) | `.agents/skills/`, `packs/*/skills/` | `@vishal-ranjan-codes` |
+| Skills (core + pack bundles) | `.agents/skills/`, `.shiftstone/packs/*/skills/` | `@vishal-ranjan-codes` |
 
 **Change rule:** harness files change only via pull request with the self-review checklist from `.shiftstone/static-rules/governance.md` (parity, tests, regenerated indexes, why + evidence). Solo repositories degrade to the same checklist as a mandatory self-review — CI enforces ownership coverage either way (`node .shiftstone/scripts/check-harness-ownership.js --strict`).
 

@@ -50,14 +50,17 @@ function makeFramework(options?: { skills?: string[] }): string {
     mkdirSync(path.dirname(abs), { recursive: true });
     writeFileSync(abs, content, 'utf8');
   };
-  cpSync(path.join(REPO_ROOT, 'packs', '_schema.json'), path.join(fw, 'packs', '_schema.json'));
+  const srcPacks = existsSync(path.join(REPO_ROOT, '.shiftstone', 'packs'))
+    ? path.join(REPO_ROOT, '.shiftstone', 'packs')
+    : path.join(REPO_ROOT, 'packs');
+  cpSync(path.join(srcPacks, '_schema.json'), path.join(fw, '.shiftstone', 'packs', '_schema.json'));
   cpSync(
-    path.join(REPO_ROOT, 'packs', 'rr8-supabase-cf', 'manifest.yaml'),
-    path.join(fw, 'packs', 'rr8-supabase-cf', 'manifest.yaml'),
+    path.join(srcPacks, 'rr8-supabase-cf', 'manifest.yaml'),
+    path.join(fw, '.shiftstone', 'packs', 'rr8-supabase-cf', 'manifest.yaml'),
   );
-  write('packs/rr8-supabase-cf/skills/stack/SKILL.md', '# stack (pack-shipped)\n');
+  write('.shiftstone/packs/rr8-supabase-cf/skills/stack/SKILL.md', '# stack (pack-shipped)\n');
   for (const skill of skills) {
-    write(`packs/rr8-supabase-cf/skills/${skill}/SKILL.md`, '# shipped by framework pack\n');
+    write(`.shiftstone/packs/rr8-supabase-cf/skills/${skill}/SKILL.md`, '# shipped by framework pack\n');
   }
   write('.shiftstone/harness/loop-runner/runner.ts', 'export const runner = "harness-skeleton";\n');
   write('.shiftstone/context/skills-manifest.yaml', 'spec: {}\n');
@@ -156,11 +159,18 @@ describe('7.7 — apply mode (steps 3–6)', () => {
     expect(existsSync(path.join(root, '.shiftstone', 'harness', 'loop-runner', 'runner.ts'))).toBe(true);
     expect(existsSync(path.join(root, '.github', 'workflows', 'parity-check.yml'))).toBe(true);
     // 2. registry created with the suggested archetype
-    const registry = readFileSync(path.join(root, 'packs', '_registry.yaml'), 'utf8');
+    const regPath = existsSync(path.join(root, '.shiftstone', 'packs', '_registry.yaml'))
+      ? path.join(root, '.shiftstone', 'packs', '_registry.yaml')
+      : path.join(root, 'packs', '_registry.yaml');
+    const registry = readFileSync(regPath, 'utf8');
     expect(registry).toMatch(/activePacks:\n\s+- rr8-supabase-cf/);
     // 3. rr8-coupled skills relocated into the pack
-    expect(existsSync(path.join(root, 'packs', 'rr8-supabase-cf', 'skills', 'react-router-routing', 'SKILL.md'))).toBe(true);
-    expect(existsSync(path.join(root, 'packs', 'rr8-supabase-cf', 'skills', 'supabase-auth', 'SKILL.md'))).toBe(true);
+    const skillA = existsSync(path.join(root, '.shiftstone', 'packs', 'rr8-supabase-cf', 'skills', 'react-router-routing', 'SKILL.md'))
+      || existsSync(path.join(root, 'packs', 'rr8-supabase-cf', 'skills', 'react-router-routing', 'SKILL.md'));
+    const skillB = existsSync(path.join(root, '.shiftstone', 'packs', 'rr8-supabase-cf', 'skills', 'supabase-auth', 'SKILL.md'))
+      || existsSync(path.join(root, 'packs', 'rr8-supabase-cf', 'skills', 'supabase-auth', 'SKILL.md'));
+    expect(skillA).toBe(true);
+    expect(skillB).toBe(true);
     expect(existsSync(path.join(root, '.agents', 'skills', 'react-router-routing'))).toBe(false);
     // 5. preservation contract
     expect(readFileSync(path.join(root, 'docs', 'backlog', 'MOC.md'), 'utf8')).toBe(backlogBefore);

@@ -44,7 +44,7 @@
     "suggestedVerifyCmd": "pnpm test"
   },
   "checkerLenses": [
-    "packs/rr8-supabase-cf/checker-lenses/cloudflare-edge-runtime.lens.json",
+    ".shiftstone/packs/rr8-supabase-cf/checker-lenses/cloudflare-edge-runtime.lens.json",
     ".shiftstone/governance/checker-lenses/architecture-boundaries.lens.json"
   ],
   "makerFixture": {

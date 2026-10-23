@@ -307,7 +307,7 @@ export function discoverLensFiles(root = ROOT) {
   }
 
   // 2. Pack checker lenses
-  const packsDir = path.join(root, 'packs');
+  const packsDir = path.join(root, '.shiftstone', 'packs');
   if (existsSync(packsDir)) {
     for (const packEntry of readdirSync(packsDir)) {
       const packLensesDir = path.join(packsDir, packEntry, 'checker-lenses');

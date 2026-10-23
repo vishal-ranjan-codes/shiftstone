@@ -28,7 +28,16 @@ export async function makeWorkspace(): Promise<string> {
   const copy = (rel: string) =>
     cpSync(path.join(TEMPLATE_ROOT, rel), path.join(root, rel), { recursive: true });
 
-  copy('packs');
+  if (existsSync(path.join(TEMPLATE_ROOT, '.shiftstone', 'packs'))) {
+    mkdirSync(path.join(root, '.shiftstone'), { recursive: true });
+    cpSync(
+      path.join(TEMPLATE_ROOT, '.shiftstone', 'packs'),
+      path.join(root, '.shiftstone', 'packs'),
+      { recursive: true },
+    );
+  } else if (existsSync(path.join(TEMPLATE_ROOT, 'packs'))) {
+    copy('packs');
+  }
   copy('docs/bible');
   copy('.shiftstone/static-rules');
   copy('.shiftstone/path-scoped-rules');

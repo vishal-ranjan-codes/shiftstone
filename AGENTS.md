@@ -20,7 +20,7 @@ Universal entry point for every AI IDE (ICM Layer 0 identity + Layer 1 task rout
 | Audit, progress, sync report | `docs/reports/` · `docs/status-reports/` · `docs/sync-reports/` |
 | Architecture change (SSOT) | `docs/bible/` (read before code, update after code) |
 | New automation loop | `docs/loops/` — author with the `loop-author` skill |
-| Harness / framework engine code · stack archetype packs (skills, bible overlays, scaffolds) | `.shiftstone/` · `packs/<pack>/` |
+| Harness / framework engine code · stack archetype packs (skills, bible overlays, scaffolds) | `.shiftstone/` · `.shiftstone/packs/<pack>/` |
 | Stable conventions, style, constraints | `_config/` (ICM Layer 3 — referenced from CONTEXT.md) |
 
 ## Skill INDEX — generated from `.shiftstone/context/skills-manifest.yaml`

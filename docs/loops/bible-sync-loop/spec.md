@@ -1,4 +1,4 @@
-﻿name: bible-sync-loop
+name: bible-sync-loop
 description: "Detect and resolve drift between the bible's structure/ToC, the code paths it references, and the ADR set (3-way diff: code vs bible vs decisions)."
 use_when: |
   After adding, removing or renaming a bible chapter, moving code that the
@@ -20,7 +20,7 @@ execution:
     - Re-run --report until the drift list is empty
   skills:
     - ss-docs
-  enumerate: "node .shiftstone/scripts/bible-sync.js --report"
+  enumerate: "node .shiftstone/scripts/bible-sync.js --enumerate"
   turn_command: "node .shiftstone/scripts/bible-sync.js --apply"
   incremental:
     state: .loops/bible-sync-loop/stage-deps.json
@@ -30,7 +30,7 @@ execution:
           - docs/bible
       - id: decisions-seed
         inputs:
-          - packs/rr8-supabase-cf/decisions-seed.yaml
+          - .shiftstone/packs/rr8-supabase-cf/decisions-seed.yaml
 verification:
   ladder_level: 1
   command: "node .shiftstone/scripts/bible-sync.js --check"

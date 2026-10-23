@@ -19,4 +19,4 @@
 
 # Skills (core + pack bundles)
 /.agents/skills/           @vishal-ranjan-codes
-/packs/*/skills/           @vishal-ranjan-codes
+/.shiftstone/packs/*/skills/           @vishal-ranjan-codes

@@ -9,11 +9,13 @@
  *   decisions  docs/bible/DECISIONS.md ADRs + packs/<pack>/decisions-seed.yaml ADRs
  *
  * Modes:
- *   --check   exit 0 only when all 3 sources agree; exit 1 on drift/missing
- *   --apply   exit 78 (EX_CONFIG) when the bible core files are missing
- *             ("escalate" → the loop's blocked terminal state); exit 0 when
- *             clean; exit 1 when drift still needs agent actuation
- *   --report  print the 3-way diff as an update plan (JSON)
+ *   --check      exit 0 only when all 3 sources agree; exit 1 on drift/missing
+ *   --apply      exit 78 (EX_CONFIG) when the bible core files are missing
+ *                ("escalate" → the loop's blocked terminal state); exit 0 when
+ *                clean; exit 1 when drift still needs agent actuation
+ *   --enumerate  print one line per target work item (missing file or drift);
+ *                prints nothing and exits 0 when code, bible and decisions agree
+ *   --report     print the 3-way diff as an update plan (JSON)
  */
 
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
@@ -84,7 +86,9 @@ function decisionIds(text) {
 
 function seedDecisions() {
   const out = [];
-  const packsDir = path.join(root, 'packs');
+  const packsDir = existsSync(path.join(root, '.shiftstone', 'packs'))
+    ? path.join(root, '.shiftstone', 'packs')
+    : path.join(root, 'packs');
   if (!existsSync(packsDir)) return out;
   for (const pack of readdirSync(packsDir, { withFileTypes: true })) {
     if (!pack.isDirectory()) continue;
@@ -175,6 +179,16 @@ function buildDrift() {
 const mode = process.argv[2] ?? '--check';
 const report = buildDrift();
 const broken = report.missing.length > 0 || report.drift.length > 0;
+
+if (mode === '--enumerate') {
+  for (const m of report.missing) {
+    console.log(`missing: ${m}`);
+  }
+  for (const d of report.drift) {
+    console.log(`drift: ${d.kind} ${d.id ?? ''}`);
+  }
+  process.exit(0);
+}
 
 if (mode === '--report') {
   console.log(JSON.stringify(report, null, 2));

@@ -106,9 +106,12 @@ describe('C9 — bible-sync-loop (task 5.9)', () => {
     await writeFile(path.join(root, '.shiftstone', 'scripts', 'bible-sync.js'), script, 'utf8');
 
     // the pack decisions seed the spec fingerprints (stage input)
-    await mkdir(path.join(root, 'packs', 'rr8-supabase-cf'), { recursive: true });
-    const seed = await readFile(path.join(REPO_ROOT, 'packs', 'rr8-supabase-cf', 'decisions-seed.yaml'), 'utf8');
-    await writeFile(path.join(root, 'packs', 'rr8-supabase-cf', 'decisions-seed.yaml'), seed, 'utf8');
+    await mkdir(path.join(root, '.shiftstone', 'packs', 'rr8-supabase-cf'), { recursive: true });
+    const seedPath = existsSync(path.join(REPO_ROOT, '.shiftstone', 'packs', 'rr8-supabase-cf', 'decisions-seed.yaml'))
+      ? path.join(REPO_ROOT, '.shiftstone', 'packs', 'rr8-supabase-cf', 'decisions-seed.yaml')
+      : path.join(REPO_ROOT, 'packs', 'rr8-supabase-cf', 'decisions-seed.yaml');
+    const seed = await readFile(seedPath, 'utf8');
+    await writeFile(path.join(root, '.shiftstone', 'packs', 'rr8-supabase-cf', 'decisions-seed.yaml'), seed, 'utf8');
 
     // clean bible: README ToC + chapter + index + DECISIONS
     await mkdir(path.join(root, 'docs', 'bible', '01-architecture'), { recursive: true });

@@ -260,9 +260,9 @@ export function collectAllSkills(root = ROOT) {
     }
   }
 
-  // 2. Active pack skills in packs/<pack>/skills/
+  // 2. Active pack skills in .shiftstone/packs/<pack>/skills/
   for (const pack of getActivePacks(root)) {
-    const packSkillsDir = path.join(root, 'packs', pack, 'skills');
+    const packSkillsDir = path.join(root, '.shiftstone', 'packs', pack, 'skills');
     if (existsSync(packSkillsDir)) {
       const entries = readdirSync(packSkillsDir, { withFileTypes: true });
       for (const e of entries) {

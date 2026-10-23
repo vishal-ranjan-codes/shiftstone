@@ -156,7 +156,9 @@ export function validateContextIntegrity(options = {}) {
   }
 
   // Check Part C: Pack-specific Forbidden Legacy Directives
-  const packsDir = path.join(root, 'packs');
+  const packsDir = existsSync(path.join(root, '.shiftstone', 'packs'))
+    ? path.join(root, '.shiftstone', 'packs')
+    : path.join(root, 'packs');
   if (existsSync(packsDir)) {
     const packDirs = readdirSync(packsDir, { withFileTypes: true })
       .filter((d) => d.isDirectory())

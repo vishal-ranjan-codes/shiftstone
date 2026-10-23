@@ -24,7 +24,7 @@ export interface PackSkill {
 }
 
 export function readPackRegistry(root: string): { activePacks: string[]; namespacedSkills: Set<string> } {
-  const registryPath = path.join(root, 'packs', '_registry.yaml');
+  const registryPath = path.join(root, '.shiftstone', 'packs', '_registry.yaml');
   if (!existsSync(registryPath)) return { activePacks: [], namespacedSkills: new Set() };
   const doc = parseYaml(readFileSync(registryPath, 'utf8')) as Record<string, unknown> | null;
   const activePacks = Array.isArray(doc?.activePacks) ? doc.activePacks : [];
@@ -48,7 +48,7 @@ export function listActivePackSkills(root: string): PackSkill[] {
   const out: PackSkill[] = [];
   const seen = new Set<string>();
   for (const pack of readPackRegistry(root).activePacks) {
-    const skillsRoot = path.join(root, 'packs', pack, 'skills');
+    const skillsRoot = path.join(root, '.shiftstone', 'packs', pack, 'skills');
     for (const name of listSkillDirs(skillsRoot)) {
       if (seen.has(name)) {
         throw new Error(

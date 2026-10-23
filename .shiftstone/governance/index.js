@@ -19,7 +19,7 @@ import { checkAll, generateAll, generateOne } from './index-generator.ts';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 const docsRoot = path.join(ROOT, 'docs');
-const BUNDLE_ROOTS = ['packs', path.join('.agents', 'skills')];
+const BUNDLE_ROOTS = [path.join('.shiftstone', 'packs'), path.join('.agents', 'skills')];
 const checkOnly = process.argv.includes('--check');
 
 if (checkOnly) {

@@ -119,7 +119,10 @@ export function validateManifest(options = {}) {
         });
       }
       for (const artifact of artifacts) {
-        const artifactAbs = path.join(root, artifact);
+        let artifactAbs = path.join(root, artifact);
+        if (!existsSync(artifactAbs) && artifact.startsWith('packs/')) {
+          artifactAbs = path.join(root, '.shiftstone', artifact);
+        }
         if (!existsSync(artifactAbs)) {
           violations.push({
             code: 'MISSING_COMPLETED_ARTIFACT',

@@ -449,7 +449,9 @@ ${sc.outputs.map((out) => `  - path: ${out.path}\n    description: ${out.descrip
   });
   let lensesOk = true;
   for (const lensRelPath of trialData.checkerLenses) {
-    const fullLensPath = path.join(root, lensRelPath);
+    const fullLensPath = existsSync(path.join(root, lensRelPath))
+      ? path.join(root, lensRelPath)
+      : path.join(root, lensRelPath.replace(/^packs\//, '.shiftstone/packs/'));
     if (!existsSync(fullLensPath)) {
       lensesOk = false;
       break;
@@ -572,7 +574,7 @@ export async function runCertificationTrials(options = {}) {
 
   // Run Factory Trials (F1–F6)
   if (suite === 'factory' || suite === 'all') {
-    const factoryDir = path.join(root, 'packs', pack, 'trials');
+    const factoryDir = path.join(root, '.shiftstone', 'packs', pack, 'trials');
     if (existsSync(factoryDir)) {
       const trialFiles = readdirSync(factoryDir)
         .filter((f) => f.startsWith('F') && f.endsWith('.trial.json'))

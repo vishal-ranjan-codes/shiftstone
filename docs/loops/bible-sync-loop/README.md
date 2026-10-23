@@ -13,7 +13,7 @@ Three-way diff over the SSOT surfaces of the workspace:
 |---|---|
 | code | `docs/bible/` chapter directories on disk + every workspace path the bible references |
 | bible | `docs/bible/README.md` table of contents + per-chapter `index.md` |
-| decisions | `docs/bible/DECISIONS.md` ADRs + `packs/<pack>/decisions-seed.yaml` ADRs |
+| decisions | `docs/bible/DECISIONS.md` ADRs + `.shiftstone/packs/<pack>/decisions-seed.yaml` ADRs |
 
 **Run:**
 

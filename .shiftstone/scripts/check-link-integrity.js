@@ -22,7 +22,7 @@ export const STRICT_SCOPE = [
   'docs/bible/**/*.md',
   'docs/loops/**/*.md',
   'docs/**/index.md',
-  'packs/index.md',
+  '.shiftstone/packs/index.md',
   '.agents/skills/index.md',
   '_config/**/*.md',
   '.shiftstone/**/*.md',
@@ -31,7 +31,7 @@ export const STRICT_SCOPE = [
   'CLAUDE.md',
   'COMMANDCODE.md',
   '.agents/skills/**/SKILL.md',
-  'packs/*/skills/**/SKILL.md',
+  '.shiftstone/packs/*/skills/**/SKILL.md',
   '**/CONTEXT.md',
 ];
 

@@ -1,3 +1,4 @@
+import { existsSync } from 'node:fs';
 import { mkdir, mkdtemp, readFile, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
@@ -62,7 +63,10 @@ describe('Phase 6 workflow artifacts', () => {
   });
 
   it('6.7 — every knowledge bundle carries a log.md and the convention is declared in _config', async () => {
-    for (const rel of ['docs/bible/log.md', 'packs/log.md', '.agents/skills/log.md']) {
+    const packLog = existsSync(path.join(REPO_ROOT, '.shiftstone', 'packs', 'log.md'))
+      ? '.shiftstone/packs/log.md'
+      : 'packs/log.md';
+    for (const rel of ['docs/bible/log.md', packLog, '.agents/skills/log.md']) {
       const log = await read(rel);
       expect(log).toContain('type: log');
       expect(log).toContain('timestamp:');
@@ -75,7 +79,8 @@ describe('Phase 6 workflow artifacts', () => {
   });
 
   it('6.7 exit criterion — every bundle has index.md + log.md, and the skills-bundle files are tracked', async () => {
-    for (const bundle of ['docs/bible', 'packs', '.agents/skills']) {
+    const packBundle = existsSync(path.join(REPO_ROOT, '.shiftstone', 'packs')) ? '.shiftstone/packs' : 'packs';
+    for (const bundle of ['docs/bible', packBundle, '.agents/skills']) {
       const index = await read(`${bundle}/index.md`);
       expect(index, `${bundle}/index.md`).toContain('type: index');
       await read(`${bundle}/log.md`);

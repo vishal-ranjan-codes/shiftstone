@@ -40,8 +40,10 @@ export const UNIVERSAL_SYNC_AREAS = [
   'init',
   'observability',
   'tests',
-  'governance/schemas',
-  'governance/checker-lenses',
+  'governance',
+  'ide-shims',
+  'packs',
+  'migrate-v1-to-v2.js',
   'vitest.config.ts',
   'tsconfig.json',
 ];

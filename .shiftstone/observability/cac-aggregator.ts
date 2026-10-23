@@ -8,6 +8,7 @@
  *   node .shiftstone/scripts/status-dashboard.js [root]
  */
 
+import { existsSync } from 'node:fs';
 import { readFile, readdir } from 'node:fs/promises';
 import path from 'node:path';
 import { parse as parseYaml } from 'yaml';
@@ -78,10 +79,13 @@ export const TERMINAL_ORDER: AnyTerminalState[] = [
 /* Reading                                                             */
 /* ------------------------------------------------------------------ */
 
-/** Active pack from packs/_registry.yaml — archetype attribution for rows without one. */
+/** Active pack from .shiftstone/packs/_registry.yaml — archetype attribution for rows without one. */
 export async function activeArchetype(root: string): Promise<string> {
   try {
-    const raw = (await parseYaml(await readFile(path.join(root, 'packs', '_registry.yaml'), 'utf8'))) as {
+    const regPath = path.join(root, '.shiftstone', 'packs', '_registry.yaml');
+    const legacyRegPath = path.join(root, 'packs', '_registry.yaml');
+    const targetPath = existsSync(regPath) ? regPath : legacyRegPath;
+    const raw = (await parseYaml(await readFile(targetPath, 'utf8'))) as {
       activePacks?: unknown;
     };
     const packs = Array.isArray(raw?.activePacks) ? raw.activePacks : [];
