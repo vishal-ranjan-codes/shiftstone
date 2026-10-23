@@ -70,7 +70,7 @@ const CONFIG = {
 
   backlog: { paths: ['docs/backlog/**'], depends_on: [] },
   'research-methodology': { paths: ['docs/research/**'], depends_on: [] },
-  'ss-docs': { paths: ['docs/bible/**', 'docs/roadmap/**', 'docs/research/**'], depends_on: [] },
+  'ss-docs': { paths: ['docs/bible/**', 'docs/backlog/**', 'docs/research/**'], depends_on: [] },
   'ss-bookkeeping': { paths: ['docs/**', 'packs/**', '.agents/skills/**', '_config/**'], depends_on: [] },
   'ss-sync-engine': { paths: ['.shiftstone/**', 'frameworks/**'], depends_on: [] },
 };

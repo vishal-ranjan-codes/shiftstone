@@ -2,7 +2,7 @@
 apiVersion: context/v1
 kind: SkillsManifest
 metadata:
-  generated: 2026-10-22T20:51:36.842Z
+  generated: 2026-10-23T21:41:08.742Z
   coreVersion: 2.1.0
   activePacks:
     - rr8-supabase-cf
@@ -316,7 +316,7 @@ spec:
     - name: ss-add-skill
       pack: core
       tier: manual-load
-      tokenCost: 858
+      tokenCost: 840
       depends_on: []
       description: Author a new specialist agent skill from scratch adhering to the
         3-tier structure (SKILL.md manifest, instructions.md, resources/),
@@ -327,7 +327,7 @@ spec:
     - name: ss-backlog-sync
       pack: core
       tier: manual-load
-      tokenCost: 856
+      tokenCost: 839
       depends_on: []
       description: Backlog maintenance & capacity balancer — sweep all task backlogs
         in docs/backlog/, detect overloaded sub-phases (> 12 tasks), split
@@ -343,7 +343,7 @@ spec:
         - packs/**
         - .agents/skills/**
         - _config/**
-      tokenCost: 805
+      tokenCost: 789
       depends_on: []
       description: LLM-Wiki bookkeeping — bulk-maintain knowledge-bundle indexes,
         cross-references, log.md entries and format fixes while human keeps
@@ -355,7 +355,7 @@ spec:
     - name: ss-brainstorm
       pack: core
       tier: manual-load
-      tokenCost: 841
+      tokenCost: 824
       depends_on: []
       description: Socratic ideation & architectural brainstorming —
         1-question-at-a-time interview, 2-3 distinct approaches with trade-off
@@ -366,7 +366,7 @@ spec:
     - name: ss-brand-naming
       pack: core
       tier: manual-load
-      tokenCost: 1089
+      tokenCost: 1072
       depends_on: []
       description: Strategic brand naming engine based on David Placek's Lexicon
         methodology (sound symbolism, coined/metaphorical/compound typologies,
@@ -377,7 +377,7 @@ spec:
     - name: ss-bug-report
       pack: core
       tier: manual-load
-      tokenCost: 878
+      tokenCost: 856
       depends_on: []
       description: Standardized bug capture workflow — gather reproduction details,
         assign BUG-XXX ID, create physical bug report in
@@ -388,7 +388,7 @@ spec:
     - name: ss-deploy
       pack: core
       tier: manual-load
-      tokenCost: 1091
+      tokenCost: 1070
       depends_on: []
       description: Pre-flight quality gates, production deployment via the active pack
         procedure, live health smoke testing, and post-deploy documentation.
@@ -398,7 +398,7 @@ spec:
     - name: ss-diagnose
       pack: core
       tier: manual-load
-      tokenCost: 901
+      tokenCost: 883
       depends_on: []
       description: Systematic debugging engine — 4-phase root-cause analysis, minimal
         reproduction test, targeted remediation, and 3-fix circuit breaker to
@@ -411,7 +411,7 @@ spec:
       tier: manual-load
       paths:
         - docs/bible/**
-        - docs/roadmap/**
+        - docs/backlog/**
         - docs/research/**
       tokenCost: 809
       depends_on: []
@@ -424,7 +424,7 @@ spec:
     - name: ss-execute-plan
       pack: core
       tier: manual-load
-      tokenCost: 961
+      tokenCost: 943
       depends_on: []
       description: Execute approved implementation plans unit-by-unit with bounded
         context (<= 4,500 tokens), Red-First TDD, and Two-Stage Review (Spec
@@ -435,7 +435,7 @@ spec:
     - name: ss-import-research
       pack: core
       tier: manual-load
-      tokenCost: 779
+      tokenCost: 762
       depends_on: []
       description: Import external technology research, raw notes, or web clips into
         the standardized docs/research/ 7-file dossier structure.
@@ -445,7 +445,7 @@ spec:
     - name: ss-init
       pack: core
       tier: manual-load
-      tokenCost: 1161
+      tokenCost: 1141
       depends_on: []
       description: Autonomous product-architecting and workspace initialization engine
         — runs 5-Gate Socratic interview, Gate 4.5 brand naming, mechanical
@@ -456,7 +456,7 @@ spec:
     - name: ss-lesson
       pack: core
       tier: manual-load
-      tokenCost: 1233
+      tokenCost: 1211
       depends_on: []
       description: Rule accumulation & knowledge compounding — convert agent mistakes
         into verified learning records and static rules behind explicit human
@@ -467,7 +467,7 @@ spec:
     - name: ss-loop-author
       pack: core
       tier: manual-load
-      tokenCost: 721
+      tokenCost: 707
       depends_on: []
       description: Author a new loop specification — triage whether a task is
         loopable, run the 7-question interview, harden against the 5
@@ -478,7 +478,7 @@ spec:
     - name: ss-new-cron-job
       pack: core
       tier: manual-load
-      tokenCost: 850
+      tokenCost: 833
       depends_on: []
       description: Background and scheduled cron job creation workflow — Stage
         Contracts in docs/plans/, idempotent job design, concurrency locking,
@@ -489,7 +489,7 @@ spec:
     - name: ss-new-feature
       pack: core
       tier: manual-load
-      tokenCost: 925
+      tokenCost: 908
       depends_on: []
       description: Full feature development lifecycle — documentation map check,
         specification planning via /ss-plan in docs/plans/, Red-First TDD
@@ -500,7 +500,7 @@ spec:
     - name: ss-new-migration
       pack: core
       tier: manual-load
-      tokenCost: 1087
+      tokenCost: 1070
       depends_on: []
       description: Database schema migration workflow — author SQL migrations, Stage
         Contracts in docs/plans/, verify RLS policies, generate types, and
@@ -511,7 +511,7 @@ spec:
     - name: ss-nexus
       pack: core
       tier: manual-load
-      tokenCost: 659
+      tokenCost: 643
       depends_on: []
       description: Run type-checks, lints, tests, and auto-fix compilation errors
         across the workspace with zero manual guesswork.
@@ -521,7 +521,7 @@ spec:
     - name: ss-plan
       pack: core
       tier: manual-load
-      tokenCost: 1826
+      tokenCost: 1787
       depends_on: []
       description: Creates and structures implementation plans, ICM Stage Contracts
         (CONTEXT.md), and plan units in docs/plans/. Associated with /ss-plan
@@ -532,7 +532,7 @@ spec:
     - name: ss-push
       pack: core
       tier: manual-load
-      tokenCost: 872
+      tokenCost: 851
       depends_on: []
       description: Dual-repo GitHub publishing workflow — verify git state, check gh
         CLI authentication, create remote repositories if needed, and push root
@@ -543,7 +543,7 @@ spec:
     - name: ss-refresh-research
       pack: core
       tier: manual-load
-      tokenCost: 821
+      tokenCost: 804
       depends_on: []
       description: Refresh stale research documents — evaluate freshness windows
         (pricing, models, APIs), conduct live searches (>= 3 receipts in
@@ -554,7 +554,7 @@ spec:
     - name: ss-research
       pack: core
       tier: manual-load
-      tokenCost: 1012
+      tokenCost: 992
       depends_on: []
       description: Author authoritative, evidence-grounded technology research in
         docs/research/ — enforces >= 3 live web searches, writes 06-SOURCES.md
@@ -565,7 +565,7 @@ spec:
     - name: ss-review
       pack: core
       tier: manual-load
-      tokenCost: 945
+      tokenCost: 925
       depends_on: []
       description: AI first-pass code review against the tuned checklist — findings
         grouped by category (hallucinated dependencies, error handling, subtle
@@ -576,7 +576,7 @@ spec:
     - name: ss-schema-sync
       pack: core
       tier: manual-load
-      tokenCost: 863
+      tokenCost: 845
       depends_on: []
       description: Database schema verification — ensure Bible schema reference, SQL
         migration files, and generated TypeScript types are 100% aligned.
@@ -586,7 +586,7 @@ spec:
     - name: ss-simplify
       pack: core
       tier: manual-load
-      tokenCost: 826
+      tokenCost: 810
       depends_on: []
       description: Behavior-preserving code cleanup and refactoring on active diffs —
         enforces green-to-green test gates, reduces cognitive complexity,
@@ -597,18 +597,18 @@ spec:
     - name: ss-status
       pack: core
       tier: manual-load
-      tokenCost: 881
+      tokenCost: 859
       depends_on: []
       description: Session orientation & development status audit — scan roadmap
         progress in docs/backlog/, detect code gaps, evaluate health, and output
-        reports to docs/status-reports/.
+        reports to docs/reports/status/.
       tags:
         - shiftstone
         - core
     - name: ss-sync-bible
       pack: core
       tier: manual-load
-      tokenCost: 1301
+      tokenCost: 1277
       depends_on: []
       description: Outer-gated documentation synchronization — detect 3-way drift
         (code vs Bible vs decisions), propose updates, and apply changes behind
@@ -622,7 +622,7 @@ spec:
       paths:
         - .shiftstone/**
         - frameworks/**
-      tokenCost: 1323
+      tokenCost: 1444
       depends_on: []
       description: Bi-directional engine synchronization — syncs universal harness
         code between the Parent Lab Hub (.shiftstone/) and Child Frameworks
@@ -633,7 +633,7 @@ spec:
     - name: ss-upgrade-research
       pack: core
       tier: manual-load
-      tokenCost: 847
+      tokenCost: 828
       depends_on: []
       description: Migrate legacy flat research folders into the standardized 7-file
         structure (00-BRIEF.md through 06-SOURCES.md) with full validation.
@@ -643,7 +643,7 @@ spec:
     - name: ss-upgrade-skill
       pack: core
       tier: manual-load
-      tokenCost: 837
+      tokenCost: 821
       depends_on: []
       description: Audit and harden existing or external community skills — enforce
         3-tier structure, 8-pillar anti-bypass guardrails, line budgets, and
@@ -654,7 +654,7 @@ spec:
     - name: ss-verify
       pack: core
       tier: manual-load
-      tokenCost: 1298
+      tokenCost: 1273
       depends_on: []
       description: Mandatory outer gate — executes the 5-Step Verification Ladder,
         spawns a disjoint Checker subagent, and blocks task completion when

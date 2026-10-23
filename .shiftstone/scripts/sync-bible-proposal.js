@@ -3,7 +3,7 @@
  * Proposal-Based /ss-sync-bible Engine (UG-22 / Phase 5 Unit U23)
  *
  * Scans docs/reports/learning/ for records with status === "validated",
- * generates structured Markdown promotion proposals in docs/sync-reports/SYNC-YYYYMMDD-XXX.md
+ * generates structured Markdown promotion proposals in docs/reports/sync/SYNC-YYYYMMDD-XXX.md
  * with rationale and proposed diff blocks, without directly mutating docs/bible/
  * until --apply <proposalId> --approval <approvalId> is executed.
  *
@@ -165,7 +165,7 @@ node .shiftstone/scripts/sync-bible-proposal.js --apply ${proposalId} --approval
 export function generateSyncProposal(options = {}) {
   const root = options.root ? path.resolve(options.root) : ROOT;
   const learningDir = path.join(root, 'docs', 'reports', 'learning');
-  const syncReportsDir = path.join(root, 'docs', 'sync-reports');
+  const syncReportsDir = path.join(root, 'docs', 'reports', 'sync');
 
   const validatedRecords = options.records ?? findValidatedLearningRecords(learningDir);
 
@@ -196,7 +196,7 @@ export function generateSyncProposal(options = {}) {
     dryRun: Boolean(options.dryRun),
     message: options.dryRun
       ? `[DRY-RUN] Would create proposal ${proposalId} aggregating ${validatedRecords.length} record(s).`
-      : `Created promotion proposal docs/sync-reports/${proposalId}.md aggregating ${validatedRecords.length} record(s).`,
+      : `Created promotion proposal docs/reports/sync/${proposalId}.md aggregating ${validatedRecords.length} record(s).`,
   };
 }
 
@@ -205,7 +205,7 @@ export function generateSyncProposal(options = {}) {
  */
 export function applySyncProposal(proposalId, approvalId, options = {}) {
   const root = options.root ? path.resolve(options.root) : ROOT;
-  const syncReportsDir = path.join(root, 'docs', 'sync-reports');
+  const syncReportsDir = path.join(root, 'docs', 'reports', 'sync');
   const learningDir = path.join(root, 'docs', 'reports', 'learning');
 
   if (!approvalId || typeof approvalId !== 'string' || approvalId.trim().length === 0) {
@@ -221,7 +221,7 @@ export function applySyncProposal(proposalId, approvalId, options = {}) {
     return {
       ok: false,
       code: 'PROPOSAL_NOT_FOUND',
-      message: `Proposal file docs/sync-reports/${proposalId}.md does not exist on disk`,
+      message: `Proposal file docs/reports/sync/${proposalId}.md does not exist on disk`,
     };
   }
 
@@ -231,7 +231,7 @@ export function applySyncProposal(proposalId, approvalId, options = {}) {
     return {
       ok: false,
       code: 'INVALID_PROPOSAL_FRONTMATTER',
-      message: `Proposal file docs/sync-reports/${proposalId}.md carries invalid YAML frontmatter`,
+      message: `Proposal file docs/reports/sync/${proposalId}.md carries invalid YAML frontmatter`,
     };
   }
 

@@ -11,7 +11,7 @@ import {
 describe('Unit U23: sync-bible-proposal (UG-22)', () => {
   const testRoot = path.resolve('.shiftstone', 'scripts', '__tests__', 'fixtures', 'sync-proposal-test');
   const learningDir = path.join(testRoot, 'docs', 'reports', 'learning');
-  const syncReportsDir = path.join(testRoot, 'docs', 'sync-reports');
+  const syncReportsDir = path.join(testRoot, 'docs', 'reports', 'sync');
   const bibleDir = path.join(testRoot, 'docs', 'bible');
 
   beforeEach(() => {

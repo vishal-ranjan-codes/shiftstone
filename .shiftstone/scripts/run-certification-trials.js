@@ -355,7 +355,7 @@ export function runTrialT3(root = ROOT) {
     attributes: { toolName: 'sync-bible-proposal.js', verificationLevel: 4 },
   });
   const recC = trialDef.cases.find((c) => c.caseId === 'T3.c-valid-learning-proposal-generation').record;
-  const proposalId = allocateProposalId(path.join(root, 'docs', 'reports', 'sync-reports'));
+  const proposalId = allocateProposalId(path.join(root, 'docs', 'reports', 'sync'));
   const proposal = buildProposalContent(proposalId, [{ data: recC, file: 'docs/reports/learning/LR-20261021-003.json' }]);
   const isProposalGenerated = proposal && proposal.content && proposal.content.includes(proposalId) && proposal.sourceRecordIds.includes(recC.learningId);
   if (isProposalGenerated) {

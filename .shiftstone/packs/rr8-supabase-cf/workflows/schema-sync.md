@@ -32,7 +32,7 @@ description: Database Schema Verification — ensure bible docs, migration files
 
 ## Phase 4 — Create Schema Sync Report Artifact
 
-7. Create a **sync receipt** at `docs/sync-reports/<ISO-8601>-schema-sync.md` (blueprint §10.16) with a 3-way comparison table and actionable fixes.
+7. Create a **sync receipt** at `docs/reports/sync/<ISO-8601>-schema-sync.md` (blueprint §10.16) with a 3-way comparison table and actionable fixes.
 
 ### Report Format
 
@@ -73,7 +73,7 @@ description: Database Schema Verification — ensure bible docs, migration files
 ## Post-Write Checkpoint
 
 - [ ] All three sources checked: `schema-reference.md`, migration files, and `database.types.ts`
-- [ ] Sync receipt created at `docs/sync-reports/<ISO-8601>-schema-sync.md` with 3-way alignment table
+- [ ] Sync receipt created at `docs/reports/sync/<ISO-8601>-schema-sync.md` with 3-way alignment table
 - [ ] Every misaligned row has a specific actionable fix listed
 
 ---

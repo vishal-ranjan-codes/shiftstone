@@ -3,7 +3,7 @@
  * ADR & Open-Question Auto-Compiler (UG-21 / LOCK-02 / Phase 5 Unit U22)
  *
  * Compiles individual OKF concept files in docs/decisions/DEC-*.md and
- * docs/open-questions/OQ-*.md into a compact summary table in docs/bible/DECISIONS.md.
+ * docs/decisions/OQ-*.md into a compact summary table in docs/bible/DECISIONS.md.
  *
  * Flags:
  *   --check: Verifies docs/bible/DECISIONS.md is in sync with docs/decisions/.
@@ -36,7 +36,7 @@ export function formatDate(timestamp) {
  */
 export function generateDecisionsLedger(root = ROOT) {
   const decisionsDir = path.join(root, 'docs', 'decisions');
-  const questionsDir = path.join(root, 'docs', 'open-questions');
+  const questionsDir = decisionsDir;
 
   const decisions = [];
   if (existsSync(decisionsDir)) {
@@ -140,7 +140,7 @@ This ledger is auto-compiled from individual OKF decision files in \`docs/decisi
   } else {
     md += `| ID | Title | Status | Date | Details |\n|---|---|---|---|---|\n`;
     for (const q of questions) {
-      const link = `[${q.id}](../open-questions/${q.file})`;
+      const link = `[${q.id}](../decisions/${q.file})`;
       let statusDisplay = q.status;
       if (q.status === 'decided' && q.resolvedBy) {
         statusDisplay = `decided (${q.resolvedBy})`;

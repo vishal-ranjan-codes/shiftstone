@@ -65,7 +65,7 @@ describe('Unit U22: validate-decisions and compile-decisions (UG-21, LOCK-02)', 
       status: 'decided',
       timestamp: '2026-10-21T00:00:00.000Z',
     };
-    const errs = validateQuestionData(invalidData, 'docs/open-questions/OQ-999-test.md', new Set(['DEC-001']));
+    const errs = validateQuestionData(invalidData, 'docs/decisions/OQ-999-test.md', new Set(['DEC-001']));
     expect(errs.some((e) => e.code === 'MISSING_RESOLVED_BY')).toBe(true);
   });
 
@@ -78,7 +78,7 @@ describe('Unit U22: validate-decisions and compile-decisions (UG-21, LOCK-02)', 
       resolvedBy: 'DEC-888',
       timestamp: '2026-10-21T00:00:00.000Z',
     };
-    const errs = validateQuestionData(invalidData, 'docs/open-questions/OQ-998-test.md', new Set(['DEC-001']));
+    const errs = validateQuestionData(invalidData, 'docs/decisions/OQ-998-test.md', new Set(['DEC-001']));
     expect(errs.some((e) => e.code === 'MISSING_RESOLVED_TARGET')).toBe(true);
   });
 

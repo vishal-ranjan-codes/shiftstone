@@ -8,7 +8,7 @@
  *   2. File naming parity: DEC-XXX-<slug>.md matches decisionId.
  *   3. When status === "superseded", supersededBy: DEC-XXX is mandatory and
  *      the target decision file must exist on disk (MISSING_SUPERSEDED_BY / MISSING_SUPERSEDED_TARGET).
- *   4. Every file in docs/open-questions/OQ-*.md carries valid OKF frontmatter:
+ *   4. Every file in docs/decisions/OQ-*.md carries valid OKF frontmatter:
  *      type: "open-question", questionId: OQ-XXX, title, status, timestamp.
  *   5. When open question status === "decided", resolvedBy: DEC-XXX is mandatory and
  *      the target decision must exist on disk (MISSING_RESOLVED_BY / MISSING_RESOLVED_TARGET).
@@ -233,12 +233,12 @@ export function validateQuestionData(data, filePath, existingDecisionIds = new S
 }
 
 /**
- * Validates all decisions in docs/decisions/ and open questions in docs/open-questions/.
+ * Validates all decisions (DEC-*.md) and open questions (OQ-*.md) in docs/decisions/.
  */
 export function validateDecisions(options = {}) {
   const root = options.root ? path.resolve(options.root) : ROOT;
   const decisionsDir = path.join(root, 'docs', 'decisions');
-  const questionsDir = path.join(root, 'docs', 'open-questions');
+  const questionsDir = decisionsDir;
 
   const violations = [];
   const decisionIds = new Set();
@@ -394,7 +394,7 @@ export function runDecisionsSelfTest(options = {}) {
     resolvedBy: 'DEC-100',
     timestamp: '2026-10-21T00:00:00.000Z',
   };
-  const qErrs = validateQuestionData(decidedQuestion, 'docs/open-questions/OQ-100-test.md', new Set(['DEC-100']));
+  const qErrs = validateQuestionData(decidedQuestion, 'docs/decisions/OQ-100-test.md', new Set(['DEC-100']));
   results.push({
     scenario: 'decided open-question with valid resolvedBy passes cleanly',
     pass: qErrs.length === 0,
@@ -427,7 +427,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.a
 
   const result = validateDecisions({ root: ROOT });
   if (!result.ok) {
-    console.error(`FAIL: Found ${result.violations.length} violation(s) in decisions / open-questions:`);
+    console.error(`FAIL: Found ${result.violations.length} violation(s) in docs/decisions (DEC/OQ records):`);
     for (const v of result.violations) {
       console.error(`  - [${v.code}] ${v.file}: ${v.message}`);
     }

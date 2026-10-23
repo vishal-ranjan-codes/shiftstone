@@ -22,18 +22,17 @@ export const DECISIONS_MARKER =
 const DOCS_DIRS = [
   'docs/plans',
   'docs/reports',
+  'docs/reports/status',
+  'docs/reports/sync',
   'docs/research',
   'docs/research/_template',
   'docs/bugs',
-  'docs/sync-reports',
-  'docs/status-reports',
   'docs/backlog',
   'docs/backlog/Phase 1 - Foundation & Auth Setup',
   'docs/backlog/Phase 2 - Core SaaS Features',
   'docs/backlog/Phase 3 - Storage & Background Jobs',
   'docs/backlog/Phase 4 - Testing & Telemetry',
   'docs/backlog/Phase 5 - Launch & Polish',
-  'docs/roadmap',
 ];
 
 function renderDecision(decision) {

@@ -27,7 +27,7 @@ describe('Phase 6 workflow artifacts', () => {
     expect(skill).toMatch(/0\.8/);
     expect(skill).toMatch(/blocked/i);
     expect(skill).toMatch(/compile-changelog\.js/); // 6.9 phase lives in the same skill
-    expect(skill).toMatch(/sync-reports/);
+    expect(skill).toMatch(/reports\/sync/);
   });
 
   it('6.4 — backlog closes only via /ss-verify with a signature, in guide, MOC and skill', async () => {

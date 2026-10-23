@@ -62,7 +62,7 @@ Compare the documented specifications in `{{BIBLE_PATH}}/` against the codebase:
 
 ## Phase 3 — Propose Updates (maker)
 
-10. Create a **sync receipt** at `docs/sync-reports/<ISO-8601>-bible-sync.md`
+10. Create a **sync receipt** at `docs/reports/sync/<ISO-8601>-bible-sync.md`
     (blueprint §10.16 — every sync emits a receipt; OKF frontmatter
     `type: sync-report`, `timestamp`, `inputs`) listing, for every drift item:
     - The proposed documentation edit (file + before/after)
