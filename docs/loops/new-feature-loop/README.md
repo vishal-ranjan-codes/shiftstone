@@ -11,9 +11,9 @@ replacement for the linear `/new-feature` workflow.
 **Invocation:**
 
 ```sh
-node core/harness/cli.js run new-feature-loop      # manual trigger
-node core/harness/cli.js status new-feature-loop
-node core/harness/cli.js validate new-feature-loop
+node .shiftstone/harness/cli.js run new-feature-loop      # manual trigger
+node .shiftstone/harness/cli.js status new-feature-loop
+node .shiftstone/harness/cli.js validate new-feature-loop
 ```
 
 **Expected terminal states:**

@@ -24,5 +24,5 @@ state a loop keeps under `.loops/<loop>/`. Never store live run state here.
 .loops/<loop>/runs/             # rotated trajectory traces (B3)
 ```
 
-**Owner:** loop harness (`core/harness/`). **Lifecycle:** templates manual,
+**Owner:** loop harness (`.shiftstone/harness/`). **Lifecycle:** templates manual,
 runtime files auto-generated.

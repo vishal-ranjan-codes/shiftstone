@@ -45,7 +45,7 @@ Procedure for parsing, restructuring, and ingesting raw notes, web clips, or ext
 1. Update `docs/research/README.md`.
 2. Validate:
    ```bash
-   node core/scripts/validate-research.js --dir docs/research/<area>/<slug>
+   node .shiftstone/scripts/validate-research.js --dir docs/research/<area>/<slug>
    ```
 
 ---
@@ -53,7 +53,7 @@ Procedure for parsing, restructuring, and ingesting raw notes, web clips, or ext
 ## Verification Ladder
 
 - **L1 (Syntax):** All 7 files present with valid markdown syntax.
-- **L2 (Completeness):** `node core/scripts/validate-research.js` exits 0.
+- **L2 (Completeness):** `node .shiftstone/scripts/validate-research.js` exits 0.
 - **L3 (Index Freshness):** Topic indexed in `docs/research/README.md`.
 - **L4 (Checker Review):** Disjoint check confirms zero lost technical data from source.
 - **L5 (User Handoff):** Link to newly imported research provided to user.

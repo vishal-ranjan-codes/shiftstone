@@ -40,7 +40,7 @@ End-to-end procedure for scoping, planning, implementing, and documenting new fe
 ### Phase 3 — Implement (Effort: AUTOMATED — Agent-Owned)
 5. Run pre-flight gate:
    ```bash
-   node core/scripts/agent-preflight.js --target "<targetFiles>" --verify-cmd "npm test"
+   node .shiftstone/scripts/agent-preflight.js --target "<targetFiles>" --verify-cmd "npm test"
    ```
 6. Red First: write failing tests proving the requirement.
 7. Green: implement minimal code to pass tests.

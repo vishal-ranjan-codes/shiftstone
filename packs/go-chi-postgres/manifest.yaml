@@ -23,11 +23,11 @@ spec:
     - name: "{{PRODUCT_IDENTITY}}"
       type: string
       default: "a Go + Chi + PostgreSQL service"
-      description: One-line product identity injected into core/static-rules/product.md.
+      description: One-line product identity injected into .shiftstone/static-rules/product.md.
     - name: "{{STACK_IDENTITY}}"
       type: string
       default: "Go 1.23, chi router, pgx, PostgreSQL, go test"
-      description: Stack identity line injected into core/static-rules/product.md.
+      description: Stack identity line injected into .shiftstone/static-rules/product.md.
 composition:
   skills:
     include:

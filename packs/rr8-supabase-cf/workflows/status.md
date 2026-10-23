@@ -60,7 +60,7 @@ description: Audit roadmap and backlog progress against the codebase and generat
 8. Run the loop-health dashboard (task 5.4):
 
    ```sh
-   node core/scripts/status-dashboard.js
+   node .shiftstone/scripts/status-dashboard.js
    ```
 
 9. Include the rendered report verbatim in the status artifact. It shows:
@@ -84,7 +84,7 @@ Suggest the exact slash command to run next (e.g. `/new-feature` to implement th
 When this workflow reaches its outcome, append exactly one `runs.jsonl` row (at workflow end, never per-tool-call):
 
 ```sh
-node core/scripts/record-run.js status --state <success|no_op|blocked|stalled|exhausted|error> --reason "<one-line outcome>" --tokens <estimate> --dollars <estimate> --accepted <changes applied>
+node .shiftstone/scripts/record-run.js status --state <success|no_op|blocked|stalled|exhausted|error> --reason "<one-line outcome>" --tokens <estimate> --dollars <estimate> --accepted <changes applied>
 ```
 
-Use `--state no_op` when the workflow found nothing to do, `--state blocked` when escalating to a human, and `--accepted 0` for read-only audits. Omit `--tokens`/`--dollars` only when they cannot be estimated. Opt out via `cost-tracker.enabled: false` in `core/context/cost-tracker.json`.
+Use `--state no_op` when the workflow found nothing to do, `--state blocked` when escalating to a human, and `--accepted 0` for read-only audits. Omit `--tokens`/`--dollars` only when they cannot be estimated. Opt out via `cost-tracker.enabled: false` in `.shiftstone/context/cost-tracker.json`.

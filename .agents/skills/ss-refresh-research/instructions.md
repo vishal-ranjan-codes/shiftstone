@@ -46,7 +46,7 @@ Procedure for auditing, updating, and re-validating stale technology research do
 3. Update `Last Updated` in `00-BRIEF.md` and `docs/research/README.md`.
 4. Validate dossier:
    ```bash
-   node core/scripts/validate-research.js --dir docs/research/<area>/<slug>
+   node .shiftstone/scripts/validate-research.js --dir docs/research/<area>/<slug>
    ```
 
 ---
@@ -55,7 +55,7 @@ Procedure for auditing, updating, and re-validating stale technology research do
 
 - **L1 (Syntax):** Valid markdown and frontmatter across all 7 files.
 - **L2 (Search Receipts):** Fresh search receipts logged in `06-SOURCES.md`.
-- **L3 (Script Check):** `node core/scripts/validate-research.js` passes cleanly.
+- **L3 (Script Check):** `node .shiftstone/scripts/validate-research.js` passes cleanly.
 - **L4 (Checker Review):** Disjoint check verifies only drifted sections were altered.
 - **L5 (Index Updated):** Master research index reflects refreshed timestamp.
 

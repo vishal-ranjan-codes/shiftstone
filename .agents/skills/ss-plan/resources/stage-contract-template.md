@@ -36,7 +36,7 @@ If during stage execution the Maker agent discovers a need to consume an input f
 not declared in `inputs[]`:
 1. **HALT execution immediately.** Never silently read undeclared source or documentation files.
 2. **Amend this contract (`CONTEXT.md`):** Append the required input path to `inputs[]` with its appropriate `role` and `requiredStatus`.
-3. **Re-validate the contract:** Execute `node core/scripts/validate-stage-contracts.js`.
+3. **Re-validate the contract:** Execute `node .shiftstone/scripts/validate-stage-contracts.js`.
 4. **Reload stage context:** Resume the stage with the newly declared input properly recorded in the audit trail.
 
 ## Human Effort
@@ -80,5 +80,5 @@ Every artifact this stage produces:
 (`docs/plans/<id>/<nn>-<stage>/CONTEXT.md`), fill the sections, validate with:
 
 ```sh
-node core/scripts/validate-stage-contracts.js
+node .shiftstone/scripts/validate-stage-contracts.js
 ```

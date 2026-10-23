@@ -5,7 +5,7 @@
 ## Configuration Layout
 
 - `.commandcode/settings.json` — permissions (`deny` / `ask` / `allow`), safety guards and tools.
-- `.commandcode/rules/` — junction → `core/path-scoped-rules/` (glob-scoped rules).
+- `.commandcode/rules/` — junction → `.shiftstone/path-scoped-rules/` (glob-scoped rules).
 - `.commandcode/skills/` — junction → `.agents/skills/` (3-tier skills: `SKILL.md` + `instructions.md`).
 
 ## Taste File — NON-ACTION Rule
@@ -14,6 +14,6 @@
 
 ## Commands & Session Flow
 
-Harness gates: `pnpm typecheck`, `pnpm test`. Loop harness: `node core/harness/cli.js`.
+Harness gates: `pnpm typecheck`, `pnpm test`. Loop harness: `node .shiftstone/harness/cli.js`.
 Canonical flow: `/ss-status` → `/ss-plan` → `/ss-execute-plan` → `/ss-verify` → `/ss-sync-bible`.
 Conventional Commits on every edit; run `pnpm typecheck && pnpm test` before wrapping up.

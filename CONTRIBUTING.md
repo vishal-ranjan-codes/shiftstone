@@ -2,7 +2,7 @@
 
 Thank you for contributing to the **Universal AI Development Workspace Framework**.
 
-Harness files (steering, rules, workflows, evals, skills) are treated like production code: versioned, PR-reviewed, with named owners — see [`CODEOWNERS`](./CODEOWNERS) and the PR checklist in [`core/static-rules/governance.md`](./core/static-rules/governance.md). Solo repositories degrade to the same checklist as a mandatory self-review.
+Harness files (steering, rules, workflows, evals, skills) are treated like production code: versioned, PR-reviewed, with named owners — see [`CODEOWNERS`](./CODEOWNERS) and the PR checklist in [`.shiftstone/static-rules/governance.md`](./.shiftstone/static-rules/governance.md). Solo repositories degrade to the same checklist as a mandatory self-review.
 
 ---
 
@@ -19,15 +19,15 @@ A **pack** (`packs/<name>/`) is a stack archetype: manifest + skills + bible ove
 - [ ] **3. Add `packs/<name>/packaging.json`** (name, version, tier, license, packaging) and **`packs/<name>/scaffold-script.js`** exporting `run(context)` — it must create the app skeleton under `defaultAppPath` without overwriting existing files.
 - [ ] **4. Author pack skills** (can follow later for a starter): each skill is a 3-tier bundle — `skills/<skill>/SKILL.md` + `instructions.md` + optional `resources/` — with OKF frontmatter (`type: skill`, ISO-8601 `timestamp`). Use the `skills-author` skill.
 - [ ] **5. Optional pack surfaces:** `bible-overlays/<chapter>/*.md` (stack chapters, OKF frontmatter), `decisions-seed.yaml` (ADRs applied only when the pack is installed), `folder-hooks/`, and a `composition.opencode.mcp` fragment for pack-specific MCP servers.
-- [ ] **6. Register nothing by hand.** `packs/index.md` is generated; regenerate the skills manifest after adding skills: `node core/scripts/generate-skills-manifest.js`.
+- [ ] **6. Register nothing by hand.** `packs/index.md` is generated; regenerate the skills manifest after adding skills: `node .shiftstone/scripts/generate-skills-manifest.js`.
 - [ ] **7. Validate locally:**
 
       ```sh
-      node core/init.js --validate                       # every pack manifest
-      node core/init.js --archetype=<name>,<peer> --validate   # conflict resolution for intended compositions
+      node .shiftstone/init.js --validate                       # every pack manifest
+      node .shiftstone/init.js --archetype=<name>,<peer> --validate   # conflict resolution for intended compositions
       ```
 
-- [ ] **8. Log the change** (OKF bookkeeping): append a row to [`packs/log.md`](./packs/log.md), then run `node core/scripts/compile-changelog.js`.
+- [ ] **8. Log the change** (OKF bookkeeping): append a row to [`packs/log.md`](./packs/log.md), then run `node .shiftstone/scripts/compile-changelog.js`.
 - [ ] **9. Add a row to the pack gallery** in [`README.md`](./README.md) — label it `scaffolded` (manifest + scaffold only) vs `full` (skills + overlays shipped).
 - [ ] **10. Run the full gate** before opening the PR:
 
@@ -50,7 +50,7 @@ Skill checklist for every tier:
 
 - [ ] `SKILL.md` frontmatter: `name`, `description` (when-to-use trigger), `type: skill`, ISO-8601 `timestamp`.
 - [ ] Procedural detail in `instructions.md`; reference material in `resources/` — keep `SKILL.md` a thin manifest (progressive disclosure, blueprint §6.2).
-- [ ] Register it: `node core/scripts/generate-skills-manifest.js`, then confirm `node core/scripts/validate-manifest-budgets.js --strict` passes (token budget).
+- [ ] Register it: `node .shiftstone/scripts/generate-skills-manifest.js`, then confirm `node .shiftstone/scripts/validate-manifest-budgets.js --strict` passes (token budget).
 - [ ] No duplicated content with existing skills (§6.6 anti-duplication mandate) — extend the pack's existing skill instead of forking one.
 
 ---
@@ -58,7 +58,7 @@ Skill checklist for every tier:
 ## Changing Harness Files
 
 1. Branch → edit → the gates above must pass (`pnpm parity` covers duplication, junctions, budgets, loop specs, OKF frontmatter, link integrity, index freshness, changelog compilation, backlog signatures, ownership coverage).
-2. Self-review with the checklist in `core/static-rules/governance.md` (why + evidence + regenerated indexes).
+2. Self-review with the checklist in `.shiftstone/static-rules/governance.md` (why + evidence + regenerated indexes).
 3. Open a PR — `CODEOWNERS` routes harness paths to their owners; CI (`parity-check`, `evals-in-ci`, `validate-packs`) must be green.
 
 ## Reporting Bugs

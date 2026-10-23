@@ -1,0 +1,82 @@
+apiVersion: governance/v1
+kind: ContextIntegrityRules
+metadata:
+  version: 2.1.0-universal
+  description: Universal contradiction pairs, drift detection rules, and core stack-decoupling assertions.
+
+contradictionPairs:
+  - id: taste-prepopulation-violation
+    name: "taste.md empty-stub law"
+    description: "taste.md must not contain pre-populated preferences; it must remain an empty stub or pointer until human-authored or taste-learned."
+    targets:
+      - ".commandcode/taste/taste.md"
+    forbiddenPatterns:
+      - '(?i)##\s*Coding Preferences\s*\r?\n\s*-\s+'
+      - '(?i)pre-populated preference'
+    allowedPatterns:
+      - '(?i)pointer stub'
+      - '(?i)no pre-populated preferences'
+    message: "taste.md contains pre-populated preferences violating the empty-stub law."
+
+  - id: app-code-in-root-violation
+    name: "Workspace Root Isolation"
+    description: "Application code belongs in {{APP_PATH}}/, never in workspace root."
+    targets:
+      - "AGENTS.md"
+      - ".shiftstone/static-rules/*.md"
+      - ".shiftstone/path-scoped-rules/*.md"
+    forbiddenPatterns:
+      - '(?i)put source code in the workspace root\b'
+      - '(?i)place application code in (?:the )?root\b(?!.*never)'
+    allowedPatterns:
+      - '(?i)never put source code in the workspace root'
+    message: "Directive contradicts workspace root isolation (app code must reside in {{APP_PATH}})."
+
+  - id: l5-gate-bypass-violation
+    name: "Level 5 Gate Integrity"
+    description: "Level 5 human gates and protected actions must never be bypassed or skipped by AI agents."
+    targets:
+      - ".shiftstone/static-rules/*.md"
+      - ".shiftstone/path-scoped-rules/*.md"
+      - ".agents/skills/**/*.md"
+      - "docs/**/*.md"
+    forbiddenPatterns:
+      - '(?i)bypass (?:the )?Level 5 (?:human )?gate'
+      - '(?i)skip (?:the )?L5 (?:human )?gate'
+      - '(?i)bypass (?:the )?protected action approval'
+    allowedPatterns:
+      - '(?i)never bypass'
+      - '(?i)cannot bypass'
+      - '(?i)refuses to bypass'
+    message: "Directive improperly authorizes bypassing Level 5 human approval gates."
+
+  - id: plan-storage-brain-artifact-violation
+    name: "Canonical Plan Storage"
+    description: "Master plans must be authored in docs/plans/<id>/ and never in ephemeral IDE brain artifacts."
+    targets:
+      - "docs/plans/**/*.md"
+      - ".agents/skills/**/*.md"
+    forbiddenPatterns:
+      - '(?i)write (?:master )?plans? to (?:brain|native IDE artifact)'
+      - '(?i)author plans? (?:in|inside) (?:brain|native IDE artifact)'
+    allowedPatterns:
+      - '(?i)forbidding native IDE brain artifacts'
+      - '(?i)never (?:use|write to) (?:brain|native IDE artifact)'
+    message: "Directive contradicts canonical plan storage in docs/plans/<id>/."
+
+coreStackDecoupling:
+  description: "core/ static rules and path-scoped rules must remain 100% stack-agnostic (Core vs Pack Separation Law)."
+  targets:
+    - ".shiftstone/static-rules/*.md"
+    - ".shiftstone/path-scoped-rules/*.md"
+  forbiddenStackTerms:
+    - term: "react-router"
+      reason: "React Router is a pack-specific framework contract; core/ must remain stack-agnostic."
+    - term: "supabase"
+      reason: "Supabase is a pack-specific database/auth service; core/ must remain stack-agnostic."
+    - term: "cloudflare"
+      reason: "Cloudflare is a pack-specific deployment/runtime target; core/ must remain stack-agnostic."
+    - term: "gutenberg"
+      reason: "Gutenberg is a WordPress-specific pack; core/ must remain stack-agnostic."
+    - term: "fastapi"
+      reason: "FastAPI is a Python pack contract; core/ must remain stack-agnostic."

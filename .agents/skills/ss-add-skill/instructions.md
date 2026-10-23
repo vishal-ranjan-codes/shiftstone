@@ -23,7 +23,7 @@ Procedure for authoring a new specialist skill in the ShiftStone AI-Native Works
 |---|---|
 | *"A single SKILL.md file is enough for a small skill."* | **Forbidden.** Without the 3-tier separation, progressive disclosure fails and context token budgets explode. |
 | *"I don't need an Iron Law for a utility skill."* | **Forbidden.** All first-party skills are strictly gated by `validate-skills-completeness.js`. |
-| *"I can register the skill later."* | **Forbidden.** Run `node core/scripts/generate-skills-manifest.js` immediately so the skill is index-routable. |
+| *"I can register the skill later."* | **Forbidden.** Run `node .shiftstone/scripts/generate-skills-manifest.js` immediately so the skill is index-routable. |
 
 ---
 
@@ -45,9 +45,9 @@ Procedure for authoring a new specialist skill in the ShiftStone AI-Native Works
 
 5. **Register & Validate:**
    ```bash
-   node core/scripts/generate-skills-manifest.js
-   node core/scripts/validate-skills-completeness.js
-   node core/scripts/validate-context-budgets.js
+   node .shiftstone/scripts/generate-skills-manifest.js
+   node .shiftstone/scripts/validate-skills-completeness.js
+   node .shiftstone/scripts/validate-context-budgets.js
    ```
 
 ---
@@ -55,9 +55,9 @@ Procedure for authoring a new specialist skill in the ShiftStone AI-Native Works
 ## Verification Ladder
 
 - **L1 (Syntax):** Valid YAML frontmatter and well-formed markdown.
-- **L2 (Completeness):** `node core/scripts/validate-skills-completeness.js` passes with 0 violations.
-- **L3 (Budget Gate):** `node core/scripts/validate-context-budgets.js` passes line ceilings.
-- **L4 (Manifest Parity):** Skill is indexed in `core/context/skills-manifest.yaml`.
+- **L2 (Completeness):** `node .shiftstone/scripts/validate-skills-completeness.js` passes with 0 violations.
+- **L3 (Budget Gate):** `node .shiftstone/scripts/validate-context-budgets.js` passes line ceilings.
+- **L4 (Manifest Parity):** Skill is indexed in `.shiftstone/context/skills-manifest.yaml`.
 - **L5 (Interactive Test):** Invoke the skill in a test turn and verify prompt routing.
 
 ---

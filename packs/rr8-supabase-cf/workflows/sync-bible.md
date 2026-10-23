@@ -15,20 +15,20 @@ description: Sync the development bible and backlog with the actual app — dete
 
 1. Run the 3-way diff (the `bible-sync-loop` grounded check, task 6.1):
    ```sh
-   node core/scripts/bible-sync.js --report
+   node .shiftstone/scripts/bible-sync.js --report
    ```
    - Exit 0 → code, bible and decisions agree; keep only the backlog/log checks below.
    - Exit 1 → treat every `drift` item as a candidate update plan (ToC row, chapter index, ADR, or stale code reference). Missing bible core files (exit 78 on `--apply`) → **escalate** to a human, do not improvise the bible.
 
 2. Check ToC freshness (generated from chapter frontmatter):
    ```sh
-   node core/governance/bible/index.js --check
+   node .shiftstone/governance/bible/index.js --check
    ```
    A stale ToC is fixed by running the generator — never by hand-editing the table.
 
 3. Check pending log entries (C6):
    ```sh
-   node core/scripts/compile-changelog.js --check
+   node .shiftstone/scripts/compile-changelog.js --check
    ```
 
 4. Check every `- [ ]` / `- [/]` item in the active sub-phase backlog against the actual code in `{{APP_PATH}}/`:
@@ -76,7 +76,7 @@ Compare the documented specifications in `{{BIBLE_PATH}}/` against the codebase:
 
 ## Phase 4 — Compile Pending Log Entries
 
-12. Run `node core/scripts/compile-changelog.js`. This compiles any *previously approved*
+12. Run `node .shiftstone/scripts/compile-changelog.js`. This compiles any *previously approved*
     log entries that are still pending into `{{BIBLE_PATH}}/CHANGELOG.md` and stamps them
     (task 6.9). It never invents content — it only moves approved log rows into the changelog.
 
@@ -85,7 +85,7 @@ Compare the documented specifications in `{{BIBLE_PATH}}/` against the codebase:
 ## Phase 5 — Outer Gate: Checker Sign-Off on Doc Edits (task 6.3)
 
 13. Spawn a **Checker subagent in a fresh, disjoint context** — exactly as `/verify`
-    Phase 2 defines (maker ≠ checker; routing from `core/context/model-routing.yaml`).
+    Phase 2 defines (maker ≠ checker; routing from `.shiftstone/context/model-routing.yaml`).
     Give the Checker only: the sync receipt, the mechanical command outputs from Phase 1,
     and the diff evidence. Never the maker's confidence.
 
@@ -112,9 +112,9 @@ Compare the documented specifications in `{{BIBLE_PATH}}/` against the codebase:
     and the affected bundles.
 
 17. Regenerate what is generated — never hand-edit:
-    - `node core/governance/bible/index.js` (ToC from chapter frontmatter)
-    - `node core/governance/index.js` (docs indexes)
-    - `node core/scripts/generate-skills-manifest.js` (only when a skill file changed — manifest and AGENTS.md index are generated)
+    - `node .shiftstone/governance/bible/index.js` (ToC from chapter frontmatter)
+    - `node .shiftstone/governance/index.js` (docs indexes)
+    - `node .shiftstone/scripts/generate-skills-manifest.js` (only when a skill file changed — manifest and AGENTS.md index are generated)
 
 18. Append one `log.md` row per applied change to each touched bundle log
     (`docs/bible/log.md`, `packs/log.md`, `.agents/skills/log.md`), leaving the
@@ -126,11 +126,11 @@ Compare the documented specifications in `{{BIBLE_PATH}}/` against the codebase:
 
 19. Re-run the gates; all must be green:
     ```sh
-    node core/scripts/bible-sync.js --check
-    node core/governance/bible/index.js --check
-    node core/governance/index.js --check
-    node core/scripts/compile-changelog.js
-    node core/scripts/check-link-integrity.js --strict
+    node .shiftstone/scripts/bible-sync.js --check
+    node .shiftstone/governance/bible/index.js --check
+    node .shiftstone/governance/index.js --check
+    node .shiftstone/scripts/compile-changelog.js
+    node .shiftstone/scripts/check-link-integrity.js --strict
     ```
 
 20. If this sync closed backlog items, each closure still needs its own `/verify <task-id>`
@@ -143,7 +143,7 @@ Compare the documented specifications in `{{BIBLE_PATH}}/` against the codebase:
 When this workflow reaches its outcome, append exactly one `runs.jsonl` row (at workflow end, never per-tool-call):
 
 ```sh
-node core/scripts/record-run.js sync-bible --state <success|no_op|blocked|stalled|exhausted|error> --reason "<one-line outcome>" --tokens <estimate> --dollars <estimate> --accepted <changes applied>
+node .shiftstone/scripts/record-run.js sync-bible --state <success|no_op|blocked|stalled|exhausted|error> --reason "<one-line outcome>" --tokens <estimate> --dollars <estimate> --accepted <changes applied>
 ```
 
-Use `--state no_op` when the workflow found nothing to do, `--state blocked` when escalating to a human, and `--accepted 0` for read-only audits. Omit `--tokens`/`--dollars` only when they cannot be estimated. Opt out via `cost-tracker.enabled: false` in `core/context/cost-tracker.json`.
+Use `--state no_op` when the workflow found nothing to do, `--state blocked` when escalating to a human, and `--accepted 0` for read-only audits. Omit `--tokens`/`--dollars` only when they cannot be estimated. Opt out via `cost-tracker.enabled: false` in `.shiftstone/context/cost-tracker.json`.

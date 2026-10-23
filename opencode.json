@@ -38,14 +38,14 @@
   },
   "instructions": [
     "AGENTS.md",
-    "core/static-rules/global.md",
-    "core/static-rules/product.md",
-    "core/static-rules/security.md",
-    "core/static-rules/verification.md",
-    "core/path-scoped-rules/structure.md",
-    "core/path-scoped-rules/code-quality.md",
-    "core/path-scoped-rules/ui-rules.md",
-    "core/path-scoped-rules/bible-rules.md",
-    "core/path-scoped-rules/research-rules.md"
+    ".shiftstone/static-rules/global.md",
+    ".shiftstone/static-rules/product.md",
+    ".shiftstone/static-rules/security.md",
+    ".shiftstone/static-rules/verification.md",
+    ".shiftstone/path-scoped-rules/structure.md",
+    ".shiftstone/path-scoped-rules/code-quality.md",
+    ".shiftstone/path-scoped-rules/ui-rules.md",
+    ".shiftstone/path-scoped-rules/bible-rules.md",
+    ".shiftstone/path-scoped-rules/research-rules.md"
   ]
 }

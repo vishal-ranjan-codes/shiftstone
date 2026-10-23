@@ -4,23 +4,23 @@
 
 ## 🥇 Tier 1 Sources (Official Docs & Core Specs)
 
-- **Source Name**: [Link](url) - *Brief note explaining what this source verified.*
-- **Source Name**: [Link](url) - *Brief note.*
+- **Source Name**: [Link](https://example.com) - *Brief note explaining what this source verified.*
+- **Source Name**: [Link](https://example.com) - *Brief note.*
 
 ---
 
 ## 🥈 Tier 2 Sources (Trusted Community & Experts)
 
-- **Source Name**: [Link](url) - *Insight gained.*
+- **Source Name**: [Link](https://example.com) - *Insight gained.*
 
 ---
 
 ## 🥉 Tier 3 Sources (Forums, Repos, Issues)
 
-- **Source Name**: [Link](url) - *Notes.*
+- **Source Name**: [Link](https://example.com) - *Notes.*
 
 ---
 
 ## 🚫 Avoided Sources (Discarded / Marketing Copy)
 
-- **Source Name**: [Link](url) - *Reason why this source was discarded.*
+- **Source Name**: [Link](https://example.com) - *Reason why this source was discarded.*

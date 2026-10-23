@@ -6,7 +6,7 @@ timestamp: 2026-10-12T03:30:00.000Z
 # Engagement Mode Declaration (B10)
 
 This file declares **which engagement mode each environment/branch permits**.
-It is read by the static rule in `core/static-rules/global.md` (task routing
+It is read by the static rule in `.shiftstone/static-rules/global.md` (task routing
 table) before acting. Mode is a project-wide boundary — the Two-Gear boundary
 only governs task granularity.
 

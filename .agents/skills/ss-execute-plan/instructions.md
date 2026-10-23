@@ -34,7 +34,7 @@ Supports two execution modes:
 ### Step 1: Pre-Flight Gate Check
 Before modifying any file, run the pre-flight gate:
 ```bash
-node core/scripts/agent-preflight.js --target "<targetFiles>" --verify-cmd "<verificationCommand>"
+node .shiftstone/scripts/agent-preflight.js --target "<targetFiles>" --verify-cmd "<verificationCommand>"
 ```
 
 ### Step 2: Red Turn (Write Failing Test)
@@ -53,7 +53,7 @@ node core/scripts/agent-preflight.js --target "<targetFiles>" --verify-cmd "<ver
    - Check hallucinated imports, error handling, edge cases.
 
 ### Step 5: Seal Unit & Advance
-- Mark unit completed in `docs/plans/<suite>/...` and `core/governance/implementation-status.json`.
+- Mark unit completed in `docs/plans/<suite>/...` and `.shiftstone/governance/implementation-status.json`.
 - Advance to next unit in the DAG.
 
 ---

@@ -4,8 +4,8 @@ timestamp: 2026-10-21T00:00:00.000Z
 ---
 # Architecture Decision Records (ADRs)
 
-All foundational engineering and architectural decisions for {{PROJECT_NAME}} are documented here in chronological order.
-This ledger is auto-compiled from individual OKF decision files in `docs/decisions/` by `core/scripts/compile-decisions.js` (`LOCK-02` / `UG-21`).
+All foundational engineering and architectural decisions for this workspace are documented here in chronological order.
+This ledger is auto-compiled from individual OKF decision files in `docs/decisions/` by `.shiftstone/scripts/compile-decisions.js` (`LOCK-02` / `UG-21`).
 
 ---
 

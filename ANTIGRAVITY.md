@@ -4,10 +4,10 @@
 
 ## Configuration Layout
 
-- `.agent/rules/` — junction → `core/static-rules/` (always-on Layer 0: `global.md`, `product.md`, `security.md`, `verification.md`).
-- `core/path-scoped-rules/*.md` — pulled per dispatch table in `global.md`.
+- `.agent/rules/` — junction → `.shiftstone/static-rules/` (always-on Layer 0: `global.md`, `product.md`, `security.md`, `verification.md`).
+- `.shiftstone/path-scoped-rules/*.md` — pulled per dispatch table in `global.md`.
 - `.agents/skills/` — 3-tier skills (`SKILL.md` + `instructions.md` + `resources/`).
-- Skill INDEX: `AGENTS.md` (generated from `core/context/skills-manifest.yaml`).
+- Skill INDEX: `AGENTS.md` (generated from `.shiftstone/context/skills-manifest.yaml`).
 
 ## Documentation Directory Map
 

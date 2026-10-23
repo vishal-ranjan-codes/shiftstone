@@ -25,7 +25,7 @@ Universal implementation plan authoring workflow for the ShiftStone AI-Native Wo
 ## 2. Step 1: Compounding Context & Decision Retrieval
 
 Before writing a single line of a plan:
-1. **Query Prior Learning Records:** Scan `docs/reports/learning/` (or run `node core/scripts/validate-learning.js --list`) for relevant patterns, past regressions, or hard-won insights related to the task domain.
+1. **Query Prior Learning Records:** Scan `docs/reports/learning/` (or run `node .shiftstone/scripts/validate-learning.js --list`) for relevant patterns, past regressions, or hard-won insights related to the task domain.
 2. **Inline Active Architectural Decisions:** Check `docs/decisions/` and `docs/bible/DECISIONS.md`. Identify all accepted ADRs governing the task.
    - Any invariant mandated by an active ADR must be explicitly inlined into the plan's Acceptance Criteria.
    - Verify that no referenced input file carries `status: superseded`, `status: deprecated`, `status: rejected`, or `status: withdrawn`.
@@ -49,7 +49,7 @@ Refer to [resources/phase-decomposition-guide.md](./resources/phase-decompositio
 
 ## 4. Step 3: Authoring Stage Contracts (`stage-contract/v1`)
 
-Every stage contract (`CONTEXT.md`) must open with structured YAML frontmatter satisfying `core/governance/schemas/stage-contract.schema.json`:
+Every stage contract (`CONTEXT.md`) must open with structured YAML frontmatter satisfying `.shiftstone/governance/schemas/stage-contract.schema.json`:
 
 ```yaml
 ---
@@ -73,7 +73,7 @@ verificationLevels:
 exitCriteria:
   - id: EC-01
     level: L1
-    command: pnpm -C core test
+    command: pnpm -C .shiftstone test
     expected: exit 0
 ---
 ```
@@ -82,7 +82,7 @@ exitCriteria:
 If a Maker agent requires an input file not listed in `inputs[]`:
 1. **Halt execution immediately.** Never silently read undeclared source or documentation files.
 2. Amend `CONTEXT.md` to add the input path with `role` and `requiredStatus`.
-3. Re-run `node core/scripts/validate-stage-contracts.js`.
+3. Re-run `node .shiftstone/scripts/validate-stage-contracts.js`.
 4. Reload the stage context and continue.
 
 ---
@@ -104,7 +104,7 @@ Each Plan Unit (`U1`, `U2`, ...) specifies an atomic, testable increments of wor
   - `AC-U1-02` (`UG-01`): Concrete observable behavior 2.
 - **Test Scenarios:**
   - `TS-U1-01` (`L1`): Automated test description and assertion.
-- **Verification Command:** `node core/scripts/validate-example.js`
+- **Verification Command:** `node .shiftstone/scripts/validate-example.js`
 - **Confidence Score:** `0.95`
 ```
 
@@ -123,13 +123,13 @@ Before concluding the authoring session, run the validation toolchain:
 
 ```bash
 # 1. Validate stage contracts
-node core/scripts/validate-stage-contracts.js
+node .shiftstone/scripts/validate-stage-contracts.js
 
 # 2. Validate plan units & dependency DAG
-node core/scripts/validate-plan-units.js
+node .shiftstone/scripts/validate-plan-units.js
 
 # 3. Validate context line/byte budgets
-node core/scripts/validate-context-budgets.js
+node .shiftstone/scripts/validate-context-budgets.js
 ```
 
 If any check fails:
@@ -141,8 +141,8 @@ If any check fails:
 ## Verification Ladder
 
 - **L1 (Syntax & Parsing):** JSON schemas parse cleanly; frontmatter YAML is well-formed.
-- **L2 (Unit Validation):** `node core/scripts/validate-stage-contracts.js` and `node core/scripts/validate-plan-units.js` pass with 0 errors.
-- **L3 (Budget Gate):** `node core/scripts/validate-context-budgets.js` verifies plan file line and byte ceilings.
+- **L2 (Unit Validation):** `node .shiftstone/scripts/validate-stage-contracts.js` and `node .shiftstone/scripts/validate-plan-units.js` pass with 0 errors.
+- **L3 (Budget Gate):** `node .shiftstone/scripts/validate-context-budgets.js` verifies plan file line and byte ceilings.
 - **L4 (Checker Review):** Independent checker verifies acyclic dependency graph, requirement mapping, and lack of placeholders.
 - **L5 (Human Gate):** Human developer signs off on stage boundaries and unit scope.
 

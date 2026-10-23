@@ -7,7 +7,7 @@ Procedure for designing, staging, applying, and documenting database schema chan
 ## Iron Law
 
 1. **Stage Contract in `docs/plans/` Required:** Every migration design MUST be written as a Tier 1 Stage Contract in `docs/plans/<migration-slug>/CONTEXT.md`. Never output to temporary IDE brain artifacts.
-2. **Level 5 Protected Action Gate (UG-23, UG-24):** ⛔ STOP — Any destructive schema change (`DROP TABLE`, `DROP COLUMN`, `TRUNCATE`) or RLS mutation (`ALTER POLICY`, `DROP POLICY`, `DISABLE ROW LEVEL SECURITY`) is a Level 5 protected action. It strictly requires an active, non-expired human approval artifact in `core/governance/approvals/APR-*.json`. Missing approval halts immediately in terminal state `blocked`.
+2. **Level 5 Protected Action Gate (UG-23, UG-24):** ⛔ STOP — Any destructive schema change (`DROP TABLE`, `DROP COLUMN`, `TRUNCATE`) or RLS mutation (`ALTER POLICY`, `DROP POLICY`, `DISABLE ROW LEVEL SECURITY`) is a Level 5 protected action. It strictly requires an active, non-expired human approval artifact in `.shiftstone/governance/approvals/APR-*.json`. Missing approval halts immediately in terminal state `blocked`.
 3. **Mandatory Row-Level Security:** Every newly created table MUST enable RLS (`ALTER TABLE <name> ENABLE ROW LEVEL SECURITY;`) and define explicit tenant-scoped policies.
 4. **Mandatory Bible & Type Regeneration:** Every applied migration MUST regenerate database TypeScript types and update `docs/bible/03-database/schema-reference.md`.
 
@@ -20,7 +20,7 @@ Procedure for designing, staging, applying, and documenting database schema chan
 | *"I'll output a migration_plan.md artifact in chat."* | **Forbidden.** Brain/chat artifacts are ephemeral. Write the migration contract to `docs/plans/<migration-slug>/CONTEXT.md`. |
 | *"I'll enable RLS later after creating the seed data."* | **Forbidden.** Unprotected tables create immediate security vulnerabilities. Enable RLS in the same migration. |
 | *"I don't need to regenerate types for a small column rename."* | **Forbidden.** Type drift causes compile errors and runtime mismatches. Run typegen immediately. |
-| *"A destructive drop can proceed with informal chat confirmation."* | **Forbidden (Level 5 Gate).** A formal `protected-action-approval/v1` artifact in `core/governance/approvals/APR-*.json` is required. |
+| *"A destructive drop can proceed with informal chat confirmation."* | **Forbidden (Level 5 Gate).** A formal `protected-action-approval/v1` artifact in `.shiftstone/governance/approvals/APR-*.json` is required. |
 
 ---
 
@@ -33,9 +33,9 @@ Procedure for designing, staging, applying, and documenting database schema chan
    - Idempotent SQL statements (`IF NOT EXISTS`, UUID primary keys, timestamp audit columns).
    - Tenant isolation & RLS policies.
    - RPC functions (`SECURITY DEFINER` with explicit `search_path`).
-3. If migration contains destructive statements or RLS policy changes, verify that an active approval exists in `core/governance/approvals/APR-*.json`:
+3. If migration contains destructive statements or RLS policy changes, verify that an active approval exists in `.shiftstone/governance/approvals/APR-*.json`:
    ```bash
-   node core/scripts/validate-protected-actions.js
+   node .shiftstone/scripts/validate-protected-actions.js
    ```
 4. **⛔ STOP — If required approval is absent, halt immediately with terminal state `blocked`.**
 

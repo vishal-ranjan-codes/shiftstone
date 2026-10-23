@@ -13,7 +13,7 @@ timestamp: 2026-10-17T05:40:00.000Z
 ```sh
 mkdir my-project && cd my-project
 git clone <framework-url> .
-node core/init.js --name="MyProject" -y          # or type /init in chat
+node .shiftstone/init.js --name="MyProject" -y          # or type /init in chat
 ```
 
 - Stack choices are identical to every IDE (flagship default / `--archetype=` / `--archetypes=` for polyglot).
@@ -29,8 +29,8 @@ node core/init.js --name="MyProject" -y          # or type /init in chat
 ## 3. first loop — the harness runs the work
 
 ```sh
-node core/harness/cli.js run diagnose-loop
-node core/harness/cli.js validate new-feature-loop
+node .shiftstone/harness/cli.js run diagnose-loop
+node .shiftstone/harness/cli.js validate new-feature-loop
 ```
 
 - Chat equivalents: `/new-feature`, `/diagnose`, `/schema-sync`, `/sync-bible`.
@@ -53,4 +53,4 @@ node core/harness/cli.js validate new-feature-loop
 |---|---|
 | Orientation + hard rules | `AGENTS.md` |
 | Command Code specifics | `COMMANDCODE.md` |
-| Commands + loop CLI | `core/workflows/README.md` |
+| Commands + loop CLI | `.shiftstone/workflows/README.md` |

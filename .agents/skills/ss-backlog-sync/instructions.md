@@ -46,7 +46,7 @@ Procedure for sweeping task backlogs, enforcing maximum task limits, splitting o
 2. For matching tasks, do NOT mark `[x]` directly: run `/ss-verify <task-id>` to generate verified signature.
 3. Verify signature compliance:
    ```bash
-   node core/scripts/check-backlog-signoff.js --strict
+   node .shiftstone/scripts/check-backlog-signoff.js --strict
    ```
 
 ---
@@ -56,7 +56,7 @@ Procedure for sweeping task backlogs, enforcing maximum task limits, splitting o
 - **L1 (Syntax):** Valid YAML frontmatter across all backlog files.
 - **L2 (Capacity Check):** Zero backlog files exceed 12 open tasks.
 - **L3 (MOC Freshness):** `docs/backlog/MOC.md` links match all active backlog files.
-- **L4 (Sign-Off Check):** `node core/scripts/check-backlog-signoff.js` passes with 0 violations.
+- **L4 (Sign-Off Check):** `node .shiftstone/scripts/check-backlog-signoff.js` passes with 0 violations.
 - **L5 (Git Diff):** Diff confirms only files under `docs/backlog/` were modified.
 
 ---

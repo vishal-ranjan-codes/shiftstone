@@ -11,9 +11,9 @@ cluster, and regression-verify on fix.
 **Invocation:**
 
 ```sh
-node core/harness/cli.js run quality-flywheel-loop      # manual trigger
-node core/harness/cli.js status quality-flywheel-loop   # oversight/budget/state
-node core/harness/cli.js validate quality-flywheel-loop # refusal gate
+node .shiftstone/harness/cli.js run quality-flywheel-loop      # manual trigger
+node .shiftstone/harness/cli.js status quality-flywheel-loop   # oversight/budget/state
+node .shiftstone/harness/cli.js validate quality-flywheel-loop # refusal gate
 ```
 
 **Expected terminal states:**
@@ -27,7 +27,7 @@ node core/harness/cli.js validate quality-flywheel-loop # refusal gate
 | 10 iterations / 30 min wall-clock | `exhausted` |
 
 **Design:** failures come from `evals/runs.jsonl` (written by
-`core/harness/evals/run.js`); the turn script `flywheel.js` clusters by label
+`.shiftstone/harness/evals/run.js`); the turn script `flywheel.js` clusters by label
 and appends one item per cluster to
 `.loops/quality-flywheel-loop/backlog-proposals.md`. Promotion into
 `docs/backlog/` is a human-gated step. Red-green on (A1) with a

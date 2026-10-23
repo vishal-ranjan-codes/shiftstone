@@ -1,4 +1,4 @@
-name: diagnose-loop
+﻿name: diagnose-loop
 description: Detect and fix type/lint compile errors in the core harness (inner-gear, deterministic L1 loop).
 use_when: |
   Type errors, lint failures, or a broken compile state after changes to core/.
@@ -13,15 +13,16 @@ execution:
   baseline: worktree-snapshot
   ordering: worst-first
   steps:
-    - Run pnpm -C core typecheck to enumerate compile errors (worst first)
+    - Run pnpm -C .shiftstone typecheck to enumerate compile errors (worst first)
     - Fix one error per turn with a single targeted edit
     - Re-run typecheck; keep the change only if the error count drops
   skills:
-    - stack
+    - ss-diagnose
     - vitest-testing
+  enumerate: "pnpm -C .shiftstone typecheck"
 verification:
   ladder_level: 1
-  command: "pnpm -C core typecheck"
+  command: "pnpm -C .shiftstone typecheck"
   expected_exit: 0
   red_green: true
   success_streak: 1
@@ -38,8 +39,8 @@ brakes:
 terminal_states:
   success: "typecheck exits 0 after at least one fix turn, red-before/green-after proven"
   no_op: "typecheck already passes before any turn"
-  blocked: "the fix requires credentials or an unavailable toolchain → escalate"
-  stalled: "2 consecutive turns with no reduction in compile errors → abort, preserve work"
+  blocked: "the fix requires credentials or an unavailable toolchain â†’ escalate"
+  stalled: "2 consecutive turns with no reduction in compile errors â†’ abort, preserve work"
   exhausted: "max_iterations or wall-clock ceiling hit"
 memory:
   location: .loops/diagnose-loop/state.json

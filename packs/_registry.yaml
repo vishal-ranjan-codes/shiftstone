@@ -1,7 +1,7 @@
 # Installed packs + active composition (blueprint Appendix C).
-# Rewritten by core/init/seed-governance.js on every composition.
-# Consumed by core/context/skill-paths.ts (skill discovery) and
-# core/scripts/generate-skills-manifest.js (metadata.activePacks).
+# Rewritten by .shiftstone/init/seed-governance.js on every composition.
+# Consumed by .shiftstone/context/skill-paths.ts (skill discovery) and
+# .shiftstone/scripts/generate-skills-manifest.js (metadata.activePacks).
 apiVersion: workspace/v1
 kind: PackRegistry
 activePacks:

@@ -57,7 +57,7 @@ Procedure for conducting technical research, grounding findings in live web sear
 1. Update `docs/research/README.md` table of contents.
 2. Validate dossier:
    ```bash
-   node core/scripts/validate-research.js --dir docs/research/<area>/<slug>
+   node .shiftstone/scripts/validate-research.js --dir docs/research/<area>/<slug>
    ```
 
 ---
@@ -66,7 +66,7 @@ Procedure for conducting technical research, grounding findings in live web sear
 
 - **L1 (Syntax):** All 7 files exist (`00` through `06`) with valid frontmatter.
 - **L2 (Search Receipts):** `06-SOURCES.md` contains $\ge 3$ verified live search receipts.
-- **L3 (Script Check):** `node core/scripts/validate-research.js` passes cleanly.
+- **L3 (Script Check):** `node .shiftstone/scripts/validate-research.js` passes cleanly.
 - **L4 (Checker Review):** Disjoint check verifies conclusion logically follows from findings.
 - **L5 (ADR Linkage):** If adopted, corresponding decision recorded in `docs/decisions/`.
 

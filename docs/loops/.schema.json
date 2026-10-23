@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "docs/loops/.schema.json",
   "title": "Loop runtime state (.loops/<loop>/state.json)",
-  "description": "On-disk LoopState written by core/harness/loop-runner/runner.ts after every turn and at terminal exit (blueprint §7.1, Family D). Validated against docs/loops/_template/state.json.",
+  "description": "On-disk LoopState written by .shiftstone/harness/loop-runner/runner.ts after every turn and at terminal exit (blueprint §7.1, Family D). Validated against docs/loops/_template/state.json.",
   "type": "object",
   "required": [
     "loop",

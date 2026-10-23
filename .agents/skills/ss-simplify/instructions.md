@@ -28,7 +28,7 @@ Procedure for reviewing active diffs, reducing unnecessary complexity, and remov
 ### Phase 1: Pre-Check (Green Baseline)
 1. Run the test and typecheck suites:
    ```bash
-   pnpm -C core test && pnpm typecheck
+   pnpm -C .shiftstone test && pnpm typecheck
    ```
 2. Verify all checks pass cleanly. If any check fails, halt: fix bugs first using `/ss-diagnose`.
 

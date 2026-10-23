@@ -24,11 +24,11 @@ spec:
     - name: "{{PRODUCT_IDENTITY}}"
       type: string
       default: "a SvelteKit + Supabase application"
-      description: One-line product identity injected into core/static-rules/product.md.
+      description: One-line product identity injected into .shiftstone/static-rules/product.md.
     - name: "{{STACK_IDENTITY}}"
       type: string
       default: "SvelteKit, Supabase (PostgreSQL + Auth + RLS), TypeScript strict, Tailwind CSS v4"
-      description: Stack identity line injected into core/static-rules/product.md.
+      description: Stack identity line injected into .shiftstone/static-rules/product.md.
 composition:
   skills:
     include:

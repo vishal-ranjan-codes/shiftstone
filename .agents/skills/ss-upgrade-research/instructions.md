@@ -19,7 +19,7 @@ Procedure for migrating legacy flat research folders into the modern ShiftStone 
 |---|---|
 | *"The old README had no recommendation, so I won't write one."* | **Forbidden.** Synthesize a recommendation from the findings or flag for human review. |
 | *"I'll leave the old README.md alongside the new files."* | **Forbidden.** Delete or archive the old unnumbered README once migration is complete to prevent duplication. |
-| *"I don't need to run the research validator on migrated files."* | **Forbidden.** `node core/scripts/validate-research.js` is required to ensure migration compliance. |
+| *"I don't need to run the research validator on migrated files."* | **Forbidden.** `node .shiftstone/scripts/validate-research.js` is required to ensure migration compliance. |
 
 ---
 
@@ -53,7 +53,7 @@ Procedure for migrating legacy flat research folders into the modern ShiftStone 
    - Update `docs/research/README.md`.
    - Run validator:
      ```bash
-     node core/scripts/validate-research.js --dir docs/research/<area>/<slug>
+     node .shiftstone/scripts/validate-research.js --dir docs/research/<area>/<slug>
      ```
 
 ---
@@ -61,7 +61,7 @@ Procedure for migrating legacy flat research folders into the modern ShiftStone 
 ## Verification Ladder
 
 - **L1 (Syntax):** All 7 files exist with valid frontmatter.
-- **L2 (Completeness):** `node core/scripts/validate-research.js` passes with 0 violations.
+- **L2 (Completeness):** `node .shiftstone/scripts/validate-research.js` passes with 0 violations.
 - **L3 (Content Parity):** Disjoint check confirms zero lost technical data from legacy folder.
 - **L4 (Index Updated):** Master research index points to migrated files.
 - **L5 (Git Diff):** Diff confirms clean migration without dangling files.

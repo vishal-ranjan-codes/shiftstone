@@ -30,43 +30,43 @@ jobs:
         working-directory: core
 
       - name: Anti-duplication (shims, junctions, copied content)
-        run: node core/scripts/check-md-duplication.js --strict
+        run: node .shiftstone/scripts/check-md-duplication.js --strict
 
       - name: IDE folders are junctions, not copies
-        run: node core/scripts/link-ide-folders.js --check
+        run: node .shiftstone/scripts/link-ide-folders.js --check
 
       - name: Skill manifest budgets
-        run: node core/scripts/validate-manifest-budgets.js --strict
+        run: node .shiftstone/scripts/validate-manifest-budgets.js --strict
 
       - name: Loop specs pass the refusal gate
-        run: node core/scripts/validate-loop-specs.js --strict
+        run: node .shiftstone/scripts/validate-loop-specs.js --strict
 
       - name: OKF frontmatter (type + ISO-8601 timestamp)
-        run: node core/scripts/validate-okf-frontmatter.js --strict
+        run: node .shiftstone/scripts/validate-okf-frontmatter.js --strict
 
       - name: Relative link integrity
-        run: node core/scripts/check-link-integrity.js --strict
+        run: node .shiftstone/scripts/check-link-integrity.js --strict
 
       - name: docs/** index freshness
-        run: node core/governance/index.js --check
+        run: node .shiftstone/governance/index.js --check
 
       - name: bible README ToC freshness (generated from chapter frontmatter)
-        run: node core/governance/bible/index.js --check
+        run: node .shiftstone/governance/bible/index.js --check
 
       - name: Bundle logs compiled into the changelog
-        run: node core/scripts/compile-changelog.js --check
+        run: node .shiftstone/scripts/compile-changelog.js --check
 
       - name: Backlog closures carry /verify signatures
-        run: node core/scripts/check-backlog-signoff.js --strict
+        run: node .shiftstone/scripts/check-backlog-signoff.js --strict
 
       - name: Harness-as-code ownership coverage (CODEOWNERS)
-        run: node core/scripts/check-harness-ownership.js --strict
+        run: node .shiftstone/scripts/check-harness-ownership.js --strict
 
       - name: Static context budget (always-on rules + AGENTS + worst shim <= 200)
-        run: node core/scripts/check-rule-budget.js --ci
+        run: node .shiftstone/scripts/check-rule-budget.js --ci
 
       - name: Typecheck
-        run: pnpm -C core typecheck
+        run: pnpm -C .shiftstone typecheck
 
       - name: Tests
-        run: pnpm -C core test
+        run: pnpm -C .shiftstone test

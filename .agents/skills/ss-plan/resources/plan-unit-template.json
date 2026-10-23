@@ -10,7 +10,7 @@
     "UG-01"
   ],
   "targetFiles": [
-    "core/governance/schemas/plan-unit-v1.schema.json"
+    ".shiftstone/governance/schemas/plan-unit-v1.schema.json"
   ],
   "acceptanceCriteria": [
     {
@@ -27,6 +27,6 @@
       "assertion": "Schema validator produces zero errors"
     }
   ],
-  "verificationCommand": "node core/scripts/validate-plan-units.js",
+  "verificationCommand": "node .shiftstone/scripts/validate-plan-units.js",
   "confidenceScore": 0.95
 }

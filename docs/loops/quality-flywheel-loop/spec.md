@@ -1,5 +1,5 @@
-name: quality-flywheel-loop
-description: Continuous quality flywheel — run the eval suites, cluster failures by root cause, open one backlog item per cluster, regression-verify on fix (B5).
+﻿name: quality-flywheel-loop
+description: Continuous quality flywheel â€” run the eval suites, cluster failures by root cause, open one backlog item per cluster, regression-verify on fix (B5).
 use_when: |
   Eval runs have produced failures that need clustering into root causes,
   or a periodic sweep is needed to confirm every failing case is tracked.
@@ -16,19 +16,19 @@ execution:
   baseline: worktree-snapshot
   ordering: worst-first
   steps:
-    - Run every eval suite (node core/harness/evals/run.js) for fresh labeled results
+    - Run every eval suite (node .shiftstone/harness/evals/run.js) for fresh labeled results
     - Read the latest failures and group them by their cluster label
     - Open one backlog item per uncovered cluster in the proposals ledger
     - Regression-verify: after a fix lands, re-run the loop and confirm the cluster closes green
     - Promote closed-cluster backlog items into docs/backlog/ after human review
   skills:
-    - docs
+    - ss-docs
     - vitest-testing
-  enumerate: node core/harness/evals/flywheel.js --list-failures
-  turn_command: node core/harness/evals/flywheel.js
+  enumerate: node .shiftstone/harness/evals/flywheel.js --list-failures
+  turn_command: node .shiftstone/harness/evals/flywheel.js
 verification:
   ladder_level: 1
-  command: node core/harness/evals/flywheel.js --verify
+  command: node .shiftstone/harness/evals/flywheel.js --verify
   expected_exit: 0
   red_green: true
   success_streak: 1
@@ -45,9 +45,9 @@ brakes:
     - promote backlog item
 terminal_states:
   success: "every failing eval case is covered by an open backlog item; red-before/green-after proven on the coverage gate"
-  no_op: "no failing eval cases — the suite is green, nothing to cluster"
-  blocked: "the eval runner cannot execute or the proposals ledger is unwritable → escalate"
-  stalled: "2 consecutive turns without a coverage change → abort, preserve the ledger"
+  no_op: "no failing eval cases â€” the suite is green, nothing to cluster"
+  blocked: "the eval runner cannot execute or the proposals ledger is unwritable â†’ escalate"
+  stalled: "2 consecutive turns without a coverage change â†’ abort, preserve the ledger"
   exhausted: "max_iterations or wall-clock ceiling hit before all failures were clustered"
 memory:
   location: .loops/quality-flywheel-loop/state.json

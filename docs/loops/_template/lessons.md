@@ -36,8 +36,8 @@ stale cache, not a fix.
 
 ## Curation rules (task 5.6)
 
-`node core/scripts/curate-memory.js <loop-id> [--n <runs>] [--dry-run]`
-(`core/harness/memory/curate.ts`) prunes evidence-free lessons when the loop
+`node .shiftstone/scripts/curate-memory.js <loop-id> [--n <runs>] [--dry-run]`
+(`.shiftstone/harness/memory/curate.ts`) prunes evidence-free lessons when the loop
 does not improve:
 
 1. `evidence` contains any `run:` entry → **kept** (the lesson has proof).

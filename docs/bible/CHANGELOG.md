@@ -8,6 +8,13 @@ All notable changes to {{PROJECT_NAME}} will be documented in this file.
 
 ---
 
+## [2026-10-23] — Synced from log.md
+
+### Added
+- [skills] Added ss-sync-engine 3-tier core skill (manual-load) — orchestrates bi-directional engine synchronization between Parent Lab Hub (.shiftstone/) and Child Frameworks with boundary protection (DEC-014)
+
+---
+
 ## [2026-10-21] — Synced from log.md
 
 ### Added
@@ -48,19 +55,19 @@ All notable changes to {{PROJECT_NAME}} will be documented in this file.
 ## [2026-10-17] — Synced from log.md
 
 ### Added
-- [packs] 3 starter packs scaffolded (task 7.5): SvelteKit, Expo React Native and Go/Chi starters — valid manifests + packaging metadata + working scaffold scripts; all 6 packs validate via `node core/init.js --validate`
+- [packs] 3 starter packs scaffolded (task 7.5): SvelteKit, Expo React Native and Go/Chi starters — valid manifests + packaging metadata + working scaffold scripts; all 6 packs validate via `node .shiftstone/init.js --validate`
 
 ---
 
 ## [2026-10-16] — Phase 5: Observability, Cost & Lineage
 
 ### Added
-- Workflow-end cost logging: every slash-command workflow appends exactly one row to `.loops/<id>/runs.jsonl` via `core/scripts/record-run.js` (opt-out: `cost-tracker.enabled: false` in `core/context/cost-tracker.json`).
-- Loop-health dashboard: `node core/scripts/status-dashboard.js` renders Cost per Accepted Change per loop/archetype/week, first-pass success rate, token burn rate, terminal-state histogram and per-loop oversight modes (`core/observability/cac-aggregator.ts`); `/status` embeds it.
-- Loop state schema and memory templates: `docs/loops/.schema.json`, `docs/loops/_template/` (`state.json` + `lessons.md` format); evidence-based lesson curation via `core/harness/memory/curate.ts`.
-- Run-trace visualizer: Mermaid DAG of loop turns (`core/observability/trace-viz.ts`).
-- C9 incremental stage engine: Make-style content hashing of declared Inputs, skip/cascade decisions, `force_rerun` escape hatch (`core/harness/stage-deps.ts`); loop specs gain `execution.incremental`; `schema-sync-loop` refactored onto it and `bible-sync-loop` authored with `core/scripts/bible-sync.js` (3-way diff: code vs bible vs decisions).
-- C10 lineage/semantic-debug tracer (`core/observability/lineage-tracer.ts`) and drift dashboard (`core/observability/drift-dashboard.ts`): walks relative links backward from a deliverable, git-diffs per-stage outputs, reports the first divergent stage + suspect `CONTEXT.md` line, plus bible chapter staleness.
+- Workflow-end cost logging: every slash-command workflow appends exactly one row to `.loops/<id>/runs.jsonl` via `.shiftstone/scripts/record-run.js` (opt-out: `cost-tracker.enabled: false` in `.shiftstone/context/cost-tracker.json`).
+- Loop-health dashboard: `node .shiftstone/scripts/status-dashboard.js` renders Cost per Accepted Change per loop/archetype/week, first-pass success rate, token burn rate, terminal-state histogram and per-loop oversight modes (`.shiftstone/observability/cac-aggregator.ts`); `/status` embeds it.
+- Loop state schema and memory templates: `docs/loops/.schema.json`, `docs/loops/_template/` (`state.json` + `lessons.md` format); evidence-based lesson curation via `.shiftstone/harness/memory/curate.ts`.
+- Run-trace visualizer: Mermaid DAG of loop turns (`.shiftstone/observability/trace-viz.ts`).
+- C9 incremental stage engine: Make-style content hashing of declared Inputs, skip/cascade decisions, `force_rerun` escape hatch (`.shiftstone/harness/stage-deps.ts`); loop specs gain `execution.incremental`; `schema-sync-loop` refactored onto it and `bible-sync-loop` authored with `.shiftstone/scripts/bible-sync.js` (3-way diff: code vs bible vs decisions).
+- C10 lineage/semantic-debug tracer (`.shiftstone/observability/lineage-tracer.ts`) and drift dashboard (`.shiftstone/observability/drift-dashboard.ts`): walks relative links backward from a deliverable, git-diffs per-stage outputs, reports the first divergent stage + suspect `CONTEXT.md` line, plus bible chapter staleness.
 
 ---
 
@@ -74,7 +81,7 @@ All notable changes to {{PROJECT_NAME}} will be documented in this file.
 - [skills] Added bookkeeping skill — one-pass index/link/log/format maintenance with inner-gear boundary (task 6.8)
 
 ### Changed
-- Chapter frontmatter carries title/description; README Table of Contents regenerated from it by core/governance/bible/index.js (task 6.2)
+- Chapter frontmatter carries title/description; README Table of Contents regenerated from it by .shiftstone/governance/bible/index.js (task 6.2)
 - [skills] Bookkeeping repair procedure adds the skills-manifest regeneration step (Phase 6 verification audit)
 
 ---

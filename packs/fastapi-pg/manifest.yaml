@@ -23,11 +23,11 @@ spec:
     - name: "{{PRODUCT_IDENTITY}}"
       type: string
       default: "a FastAPI + PostgreSQL service"
-      description: One-line product identity injected into core/static-rules/product.md.
+      description: One-line product identity injected into .shiftstone/static-rules/product.md.
     - name: "{{STACK_IDENTITY}}"
       type: string
       default: "Python 3.12, FastAPI, PostgreSQL, Pydantic v2, pytest"
-      description: Stack identity line injected into core/static-rules/product.md.
+      description: Stack identity line injected into .shiftstone/static-rules/product.md.
 composition:
   skills:
     include:

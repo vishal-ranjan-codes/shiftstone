@@ -10,7 +10,7 @@ Stable, cross-cutting conventions for this workspace (ICM Layer 3).
 ## Naming & Commits
 
 - Conventional Commits: `type(scope): summary` (feat, fix, docs, chore, refactor, test).
-- Application code follows `core/path-scoped-rules/code-quality.md` (TypeScript strict, explicit return types on exports).
+- Application code follows `.shiftstone/path-scoped-rules/code-quality.md` (TypeScript strict, explicit return types on exports).
 
 ## File Placement
 
@@ -18,7 +18,7 @@ Stable, cross-cutting conventions for this workspace (ICM Layer 3).
 - Plans → `docs/plans/<id>/`; bugs → `docs/bugs/open-bugs.md`; research → `docs/research/`.
 - Reports → `docs/reports/`; periodic snapshots → `docs/status-reports/`; drift outputs → `docs/sync-reports/`.
 - Stage folders carry a `CONTEXT.md` contract (template:
-  `core/governance/stage-contract-template.md`).
+  `.shiftstone/governance/stage-contract-template.md`).
 
 ## Documentation Discipline
 
@@ -31,7 +31,7 @@ Stable, cross-cutting conventions for this workspace (ICM Layer 3).
 
 Every knowledge bundle carries an append-only `log.md` — the chronological
 record agents maintain so history and changelogs survive across sessions —
-plus a generated root `index.md` (`node core/governance/index.js`, shallow:
+plus a generated root `index.md` (`node .shiftstone/governance/index.js`, shallow:
 bundle root only; catalogs stay the skills manifest / pack registry):
 
 | Bundle | Log |
@@ -45,5 +45,5 @@ bundle root only; catalogs stay the skills manifest / pack registry):
   skill at the end of a sync — never edited, reordered or deleted.
 - An empty `Compiled` cell means pending. `/sync-bible` compiles pending
   rows into `docs/bible/CHANGELOG.md` via
-  `node core/scripts/compile-changelog.js` and stamps them.
+  `node .shiftstone/scripts/compile-changelog.js` and stamps them.
 - Keep the `Change` cell a single line without a literal `|` character.

@@ -35,8 +35,8 @@ Any plan or stage contract not materialized in `docs/plans/<suite-name>/` does n
 
 ## Verification Ladder
 
-- **L1 (Lint & Schema):** `node core/scripts/validate-stage-contracts.js` and `node core/scripts/validate-plan-units.js` exit 0 with zero violations.
-- **L2 (Context & Budgets):** `node core/scripts/validate-context-budgets.js` validates all plan files remain within line and byte ceilings.
+- **L1 (Lint & Schema):** `node .shiftstone/scripts/validate-stage-contracts.js` and `node .shiftstone/scripts/validate-plan-units.js` exit 0 with zero violations.
+- **L2 (Context & Budgets):** `node .shiftstone/scripts/validate-context-budgets.js` validates all plan files remain within line and byte ceilings.
 - **L3 (DAG & Traceability):** Dependency graph across `dependsOn` is a proven acyclic DAG with 100% requirement coverage.
 - **L4 (Checker Review):** Disjoint maker-checker review verifies plan against architecture overview and pack checker lenses.
 - **L5 (Human Direction):** Human review and sign-off on scope, risk classes, and milestone sequencing.

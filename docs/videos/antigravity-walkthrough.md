@@ -13,25 +13,25 @@ timestamp: 2026-10-17T05:40:00.000Z
 ```sh
 mkdir my-project && cd my-project
 git clone <framework-url> . 
-node core/init.js --name="MyProject" -y        # or type /init in the Antigravity chat
+node .shiftstone/init.js --name="MyProject" -y        # or type /init in the Antigravity chat
 ```
 
-- Flagship default needs no flags: `node core/init.js --name="MyProject" --clone-starter -y`.
-- Alternative stack: `node core/init.js --archetype=fastapi-pg -y` (zero RR8 tokens in the result).
-- Polyglot: `node core/init.js --archetypes=rr8-supabase-cf,fastapi-pg -y`.
+- Flagship default needs no flags: `node .shiftstone/init.js --name="MyProject" --clone-starter -y`.
+- Alternative stack: `node .shiftstone/init.js --archetype=fastapi-pg -y` (zero RR8 tokens in the result).
+- Polyglot: `node .shiftstone/init.js --archetypes=rr8-supabase-cf,fastapi-pg -y`.
 - Init **stages and commits locally — nothing is pushed** until `/push`.
 
 ## 2. skills — progressive disclosure
 
 - `.agent/` is a junction to `core/`; skills live in `.agents/skills/` (3-tier: `SKILL.md` + `instructions.md` + `resources/`).
-- The skill INDEX in `AGENTS.md` is generated from `core/context/skills-manifest.yaml` — never hand-edit it.
-- Path-scoped loading: opening `apps/web/**` pulls React Router/Supabase/Cloudflare skills; `docs/bible/**` pulls bible rules — within the token budget (`core/context/token-budget.json`).
+- The skill INDEX in `AGENTS.md` is generated from `.shiftstone/context/skills-manifest.yaml` — never hand-edit it.
+- Path-scoped loading: opening `apps/web/**` pulls React Router/Supabase/Cloudflare skills; `docs/bible/**` pulls bible rules — within the token budget (`.shiftstone/context/token-budget.json`).
 
 ## 3. first loop — the harness runs the work
 
 ```sh
-node core/harness/cli.js status diagnose-loop   # inspect a loop
-node core/harness/cli.js run diagnose-loop      # run it end to end
+node .shiftstone/harness/cli.js status diagnose-loop   # inspect a loop
+node .shiftstone/harness/cli.js run diagnose-loop      # run it end to end
 ```
 
 - Reference loops: `diagnose-loop` (L1), `schema-sync-loop` (L1), `new-feature-loop` (L4, outer gear), `bible-sync-loop`, `quality-flywheel-loop`.
@@ -53,5 +53,5 @@ node core/harness/cli.js run diagnose-loop      # run it end to end
 | Question | Read first |
 |---|---|
 | What is this workspace? | `AGENTS.md` (orientation + task routing) |
-| What commands exist? | `core/workflows/README.md` (`/init`, `/new-feature`, `/push`, `/verify`, …) |
-| Which rule applies to this path? | `ANTIGRAVITY.md` → dispatch table in `core/static-rules/global.md` |
+| What commands exist? | `.shiftstone/workflows/README.md` (`/init`, `/new-feature`, `/push`, `/verify`, …) |
+| Which rule applies to this path? | `ANTIGRAVITY.md` → dispatch table in `.shiftstone/static-rules/global.md` |

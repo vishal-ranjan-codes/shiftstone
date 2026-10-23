@@ -38,7 +38,7 @@ Use this table in Development Mode to identify which `docs/bible/` file(s) to up
 | New core systems domain logic | `05-core-systems/core-domain-rules.md` |
 | New UI component or styling token | `07-frontend/ui-architecture.md` |
 | Architecture decision made | `DECISIONS.md` (new DEC-XXX entry) |
-| Any shipped feature or bug fix | `log.md` row → compiled into `CHANGELOG.md` (`node core/scripts/compile-changelog.js`) |
+| Any shipped feature or bug fix | `log.md` row → compiled into `CHANGELOG.md` (`node .shiftstone/scripts/compile-changelog.js`) |
 
 ---
 
@@ -62,7 +62,7 @@ Every architecture decision gets a DEC-XXX entry in `docs/bible/DECISIONS.md`:
 
 Every shipped change is recorded as an append-only `log.md` row (format in
 `_config/conventions.md`) and compiled into `docs/bible/CHANGELOG.md` by
-`node core/scripts/compile-changelog.js` — prefer the log path over a direct
+`node .shiftstone/scripts/compile-changelog.js` — prefer the log path over a direct
 changelog edit, so the record and the changelog cannot drift apart:
 
 ```markdown

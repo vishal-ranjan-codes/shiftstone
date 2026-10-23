@@ -6,10 +6,10 @@ timestamp: 2026-10-12T02:30:05.507Z
 
 | Field | Declaration |
 |---|---|
-| **Purpose** | Canonical, versioned **loop specs** consumed by the Loop Runner (`core/harness/`). Runtime state, baselines and run history live in `.loops/` (gitignored), never here. |
+| **Purpose** | Canonical, versioned **loop specs** consumed by the Loop Runner (`.shiftstone/harness/`). Runtime state, baselines and run history live in `.loops/` (gitignored), never here. |
 | **When populated** | When a new automation loop is authored with the `loop-author` skill; updated when loop behavior changes. |
 | **File types** | `<loop-id>/spec.md` + `README.md`; `_template/` (state.json, lessons.md); `.schema.json` state schema. |
-| **Owner** | Loop author (human + agent) via the `loop-author` skill; specs gate through `core/harness/cli.js validate`. |
+| **Owner** | Loop author (human + agent) via the `loop-author` skill; specs gate through `.shiftstone/harness/cli.js validate`. |
 | **Lifecycle** | Authored → validated (refusal gate) → versioned here → runtime state accumulates in `.loops/`. |
 
 | Loop | Level | Trigger | Purpose |
@@ -24,12 +24,12 @@ timestamp: 2026-10-12T02:30:05.507Z
 pass), then gate the spec:
 
 ```sh
-node core/harness/cli.js validate <loop-id>
+node .shiftstone/harness/cli.js validate <loop-id>
 ```
 
 **Running:**
 
 ```sh
-node core/harness/cli.js run <loop-id>
-node core/harness/cli.js status <loop-id>
+node .shiftstone/harness/cli.js run <loop-id>
+node .shiftstone/harness/cli.js status <loop-id>
 ```

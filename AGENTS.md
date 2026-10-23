@@ -20,30 +20,24 @@ Universal entry point for every AI IDE (ICM Layer 0 identity + Layer 1 task rout
 | Audit, progress, sync report | `docs/reports/` · `docs/status-reports/` · `docs/sync-reports/` |
 | Architecture change (SSOT) | `docs/bible/` (read before code, update after code) |
 | New automation loop | `docs/loops/` — author with the `loop-author` skill |
-| Harness / framework engine code · stack archetype packs (skills, bible overlays, scaffolds) | `core/` · `packs/<pack>/` |
+| Harness / framework engine code · stack archetype packs (skills, bible overlays, scaffolds) | `.shiftstone/` · `packs/<pack>/` |
 | Stable conventions, style, constraints | `_config/` (ICM Layer 3 — referenced from CONTEXT.md) |
 
-## Skill INDEX — generated from `core/context/skills-manifest.yaml`
+## Skill INDEX — generated from `.shiftstone/context/skills-manifest.yaml`
 
 <!-- SKILL-INDEX:BEGIN -->
-- backlog, ci-cd-cloudflare, cloudflare-cron, cloudflare-d1, cloudflare-kv, cloudflare-queues
-- cloudflare-r2, cloudflare-workers, design-tokens, find-skills, graceful-degradation, jobs
-- playwright-e2e, rate-limiting, react-router-actions-forms, react-router-data-loading
-- react-router-error-boundaries, react-router-middleware, react-router-routing, react-router-typegen
-- research-methodology, security-headers, shadcn-ui, ss-add-skill, ss-backlog-sync, ss-bookkeeping
-- ss-brainstorm, ss-brand-naming, ss-bug-report, ss-deploy, ss-diagnose, ss-docs, ss-execute-plan
-- ss-import-research, ss-init, ss-lesson, ss-loop-author, ss-new-cron-job, ss-new-feature
-- ss-new-migration, ss-nexus, ss-plan, ss-push, ss-refresh-research, ss-research, ss-review
-- ss-schema-sync, ss-simplify, ss-status, ss-sync-bible, ss-upgrade-research, ss-upgrade-skill, ss-verify
-- stack, storage, supabase-api-keys, supabase-auth, supabase-migrations, supabase-postgres
-- supabase-realtime, supabase-rls, swarm, tailwind-v4, theme-management, ui, vitest-testing
-- web-design-guidelines, zod-validation
+- backlog, ci-cd-cloudflare, cloudflare-cron, cloudflare-d1, cloudflare-kv, cloudflare-queues, cloudflare-r2, cloudflare-workers, design-tokens, find-skills, graceful-degradation, jobs, playwright-e2e
+- rate-limiting, react-router-actions-forms, react-router-data-loading, react-router-error-boundaries, react-router-middleware, react-router-routing, react-router-typegen, research-methodology
+- security-headers, shadcn-ui, ss-add-skill, ss-backlog-sync, ss-bookkeeping, ss-brainstorm, ss-brand-naming, ss-bug-report, ss-deploy, ss-diagnose, ss-docs, ss-execute-plan, ss-import-research, ss-init
+- ss-lesson, ss-loop-author, ss-new-cron-job, ss-new-feature, ss-new-migration, ss-nexus, ss-plan, ss-push, ss-refresh-research, ss-research, ss-review, ss-schema-sync, ss-simplify, ss-status
+- ss-sync-bible, ss-sync-engine, ss-upgrade-research, ss-upgrade-skill, ss-verify, stack, storage, supabase-api-keys, supabase-auth, supabase-migrations, supabase-postgres, supabase-realtime
+- supabase-rls, swarm, tailwind-v4, theme-management, ui, vitest-testing, web-design-guidelines, zod-validation
 <!-- SKILL-INDEX:END -->
 
 ## Load Order & Canonical Locations
 
-1. `core/static-rules/` — always on: `global.md` (task→rule dispatch + mode detection), `product.md` (identity), `security.md`, `verification.md` (Two-Gear boundary).
-2. `core/path-scoped-rules/*.md` — path-scoped rules, pulled via the dispatch table or `paths:` globs.
-3. Skills — INDEX above; procedural detail loads through `core/context/skills-loader.ts` (budget-enforced).
+1. `.shiftstone/static-rules/` — always on: `global.md` (task→rule dispatch + mode detection), `product.md` (identity), `security.md`, `verification.md` (Two-Gear boundary).
+2. `.shiftstone/path-scoped-rules/*.md` — path-scoped rules, pulled via the dispatch table or `paths:` globs.
+3. Skills — INDEX above; procedural detail loads through `.shiftstone/context/skills-loader.ts` (budget-enforced).
 4. `.agents/skills/ss-*/` — ShiftStone 3-tier core skills and slash commands; `docs/loops/` for autonomous loops.
 5. Each `docs/*/README.md` — purpose registry for the documentation tree (blueprint §10.15).

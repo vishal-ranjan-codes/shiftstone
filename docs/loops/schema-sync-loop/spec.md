@@ -1,8 +1,8 @@
-name: schema-sync-loop
+﻿name: schema-sync-loop
 description: Detect and resolve drift between bible schema, migrations, and generated TypeScript types.
 use_when: Database schema, migrations, or generated types may be out of sync.
 trigger:
-  type: manual   # also fireable via event/git-hook: node core/harness/cli.js trigger schema-sync-loop
+  type: manual   # also fireable via event/git-hook: node .shiftstone/harness/cli.js trigger schema-sync-loop
 goal:
   statement: All 3 sources (docs/bible schema reference, supabase migrations, database types) describe the same schema.
   type: verifiable
@@ -11,7 +11,7 @@ execution:
   baseline: worktree-snapshot
   ordering: worst-first
   steps:
-    - Plan the incremental check (C9): stages whose declared inputs are unchanged since the last clean run are skipped — nothing to parse
+    - Plan the incremental check (C9): stages whose declared inputs are unchanged since the last clean run are skipped â€” nothing to parse
     - Parse docs/bible/03-database/schema-reference.md into a canonical schema
     - Parse supabase/migrations/*.sql into a canonical schema
     - Parse the generated database types into a canonical schema
@@ -21,8 +21,9 @@ execution:
   skills:
     - supabase-migrations
     - supabase-postgres
-    - docs
-  turn_command: "node core/scripts/schema-sync.js --apply"
+    - ss-docs
+  enumerate: "node .shiftstone/scripts/schema-sync.js --check"
+  turn_command: "node .shiftstone/scripts/schema-sync.js --apply"
   incremental:
     state: .loops/schema-sync-loop/stage-deps.json
     stages:
@@ -37,7 +38,7 @@ execution:
           - apps/web/app/types/database.types.ts
 verification:
   ladder_level: 1
-  command: "node core/scripts/schema-sync.js --check"
+  command: "node .shiftstone/scripts/schema-sync.js --check"
   expected_exit: 0
   red_green: true
   success_streak: 1
@@ -54,8 +55,8 @@ brakes:
 terminal_states:
   success: "All 3 sources match and --check exits 0 (red-before/green-after proven)"
   no_op: "All 3 sources already match before any turn, or their fingerprints are unchanged since the last clean run (C9 incremental skip)"
-  blocked: "Supabase not configured (source missing) → escalate"
-  stalled: "2 consecutive turns with no diff reduction → abort"
+  blocked: "Supabase not configured (source missing) â†’ escalate"
+  stalled: "2 consecutive turns with no diff reduction â†’ abort"
   exhausted: "max_iterations or max_tokens hit"
 memory:
   location: .loops/schema-sync-loop/state.json

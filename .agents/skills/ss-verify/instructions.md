@@ -49,7 +49,7 @@ Procedure for running the 5-Step Verification Gate and spawning a disjoint Check
 
 ### Step 4: Disjoint Checker Subagent Evaluation
 - Spawn a Checker subagent using [resources/checker-prompt.md](./resources/checker-prompt.md).
-- Model selection resolves via `core/context/model-routing.yaml` (task-class advisory tiers with maker-disjoint Checker family).
+- Model selection resolves via `.shiftstone/context/model-routing.yaml` (task-class advisory tiers with maker-disjoint Checker family).
 - Checker evaluates the 5 Universal Dimensions (`task_success`, `tool_use_quality`, `trajectory_compliance`, `hallucination`, `response_quality`).
 - Compute normalized score and evaluate Gate A and Gate B.
 
@@ -69,7 +69,7 @@ When verifying a production release bundle (`docs/reports/release-evidence/REL-v
    ```
 2. Validate release certification bundle:
    ```bash
-   node core/scripts/validate-release-evidence.js
+   node .shiftstone/scripts/validate-release-evidence.js
    ```
    Requires:
    - Green L1 (typecheck/lint), L1.5 (anti-gaming), L2 (tests), L3 (build/smoke).

@@ -26,7 +26,7 @@ Procedure for evaluating, refactoring, and hardening external or legacy skills t
 ## Step-by-Step Hardening Procedure
 
 1. **Initial Audit:**
-   - Run `node core/scripts/validate-skills-completeness.js` against the target skill.
+   - Run `node .shiftstone/scripts/validate-skills-completeness.js` against the target skill.
    - Note line count overruns, missing frontmatter, missing mandatory sections, or broken links.
 
 2. **Refactor to 3 Tiers:**
@@ -42,9 +42,9 @@ Procedure for evaluating, refactoring, and hardening external or legacy skills t
 
 4. **Verify & Re-index:**
    ```bash
-   node core/scripts/generate-skills-manifest.js
-   node core/scripts/validate-skills-completeness.js
-   node core/scripts/validate-context-budgets.js
+   node .shiftstone/scripts/generate-skills-manifest.js
+   node .shiftstone/scripts/validate-skills-completeness.js
+   node .shiftstone/scripts/validate-context-budgets.js
    ```
 
 ---
@@ -52,8 +52,8 @@ Procedure for evaluating, refactoring, and hardening external or legacy skills t
 ## Verification Ladder
 
 - **L1 (Syntax):** Valid YAML frontmatter and well-formed markdown.
-- **L2 (Completeness):** `node core/scripts/validate-skills-completeness.js` exits 0.
-- **L3 (Budget Gate):** `node core/scripts/validate-context-budgets.js` exits 0.
+- **L2 (Completeness):** `node .shiftstone/scripts/validate-skills-completeness.js` exits 0.
+- **L3 (Budget Gate):** `node .shiftstone/scripts/validate-context-budgets.js` exits 0.
 - **L4 (Checker Review):** Disjoint check confirms zero lost technical knowledge from original.
 - **L5 (Git Clean):** Staged diff confirms clean, formatted files.
 

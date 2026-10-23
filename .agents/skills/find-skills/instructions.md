@@ -139,13 +139,13 @@ This workspace owns its skill tree (`.agents/skills/` is the canonical view; `.c
 
 4. **Register**:
    - Add the gitignore negation for core skills: `!/.agents/skills/<name>/` (otherwise the skill is silently untracked).
-   - Declare `tier`/`paths`/`depends_on` in `core/scripts/generate-skills-manifest.js` CONFIG (`manual-load` unless discovery should be automatic).
-   - Run `node core/scripts/generate-skills-manifest.js` (rewrites `core/context/skills-manifest.yaml` + the AGENTS.md Skill INDEX).
-   - Append a row to `.agents/skills/log.md` and run `node core/scripts/compile-changelog.js`.
+   - Declare `tier`/`paths`/`depends_on` in `.shiftstone/scripts/generate-skills-manifest.js` CONFIG (`manual-load` unless discovery should be automatic).
+   - Run `node .shiftstone/scripts/generate-skills-manifest.js` (rewrites `.shiftstone/context/skills-manifest.yaml` + the AGENTS.md Skill INDEX).
+   - Append a row to `.agents/skills/log.md` and run `node .shiftstone/scripts/compile-changelog.js`.
 
 5. **Gate**: `pnpm parity` must pass (manifest budgets, OKF frontmatter, links, indexes).
 
 ## See also
 
-- [skills-author](../skills-author/instructions.md) — authoring and registering skills in this workspace
-- [bookkeeping](../bookkeeping/instructions.md) — bundle index/log maintenance when a skill move leaves stale records
+- [skills-author](../ss-add-skill/instructions.md) — authoring and registering skills in this workspace
+- [bookkeeping](../ss-bookkeeping/instructions.md) — bundle index/log maintenance when a skill move leaves stale records

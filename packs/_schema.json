@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://universal-ai-workspace-framework.dev/packs/_schema.json",
   "title": "Stack Archetype Pack Manifest",
-  "description": "Registration contract for packs/<name>/manifest.yaml (blueprint section 5.2). Validated by core/init/schema-validate.js.",
+  "description": "Registration contract for packs/<name>/manifest.yaml (blueprint section 5.2). Validated by .shiftstone/init/schema-validate.js.",
   "type": "object",
   "required": ["apiVersion", "kind", "metadata", "spec", "composition"],
   "additionalProperties": false,
@@ -113,11 +113,11 @@
         "scaffold_script": { "type": "string" },
         "path_scoped_rules": {
           "type": "string",
-          "description": "Pack-owned path-scoped rule files layered into core/path-scoped-rules/ at composition."
+          "description": "Pack-owned path-scoped rule files layered into .shiftstone/path-scoped-rules/ at composition."
         },
         "workflows": {
           "type": "string",
-          "description": "Pack-owned workflow files layered over core/workflows/ at composition."
+          "description": "Pack-owned workflow files layered over .shiftstone/workflows/ at composition."
         },
         "commandcode": {
           "type": "object",

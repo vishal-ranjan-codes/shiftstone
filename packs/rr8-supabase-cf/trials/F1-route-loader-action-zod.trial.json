@@ -47,7 +47,7 @@
   },
   "checkerLenses": [
     "packs/rr8-supabase-cf/checker-lenses/route-loader-action.lens.json",
-    "core/governance/checker-lenses/security-invariants.lens.json"
+    ".shiftstone/governance/checker-lenses/security-invariants.lens.json"
   ],
   "makerFixture": {
     "files": [

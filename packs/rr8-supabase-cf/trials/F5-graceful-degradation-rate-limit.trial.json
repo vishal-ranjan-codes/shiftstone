@@ -45,7 +45,7 @@
   },
   "checkerLenses": [
     "packs/rr8-supabase-cf/checker-lenses/cloudflare-edge-runtime.lens.json",
-    "core/governance/checker-lenses/architecture-boundaries.lens.json"
+    ".shiftstone/governance/checker-lenses/architecture-boundaries.lens.json"
   ],
   "makerFixture": {
     "files": [

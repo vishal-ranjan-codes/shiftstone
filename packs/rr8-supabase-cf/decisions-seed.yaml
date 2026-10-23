@@ -1,5 +1,5 @@
 # Seeded Architecture Decision Records for this pack (phase 4, task 4.5).
-# Rendered into docs/bible/DECISIONS.md by core/init/seed-governance.js
+# Rendered into docs/bible/DECISIONS.md by .shiftstone/init/seed-governance.js
 # when the pack is composed into a workspace.
 apiVersion: workspace/v1
 kind: DecisionSeed

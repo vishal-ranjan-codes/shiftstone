@@ -39,10 +39,10 @@ Execute one question at a time via `ask_question`:
 ## Verification Ladder
 
 - **L1 (Syntax):** YAML frontmatter parses cleanly without syntax errors.
-- **L2 (Harness Refusal Gate):** `node core/harness/cli.js validate <loop-id>` exits 0.
+- **L2 (Harness Refusal Gate):** `node .shiftstone/harness/cli.js validate <loop-id>` exits 0.
 - **L3 (Budget Gate):** Spec line count $\le 200$ lines.
 - **L4 (Checker Review):** Disjoint check verifies all 5 terminal states and named skill references.
-- **L5 (Dry Run):** `node core/harness/cli.js run <loop-id>` executes first turn cleanly.
+- **L5 (Dry Run):** `node .shiftstone/harness/cli.js run <loop-id>` executes first turn cleanly.
 
 ---
 

@@ -1,5 +1,5 @@
 # packs/rr8-supabase-cf — flagship archetype (blueprint section 5.2).
-# Validated against packs/_schema.json by core/init/validate-manifest.js.
+# Validated against packs/_schema.json by .shiftstone/init/validate-manifest.js.
 apiVersion: workspace/v1
 kind: StackArchetype
 metadata:
@@ -24,11 +24,11 @@ spec:
     - name: "{{PRODUCT_IDENTITY}}"
       type: string
       default: "a full-stack React Router 8 + Supabase + Cloudflare application"
-      description: One-line product identity injected into core/static-rules/product.md.
+      description: One-line product identity injected into .shiftstone/static-rules/product.md.
     - name: "{{STACK_IDENTITY}}"
       type: string
       default: "React Router 8 (framework mode), Supabase (PostgreSQL + Auth + RLS), Cloudflare Workers (Edge runtime), TypeScript strict, {{MONOREPO_OR_SINGLE}}, Tailwind CSS v4, shadcn/ui"
-      description: Stack identity line injected into core/static-rules/product.md.
+      description: Stack identity line injected into .shiftstone/static-rules/product.md.
     - name: "{{SUPABASE_TYPES_CMD}}"
       type: string
       default: "{{PACKAGE_MANAGER}} --filter {{NPM_PACKAGE_NAME}} supabase:types"

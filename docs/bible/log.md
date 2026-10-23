@@ -9,12 +9,12 @@ Append-only chronological record of changes to the bible bundle (OKF C6,
 convention: `_config/conventions.md`). `/sync-bible` and the `bookkeeping`
 skill append rows at the end of a sync; rows are never edited or reordered.
 Pending rows (empty `Compiled` cell) are compiled into
-`docs/bible/CHANGELOG.md` by `node core/scripts/compile-changelog.js`.
+`docs/bible/CHANGELOG.md` by `node .shiftstone/scripts/compile-changelog.js`.
 
 | Date | Scope | Change | Kind | Compiled |
 |---|---|---|---|---|
 | 2026-10-16 | bible | log.md bootstrap — append-only chronological record for the bible bundle (task 6.7) | Added | 2026-10-16 |
-| 2026-10-16 | bible | Chapter frontmatter carries title/description; README Table of Contents regenerated from it by core/governance/bible/index.js (task 6.2) | Changed | 2026-10-16 |
+| 2026-10-16 | bible | Chapter frontmatter carries title/description; README Table of Contents regenerated from it by .shiftstone/governance/bible/index.js (task 6.2) | Changed | 2026-10-16 |
 | 2026-10-16 | bible | /sync-bible now runs in the outer gear: mechanical 3-way drift detection, mandatory Checker sign-off before any doc edit, log append and changelog compilation in the same run (tasks 6.3/6.9) | Added | 2026-10-16 |
 | 2026-10-19 | core | Hardened CI & enforcement gates (WS-F): junction-slot tracked files check, static-budget CI gate, pnpm across GitHub Actions workflows, and verification test additions (WS-G) | Changed | 2026-10-19 |
 | 2026-10-20 | core | Universal Workspace Framework v2.1 Phase 1 implemented (UG-01 to UG-06): validate-context-budgets, validate-context-integrity, setup-ide-junctions, verify-ide-parity, and validate-manifest | Added | 2026-10-20 |

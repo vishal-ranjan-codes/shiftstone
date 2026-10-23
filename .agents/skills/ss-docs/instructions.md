@@ -44,7 +44,7 @@ Procedural reference mapping every code change to the exact Single Source of Tru
 
 - **L1 (Syntax):** Markdown formatting valid; OKF frontmatter present.
 - **L2 (Existence):** All referenced code symbols and files exist on disk.
-- **L3 (Parity Check):** `node core/scripts/bible-sync.js` reports 0 contract drift.
+- **L3 (Parity Check):** `node .shiftstone/scripts/bible-sync.js` reports 0 contract drift.
 - **L4 (Checker Review):** Disjoint Checker verifies accuracy against implemented code.
 - **L5 (Sign-Off):** Backlog item marked verified with documentation updated.
 

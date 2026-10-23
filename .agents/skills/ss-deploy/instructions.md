@@ -6,10 +6,10 @@ Procedure for executing pre-flight quality checks, Level 5 human deployment sign
 
 ## Iron Law
 
-1. **Level 5 Protected Action Gate (UG-23, UG-24):** ⛔ STOP — Production deploy is a Level 5 protected action (`actionClass: "production-deploy"`). Never deploy without an active, non-expired human approval artifact in `core/governance/approvals/APR-*.json`. Missing approval halts deterministically in terminal state `blocked`.
+1. **Level 5 Protected Action Gate (UG-23, UG-24):** ⛔ STOP — Production deploy is a Level 5 protected action (`actionClass: "production-deploy"`). Never deploy without an active, non-expired human approval artifact in `.shiftstone/governance/approvals/APR-*.json`. Missing approval halts deterministically in terminal state `blocked`.
 2. **Zero-Defect Pre-Flight & Workspace Pipeline:** Pre-flight checks (`pnpm typecheck`, `pnpm test`, `pnpm build`) and workspace validation (`npm run validate:workspace`) MUST pass with 0 errors and 0 failures. Never deploy broken or untested code.
 3. **Never Commit Secrets:** Production secrets and credentials must be injected via platform secret stores or encrypted environment variables. Never commit `.env` or raw API keys.
-4. **Mandatory Post-Deploy Smoke Test & Release Evidence:** Every deployment must verify live health endpoints (`/api/health`) and certify evidence with `node core/scripts/validate-release-evidence.js`.
+4. **Mandatory Post-Deploy Smoke Test & Release Evidence:** Every deployment must verify live health endpoints (`/api/health`) and certify evidence with `node .shiftstone/scripts/validate-release-evidence.js`.
 
 ---
 
@@ -37,9 +37,9 @@ Confirm zero errors. Verify that all required production secrets are configured 
 ### Phase 2: Level 5 Protected Action Approval Gate
 1. Verify active human approval artifact exists:
    ```bash
-   node core/scripts/validate-protected-actions.js
+   node .shiftstone/scripts/validate-protected-actions.js
    ```
-2. Confirm the approval in `core/governance/approvals/APR-*.json`:
+2. Confirm the approval in `.shiftstone/governance/approvals/APR-*.json`:
    - `actionClass === "production-deploy"`
    - `status === "active"`
    - `expiresAt > now`
@@ -62,7 +62,7 @@ Monitor build output, verify release hashes, and record production URL.
 1. Append deployment release entry to `docs/bible/CHANGELOG.md`.
 2. Validate release evidence bundle:
    ```bash
-   node core/scripts/validate-release-evidence.js
+   node .shiftstone/scripts/validate-release-evidence.js
    ```
 
 ---
@@ -71,7 +71,7 @@ Monitor build output, verify release hashes, and record production URL.
 
 - **L1 (Pre-Flight):** Typecheck, unit test, build, and `validate:workspace` exit 0.
 - **L2 (Secret Guard):** Secret scanner confirms zero credentials in git diff.
-- **L3 (Human Gate):** Active Level 5 human approval artifact present in `core/governance/approvals/`.
+- **L3 (Human Gate):** Active Level 5 human approval artifact present in `.shiftstone/governance/approvals/`.
 - **L4 (Smoke Test):** Live `/api/health` returns status 200 OK.
 - **L5 (Release Evidence & Changelog):** `validate-release-evidence.js` passes and `CHANGELOG.md` updated.
 

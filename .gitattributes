@@ -1,0 +1,24 @@
+# ShiftStone Universal Framework Git Attributes
+# Auto-detect text files and normalize line endings to LF on checkout and commit.
+# This prevents Windows CRLF shebang crashes in Vitest/Node (#!/usr/bin/env node\r\n).
+* text=auto eol=lf
+
+# Windows command files must keep CRLF
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Shell scripts must strictly use LF
+*.sh text eol=lf
+*.bash text eol=lf
+*.zsh text eol=lf
+
+# Binary files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.woff binary
+*.woff2 binary
+*.ttf binary

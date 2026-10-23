@@ -1,4 +1,4 @@
-name: new-feature-loop
+﻿name: new-feature-loop
 description: Implement a new feature from approved spec to verified completion (outer-gate, L4 maker-checker).
 use_when: |
   Adding a new feature whose spec is already approved and implementation-ready.
@@ -20,13 +20,13 @@ execution:
     - Update docs/bible/ if any new contract was introduced
     - Mark the backlog task as [/] (in-progress)
   skills:
-    - stack
+    - ss-new-feature
     - vitest-testing
-    - docs
-  enumerate: "node core/scripts/feature-status.js --enumerate"
+    - ss-docs
+  enumerate: "node .shiftstone/scripts/feature-status.js --enumerate"
 verification:
   ladder_level: 4
-  command: "node core/scripts/feature-status.js --check"
+  command: "node .shiftstone/scripts/feature-status.js --check"
   expected_exit: 0
   rubric:
     dimensions:
@@ -64,7 +64,7 @@ brakes:
     # first stage: direction is approved by a human before anything runs
     # (paired with the blocked terminal state: "Spec not approved")
     - "approve spec"
-    # last stage: alignment — the close-out action needs human sign-off
+    # last stage: alignment â€” the close-out action needs human sign-off
     # (paired with the L4 maker-checker verdict via /verify)
     - "mark the backlog task as [x]"
     - "git push"
@@ -73,9 +73,9 @@ brakes:
 terminal_states:
   success: "L4 score >= 0.8 for 2 consecutive turns + feature checks pass + enumeration satisfied"
   no_op: "Pre-check shows the feature is already implemented, verified and merged"
-  blocked: "Spec not approved, missing credentials, or human review requested → escalate"
-  stalled: "2 consecutive turns with no progress → abort, preserve worktree"
-  exhausted: "Any budget ceiling hit → abort, partial work only if verified"
+  blocked: "Spec not approved, missing credentials, or human review requested â†’ escalate"
+  stalled: "2 consecutive turns with no progress â†’ abort, preserve worktree"
+  exhausted: "Any budget ceiling hit â†’ abort, partial work only if verified"
 memory:
   location: .loops/new-feature-loop/state.json
   format: markdown

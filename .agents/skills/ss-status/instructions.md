@@ -45,7 +45,7 @@ For tasks in the active sub-phase, cross-reference the filesystem:
    ```
 2. Run loop health dashboard (if telemetry is active):
    ```bash
-   node core/scripts/status-dashboard.js
+   node .shiftstone/scripts/status-dashboard.js
    ```
 
 ### Phase 4: Output Status Report

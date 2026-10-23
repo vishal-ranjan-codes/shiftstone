@@ -62,7 +62,7 @@ This Map of Content serves as the single source of truth for the {{PROJECT_NAME}
 - `[ ]` → `[/]` when work starts (no ceremony).
 - `[/]` → `[x]` **only** after `/ss-verify <task-id>` returns a Checker verdict ≥ 0.8, with the
   signature appended: `- [x] <task> — verified by <model-family> @ <score> (<date>)`.
-- Unsigned closures fail `node core/scripts/check-backlog-signoff.js --strict` in CI.
+- Unsigned closures fail `node .shiftstone/scripts/check-backlog-signoff.js --strict` in CI.
 
 ### AI Auto-Maintenance & Splitting Rules
 - **Threshold limit**: No active backlog file should exceed **12 unresolved tasks**.

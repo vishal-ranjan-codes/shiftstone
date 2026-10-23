@@ -18,8 +18,8 @@ Three-way diff over the SSOT surfaces of the workspace:
 **Run:**
 
 ```sh
-node core/scripts/bible-sync.js --report   # JSON update plan (the drift list)
-node core/harness/cli.js run bible-sync-loop
+node .shiftstone/scripts/bible-sync.js --report   # JSON update plan (the drift list)
+node .shiftstone/harness/cli.js run bible-sync-loop
 ```
 
 **Incremental (C9):** declared stage inputs (`docs/bible`, the pack decisions

@@ -17,7 +17,7 @@ Catalog manager procedure for maintaining knowledge bundles across `docs/`, `pac
 | Excuse / Rationalization | Reality & Anti-Bypass Rule |
 |---|---|
 | *"I can rephrase this architecture claim to sound cleaner."* | **Forbidden.** Bookkeeping must not alter document meaning. Flag semantic issues for human review. |
-| *"I'll hand-edit the ToC in README.md."* | **Forbidden.** Indexes and ToCs are machine-generated (`core/governance/index.js`). Hand-edits get wiped on next run. |
+| *"I'll hand-edit the ToC in README.md."* | **Forbidden.** Indexes and ToCs are machine-generated (`.shiftstone/governance/index.js`). Hand-edits get wiped on next run. |
 | *"I don't need to update log.md for small fixes."* | **Forbidden.** Every knowledge bundle touched must record an append-only row in its `log.md`. |
 
 ---
@@ -26,31 +26,31 @@ Catalog manager procedure for maintaining knowledge bundles across `docs/`, `pac
 
 1. **Run Detectors:**
    ```bash
-   node core/governance/index.js --check
-   node core/governance/bible/index.js --check
-   node core/scripts/check-link-integrity.js
-   node core/scripts/validate-okf-frontmatter.js
+   node .shiftstone/governance/index.js --check
+   node .shiftstone/governance/bible/index.js --check
+   node .shiftstone/scripts/check-link-integrity.js
+   node .shiftstone/scripts/validate-okf-frontmatter.js
    ```
 
 2. **Sequential One-Pass Resolution:**
-   - Stale/missing `index.md`: run `node core/governance/index.js`.
-   - Stale Bible ToC: run `node core/governance/bible/index.js`.
+   - Stale/missing `index.md`: run `node .shiftstone/governance/index.js`.
+   - Stale Bible ToC: run `node .shiftstone/governance/bible/index.js`.
    - Broken relative link: retarget to the canonical file in `index.md`; if missing, flag for human.
-   - Missing OKF frontmatter: run `node core/scripts/validate-okf-frontmatter.js --fix`.
-   - Changed skills: run `node core/scripts/generate-skills-manifest.js`.
+   - Missing OKF frontmatter: run `node .shiftstone/scripts/validate-okf-frontmatter.js --fix`.
+   - Changed skills: run `node .shiftstone/scripts/generate-skills-manifest.js`.
 
 3. **Append Bundle Records:**
    - Append rows to `log.md` in affected bundles (`docs/log.md`, `packs/log.md`, `.agents/skills/log.md`).
-   - Run `node core/scripts/compile-changelog.js`.
+   - Run `node .shiftstone/scripts/compile-changelog.js`.
 
 ---
 
 ## Verification Ladder
 
-- **L1 (Syntax):** `node core/scripts/validate-okf-frontmatter.js` passes cleanly.
-- **L2 (Link Integrity):** `node core/scripts/check-link-integrity.js` reports 0 broken links.
-- **L3 (Index Freshness):** `node core/governance/index.js --check` confirms all indexes fresh.
-- **L4 (Changelog Parity):** `node core/scripts/compile-changelog.js` completes with 0 errors.
+- **L1 (Syntax):** `node .shiftstone/scripts/validate-okf-frontmatter.js` passes cleanly.
+- **L2 (Link Integrity):** `node .shiftstone/scripts/check-link-integrity.js` reports 0 broken links.
+- **L3 (Index Freshness):** `node .shiftstone/governance/index.js --check` confirms all indexes fresh.
+- **L4 (Changelog Parity):** `node .shiftstone/scripts/compile-changelog.js` completes with 0 errors.
 - **L5 (Human Review):** Human checks git diff of catalog changes.
 
 ---

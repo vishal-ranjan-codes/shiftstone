@@ -1,6 +1,6 @@
 # Harness-as-code ownership (amendment B11, task 6.6).
 # Harness files change only via PR with the checklist in
-# core/static-rules/governance.md. GitHub requests the listed owner's review
+# .shiftstone/static-rules/governance.md. GitHub requests the listed owner's review
 # on every PR touching these paths; solo repositories degrade to the
 # self-review checklist (same rule, same paths).
 
@@ -11,8 +11,8 @@
 /COMMANDCODE.md            @vishal-ranjan-codes
 
 # Rules
-/core/static-rules/        @vishal-ranjan-codes
-/core/path-scoped-rules/   @vishal-ranjan-codes
+/.shiftstone/static-rules/        @vishal-ranjan-codes
+/.shiftstone/path-scoped-rules/   @vishal-ranjan-codes
 
 # Evals
 /evals/                    @vishal-ranjan-codes

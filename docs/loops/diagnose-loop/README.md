@@ -10,9 +10,9 @@ green typecheck/lint state after changes.
 **Invocation:**
 
 ```sh
-node core/harness/cli.js run diagnose-loop      # manual trigger
-node core/harness/cli.js status diagnose-loop   # oversight/budget/state
-node core/harness/cli.js validate diagnose-loop # refusal gate
+node .shiftstone/harness/cli.js run diagnose-loop      # manual trigger
+node .shiftstone/harness/cli.js status diagnose-loop   # oversight/budget/state
+node .shiftstone/harness/cli.js validate diagnose-loop # refusal gate
 ```
 
 **Expected terminal states:**

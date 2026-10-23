@@ -7,7 +7,7 @@ timestamp: 2026-10-12T00:00:00Z
 
 Hard workspace constraints (ICM Layer 3). These are limits, not advice.
 
-## Context Budgets (`core/context/token-budget.json`)
+## Context Budgets (`.shiftstone/context/token-budget.json`)
 
 - Static context: ≤ **200 lines** per IDE (Layer 0 + 1 + 2 combined); root shims ≤ **50 lines** each.
 - Dynamic context: ≤ **8 000 tokens** loaded per turn (skills instructions, budget-enforced by the loader).

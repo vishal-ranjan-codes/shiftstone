@@ -4,7 +4,7 @@ activation: always
 
 # {{PROJECT_NAME}} — Workspace Initialization Rules
 
-This rule is active when the project directory is detected as **Uninitialized** (i.e. `apps/web/package.json` or `docs/` is missing, but `core/init.js` is present in the workspace).
+This rule is active when the project directory is detected as **Uninitialized** (i.e. `apps/web/package.json` or `docs/` is missing, but `.shiftstone/init.js` is present in the workspace).
 
 ---
 
@@ -30,7 +30,7 @@ Greet the user and request key details about their SaaS concept. Keep it concise
 Once the user describes their concept, propose running the automated setup command (the archetype composer) that clones the official starter boilerplate from GitHub, customizes the workspace, and prepares the Dual-Repo Git architecture:
 
 ```powershell
-node core/init.js --name="MySaaS" --gh-user="my-github-user" --skills="stripe,resend" --layout="monorepo" --pm="pnpm" --clone-starter -y
+node .shiftstone/init.js --name="MySaaS" --gh-user="my-github-user" --skills="stripe,resend" --layout="monorepo" --pm="pnpm" --clone-starter -y
 ```
 
 Add `--archetype=<pack>` (or `--archetypes=<a>,<b>`) to compose a non-default or multiple stack archetypes.

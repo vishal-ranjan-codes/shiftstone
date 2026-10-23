@@ -7,7 +7,7 @@ Procedure for auditing database schema consistency across Bible documentation, S
 ## Iron Law
 
 1. **3-Way Consistency:** All 3 representations (Bible documentation, SQL migration files, generated TypeScript types) MUST agree. If any one differs, the system is in an unverified state.
-2. **Automated Detection First:** Run `node core/scripts/schema-sync.js` before manual inspection.
+2. **Automated Detection First:** Run `node .shiftstone/scripts/schema-sync.js` before manual inspection.
 3. **Physical Sync Receipt:** Output audit results directly to `docs/sync-reports/<YYYY-MM-DD>-schema-sync.md`. Never output to temporary IDE brain artifacts.
 4. **Remediation Order:** Fix missing migrations via `/ss-new-migration`, regenerate types via the pack typegen script (e.g. `npm run db:types`), and update `docs/bible/03-database/schema-reference.md`.
 
@@ -27,7 +27,7 @@ Procedure for auditing database schema consistency across Bible documentation, S
 
 ### Step 1: Run Deterministic Alignment Script
 ```bash
-node core/scripts/schema-sync.js
+node .shiftstone/scripts/schema-sync.js
 ```
 - If 3 sources match $\rightarrow$ record clean status.
 - If drift detected $\rightarrow$ analyze 3-way table.
@@ -59,7 +59,7 @@ Write report to `docs/sync-reports/<YYYY-MM-DD>-schema-sync.md`:
 
 - **L1 (Syntax):** SQL files and generated type files parse cleanly.
 - **L2 (Typecheck):** `pnpm typecheck` exits 0 with active schema types.
-- **L3 (Script Check):** `node core/scripts/schema-sync.js` reports all 3 sources match.
+- **L3 (Script Check):** `node .shiftstone/scripts/schema-sync.js` reports all 3 sources match.
 - **L4 (Checker Review):** Disjoint check confirms zero undocumented columns.
 - **L5 (Receipt):** Sync report saved to `docs/sync-reports/`.
 

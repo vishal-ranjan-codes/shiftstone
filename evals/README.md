@@ -18,9 +18,9 @@ evals/
 ## Running
 
 ```sh
-node core/harness/evals/run.js               # all suites, warn mode
-node core/harness/evals/run.js --suite X     # one suite
-node core/harness/evals/run.js --strict      # CI gate: exit 1 on regression
+node .shiftstone/harness/evals/run.js               # all suites, warn mode
+node .shiftstone/harness/evals/run.js --suite X     # one suite
+node .shiftstone/harness/evals/run.js --strict      # CI gate: exit 1 on regression
 ```
 
 CI runs every suite on push/PR via `.github/workflows/evals-in-ci.yml`.
@@ -40,5 +40,5 @@ A loop runs its registered suite each verification turn via
 | `tags` | no | Freeform labels |
 
 `rubric` cases are skipped by the runner — scoring against the 5-dimension
-schema (`core/harness/evals/rubric-schema.json`) is the L4 Checker's job
+schema (`.shiftstone/harness/evals/rubric-schema.json`) is the L4 Checker's job
 during loop verification, where the judge returns per-dimension scores.

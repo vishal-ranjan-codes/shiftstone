@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { loadPreflightMatrices, runSelfTest } from '../../../core/scripts/agent-preflight.js';
+import { loadPreflightMatrices, runSelfTest } from '../../../.shiftstone/scripts/agent-preflight.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
 const MATRIX_PATH = path.join(ROOT, 'packs', 'rr8-supabase-cf', 'preflight-matrix.yaml');

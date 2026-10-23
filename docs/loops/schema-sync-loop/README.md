@@ -10,10 +10,10 @@ reference, Supabase migrations, and generated TypeScript types.
 **Invocation:**
 
 ```sh
-node core/harness/cli.js run schema-sync-loop       # manual trigger
-node core/harness/cli.js trigger schema-sync-loop   # event/git-hook receiver
-node core/harness/cli.js watch schema-sync-loop     # file-watch trigger
-node core/harness/cli.js status schema-sync-loop
+node .shiftstone/harness/cli.js run schema-sync-loop       # manual trigger
+node .shiftstone/harness/cli.js trigger schema-sync-loop   # event/git-hook receiver
+node .shiftstone/harness/cli.js watch schema-sync-loop     # file-watch trigger
+node .shiftstone/harness/cli.js status schema-sync-loop
 ```
 
 **Expected terminal states:**

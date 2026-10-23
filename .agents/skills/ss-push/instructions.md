@@ -44,7 +44,7 @@ Read `.workspace-git.json` from the workspace root:
 ### Step 3: Run Secret Scanner Guard
 Verify zero secrets in staged diffs:
 ```bash
-node core/harness/hooks/pre-commit.js
+node .shiftstone/harness/hooks/pre-commit.js
 ```
 
 ### Step 4: Execute Sequential Remote Push

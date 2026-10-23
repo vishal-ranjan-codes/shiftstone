@@ -57,7 +57,7 @@ When you assign a coding task to an AI agent, the agent coordinates the backlog 
 ```
 
 **Hard rule (task 6.4):** no agent, workflow, or git-scan may write `[x]` without
-the `— verified by …` signature — `node core/scripts/check-backlog-signoff.js --strict`
+the `— verified by …` signature — `node .shiftstone/scripts/check-backlog-signoff.js --strict`
 (part of `pnpm parity` and CI) fails the build on an unsigned closure. Only `/ss-verify`
 produces the signature.
 
