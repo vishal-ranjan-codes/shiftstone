@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * IDE folder link manager — enforces the Anti-Duplication Mandate
- * (blueprint §6.6): content lives once under core/ and packs/, IDE folders
+ * (blueprint §6.6): content lives once under core/ and .shiftstone/packs/, IDE folders
  * are junction links (locally created, gitignored).
  *
  * Usage:

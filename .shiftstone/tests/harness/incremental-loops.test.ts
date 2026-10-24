@@ -1,4 +1,4 @@
-import { spawnSync, type SpawnSyncReturns } from 'node:child_process';
+import { execFile } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { mkdir, mkdtemp, readFile, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
@@ -9,13 +9,38 @@ import { describe, expect, it } from 'vitest';
 const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
 const CLI = path.join(REPO_ROOT, '.shiftstone', 'harness', 'cli.js');
 
-function runCli(args: string[], cwd: string): SpawnSyncReturns<string> {
-  return spawnSync(process.execPath, [CLI, ...args], {
-    cwd,
-    encoding: 'utf8',
-    timeout: 180_000,
-    env: process.env,
+interface CliResult {
+  stdout: string;
+  stderr: string;
+  status: number;
+}
+
+/**
+ * Resolves instead of rejecting on a non-zero exit so assertions keep reading
+ * `res.status` exactly as they did with spawnSync. Deliberately async: a worker
+ * parked in spawnSync cannot answer Vitest's main-thread RPC, and that RPC
+ * timeout is fixed at 60s while these loop runs legitimately take minutes
+ * (audit W1 / REQ-06).
+ */
+function runNode(script: string, args: string[], cwd: string, timeout: number): Promise<CliResult> {
+  return new Promise((resolve) => {
+    execFile(
+      process.execPath,
+      [script, ...args],
+      { cwd, encoding: 'utf8', timeout, env: process.env },
+      (error, stdout, stderr) => {
+        resolve({
+          stdout: stdout ?? '',
+          stderr: stderr ?? '',
+          status: !error ? 0 : typeof error.code === 'number' ? error.code : 1,
+        });
+      },
+    );
   });
+}
+
+function runCli(args: string[], cwd: string): Promise<CliResult> {
+  return runNode(CLI, args, cwd, 180_000);
 }
 
 /** Fixture workspace whose 3 schema sources exist and agree. */
@@ -56,14 +81,14 @@ describe('C9 — schema-sync-loop on the incremental engine (task 5.9)', () => {
   it('second run with no changes exits no-op from the fingerprint gate', async () => {
     const root = await schemaFixture();
 
-    const first = runCli(['run', 'schema-sync-loop'], root);
+    const first = await runCli(['run', 'schema-sync-loop'], root);
     expect(first.stdout).toContain('TERMINAL: no_op');
     expect(first.stdout).toContain('All 3 sources already match'); // spec no_op text = pre-check path
     expect(first.stdout).not.toContain('stage(s)'); // NOT the fingerprint-gate reason
     expect(first.status).toBe(0);
     expect(existsSync(path.join(root, '.loops', 'schema-sync-loop', 'stage-deps.json'))).toBe(true);
 
-    const second = runCli(['run', 'schema-sync-loop'], root);
+    const second = await runCli(['run', 'schema-sync-loop'], root);
     expect(second.stdout).toContain('TERMINAL: no_op');
     expect(second.stdout).toContain('incremental: all 3 stage(s) unchanged since last clean run'); // C9 gate
     expect(second.status).toBe(0);
@@ -71,8 +96,8 @@ describe('C9 — schema-sync-loop on the incremental engine (task 5.9)', () => {
 
   it('changed inputs break the skip: drift reaches the loop instead of no-op', async () => {
     const root = await schemaFixture();
-    runCli(['run', 'schema-sync-loop'], root); // clean → no_op + fingerprints
-    runCli(['run', 'schema-sync-loop'], root); // incremental no-op
+    await runCli(['run', 'schema-sync-loop'], root); // clean → no_op + fingerprints
+    await runCli(['run', 'schema-sync-loop'], root); // incremental no-op
 
     // plant drift: a bible table the other two sources do not describe
     await writeFile(
@@ -80,7 +105,7 @@ describe('C9 — schema-sync-loop on the incremental engine (task 5.9)', () => {
       '# Schema Reference\n\n### `profiles`\n\n### `orders`\n',
       'utf8',
     );
-    const drifted = runCli(['run', 'schema-sync-loop'], root);
+    const drifted = await runCli(['run', 'schema-sync-loop'], root);
     expect(drifted.stdout).not.toContain('stage(s)'); // gate did NOT skip
     expect(drifted.stdout).toContain('TERMINAL: stalled'); // 2 barren turns on unresolved drift
     expect(drifted.status).toBe(1);
@@ -88,8 +113,8 @@ describe('C9 — schema-sync-loop on the incremental engine (task 5.9)', () => {
 });
 
 describe('C9 — bible-sync-loop (task 5.9)', () => {
-  it('validates against the refusal gate', () => {
-    const res = runCli(['validate', 'bible-sync-loop'], REPO_ROOT);
+  it('validates against the refusal gate', async () => {
+    const res = await runCli(['validate', 'bible-sync-loop'], REPO_ROOT);
     expect(res.status).toBe(0);
     expect(res.stdout).toContain('RESULT: accepted');
   });
@@ -158,20 +183,21 @@ describe('C9 — bible-sync-loop (task 5.9)', () => {
   it('clean workspace: run 1 no-op via pre-check, run 2 no-op via the incremental gate', async () => {
     const root = await bibleFixture();
 
-    const check = spawnSync(process.execPath, [path.join(REPO_ROOT, '.shiftstone', 'scripts', 'bible-sync.js'), '--check'], {
-      cwd: root,
-      encoding: 'utf8',
-      timeout: 60_000,
-    });
+    const check = await runNode(
+      path.join(REPO_ROOT, '.shiftstone', 'scripts', 'bible-sync.js'),
+      ['--check'],
+      root,
+      60_000,
+    );
     expect(check.status).toBe(0); // pre-condition: the fixture is in sync
 
-    const first = runCli(['run', 'bible-sync-loop'], root);
+    const first = await runCli(['run', 'bible-sync-loop'], root);
     expect(first.stdout).toContain('TERMINAL: no_op');
     expect(first.stdout).toContain('already agree before any turn'); // spec no_op text = pre-check path
     expect(first.stdout).not.toContain('stage(s)');
     expect(first.status).toBe(0);
 
-    const second = runCli(['run', 'bible-sync-loop'], root);
+    const second = await runCli(['run', 'bible-sync-loop'], root);
     expect(second.stdout).toContain('TERMINAL: no_op');
     expect(second.stdout).toContain('incremental: all 2 stage(s) unchanged since last clean run'); // C9 gate
     expect(second.status).toBe(0);
@@ -186,7 +212,7 @@ describe('C9 — bible-sync-loop (task 5.9)', () => {
       'utf8',
     );
 
-    const drifted = runCli(['run', 'bible-sync-loop'], root);
+    const drifted = await runCli(['run', 'bible-sync-loop'], root);
     expect(drifted.stdout).not.toContain('TERMINAL: no_op'); // gate must NOT skip; pre-check is red
     expect(drifted.stdout).toContain('TERMINAL: stalled'); // 2 barren turns on unresolved drift
     expect(drifted.status).toBe(1);

@@ -15,4 +15,5 @@ timestamp: 2026-10-22T00:00:00.000Z
 
 **Files**
 
+- [Fresh-Clone Developer Experience Proof & Verification Boundary Audit](./2026-10-24-fresh-clone-proof.md)
 - [docs/reports/](./README.md)

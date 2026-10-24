@@ -291,7 +291,7 @@ export function validateSingleCheckerLens(lens, options = {}) {
 }
 
 /**
- * Discovers all .lens.json files in .shiftstone/governance/checker-lenses and packs/* /checker-lenses.
+ * Discovers all .lens.json files in .shiftstone/governance/checker-lenses and .shiftstone/packs/<pack>/checker-lenses.
  */
 export function discoverLensFiles(root = ROOT) {
   const lensFiles = [];

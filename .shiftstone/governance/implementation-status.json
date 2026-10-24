@@ -22,7 +22,7 @@
       "requirementIds": ["UG-03"],
       "requiredArtifacts": [
         ".shiftstone/governance/context-integrity-rules.yaml",
-        "packs/rr8-supabase-cf/pack.yaml",
+        ".shiftstone/packs/rr8-supabase-cf/pack.yaml",
         ".shiftstone/scripts/validate-context-integrity.js",
         ".shiftstone/scripts/__tests__/validate-context-integrity.test.ts"
       ]
@@ -60,9 +60,9 @@
     "U12": { "phase": "phase-3", "status": "completed", "requirementIds": ["UG-31", "UG-34"], "requiredArtifacts": [".agents/skills/ss-init/SKILL.md", ".shiftstone/scripts/validate-research.js"] },
     "U13": { "phase": "phase-3", "status": "completed", "requirementIds": ["UG-33"], "requiredArtifacts": [".agents/skills/ss-brainstorm/SKILL.md", ".agents/skills/ss-brand-naming/SKILL.md"] },
     "U14": { "phase": "phase-3", "status": "completed", "requirementIds": ["UG-13", "UG-34"], "requiredArtifacts": [".shiftstone/scripts/validate-skills-completeness.js"] },
-    "U15": { "phase": "phase-3", "status": "completed", "requirementIds": ["UG-14"], "requiredArtifacts": ["packs/rr8-supabase-cf/preflight-matrix.yaml"] },
+    "U15": { "phase": "phase-3", "status": "completed", "requirementIds": ["UG-14"], "requiredArtifacts": [".shiftstone/packs/rr8-supabase-cf/preflight-matrix.yaml"] },
     "U16": { "phase": "phase-4", "status": "completed", "requirementIds": ["UG-15"], "requiredArtifacts": [".shiftstone/governance/schemas/checker-lens.schema.json", ".shiftstone/scripts/validate-checker-lenses.js"] },
-    "U17": { "phase": "phase-4", "status": "completed", "requirementIds": ["UG-16"], "requiredArtifacts": [".shiftstone/governance/checker-lenses/security-invariants.lens.json", ".shiftstone/governance/checker-lenses/architecture-boundaries.lens.json", ".shiftstone/governance/checker-lenses/bible-alignment.lens.json", "packs/rr8-supabase-cf/checker-lenses/rls-security.lens.json", "packs/rr8-supabase-cf/checker-lenses/route-loader-action.lens.json", "packs/rr8-supabase-cf/checker-lenses/cloudflare-edge-runtime.lens.json", "packs/rr8-supabase-cf/checker-lenses/semantic-tokens.lens.json"] },
+    "U17": { "phase": "phase-4", "status": "completed", "requirementIds": ["UG-16"], "requiredArtifacts": [".shiftstone/governance/checker-lenses/security-invariants.lens.json", ".shiftstone/governance/checker-lenses/architecture-boundaries.lens.json", ".shiftstone/governance/checker-lenses/bible-alignment.lens.json", ".shiftstone/packs/rr8-supabase-cf/checker-lenses/rls-security.lens.json", ".shiftstone/packs/rr8-supabase-cf/checker-lenses/route-loader-action.lens.json", ".shiftstone/packs/rr8-supabase-cf/checker-lenses/cloudflare-edge-runtime.lens.json", ".shiftstone/packs/rr8-supabase-cf/checker-lenses/semantic-tokens.lens.json"] },
     "U18": { "phase": "phase-4", "status": "completed", "requirementIds": ["UG-17"], "requiredArtifacts": [".shiftstone/governance/schemas/checker-report.schema.json", ".shiftstone/scripts/validate-checker-report.js"] },
     "U19": { "phase": "phase-4", "status": "completed", "requirementIds": ["UG-18", "UG-19"], "requiredArtifacts": [".shiftstone/scripts/check-anti-gaming.js", ".shiftstone/harness/loop-runner/validator.ts", ".shiftstone/harness/evals/checker/rubric-template.ts"] },
     "U20": { "phase": "phase-5", "status": "completed", "requirementIds": ["UG-20"], "requiredArtifacts": [".shiftstone/governance/schemas/learning-record.schema.json", ".shiftstone/scripts/validate-learning.js"] },
@@ -75,7 +75,7 @@
     "U27": { "phase": "phase-6", "status": "completed", "requirementIds": ["UG-26"], "requiredArtifacts": [".agents/skills/ss-verify/SKILL.md", ".agents/skills/ss-new-migration/SKILL.md", ".agents/skills/ss-deploy/SKILL.md", ".shiftstone/static-rules/verification.md"] },
     "U28": { "phase": "phase-7", "status": "completed", "requirementIds": ["UG-27"], "requiredArtifacts": [".shiftstone/governance/schemas/trajectory.schema.json", ".shiftstone/governance/schemas/telemetry.schema.json", ".shiftstone/scripts/record-telemetry.js", ".shiftstone/observability/otel-tracer.ts", ".shiftstone/scripts/__tests__/record-telemetry.test.ts"] },
     "U29": { "phase": "phase-7", "status": "completed", "requirementIds": ["UG-28"], "requiredArtifacts": [".shiftstone/harness/evals/trials/T1-context-and-stage-contract-gate.trial.json", ".shiftstone/harness/evals/trials/T2-checker-collusion-and-anti-gaming-gate.trial.json", ".shiftstone/harness/evals/trials/T3-protected-action-and-ssot-promotion-gate.trial.json", ".shiftstone/scripts/run-certification-trials.js"] },
-    "U30": { "phase": "phase-7", "status": "completed", "requirementIds": ["UG-29"], "requiredArtifacts": ["packs/rr8-supabase-cf/trials/F1-route-loader-action-zod.trial.json", "packs/rr8-supabase-cf/trials/F2-supabase-rls-migration.trial.json", "packs/rr8-supabase-cf/trials/F3-cloudflare-worker-queue-cron.trial.json", "packs/rr8-supabase-cf/trials/F4-shadcn-tailwind-v4-tokens.trial.json", "packs/rr8-supabase-cf/trials/F5-graceful-degradation-rate-limit.trial.json", "packs/rr8-supabase-cf/trials/F6-playwright-e2e-release-gate.trial.json"] },
+    "U30": { "phase": "phase-7", "status": "completed", "requirementIds": ["UG-29"], "requiredArtifacts": [".shiftstone/packs/rr8-supabase-cf/trials/F1-route-loader-action-zod.trial.json", ".shiftstone/packs/rr8-supabase-cf/trials/F2-supabase-rls-migration.trial.json", ".shiftstone/packs/rr8-supabase-cf/trials/F3-cloudflare-worker-queue-cron.trial.json", ".shiftstone/packs/rr8-supabase-cf/trials/F4-shadcn-tailwind-v4-tokens.trial.json", ".shiftstone/packs/rr8-supabase-cf/trials/F5-graceful-degradation-rate-limit.trial.json", ".shiftstone/packs/rr8-supabase-cf/trials/F6-playwright-e2e-release-gate.trial.json"] },
     "U31": { "phase": "phase-7", "status": "completed", "requirementIds": ["UG-30"], "requiredArtifacts": [".shiftstone/scripts/validate-workspace.js"] }
   },
   "amendments": {

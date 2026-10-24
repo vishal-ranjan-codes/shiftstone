@@ -1,12 +1,10 @@
-# packs/fastapi-pg — starter archetype placeholder (task 4.9).
-# Valid manifest so `--archetype=fastapi-pg` composes; skills and bible
-# overlays are authored later (blueprint section 5.3 journey 1).
+# packs/fastapi-pg — starter archetype (graduated to LOCK-B4 bar).
 apiVersion: workspace/v1
 kind: StackArchetype
 metadata:
   name: fastapi-pg
   displayName: FastAPI + PostgreSQL
-  version: 0.1.0
+  version: 1.0.0
   tier: starter
   tags: [python, fastapi, postgresql, api]
 spec:
@@ -28,6 +26,13 @@ spec:
       type: string
       default: "Python 3.12, FastAPI, PostgreSQL, Pydantic v2, pytest"
       description: Stack identity line injected into .shiftstone/static-rules/product.md.
+  workspace:
+    rootScripts:
+      dev: "uv run --directory {{APP_PATH}} uvicorn main:app --reload"
+      test: "uv run --directory {{APP_PATH}} pytest"
+      lint: "uv run --directory {{APP_PATH}} ruff check ."
+      typecheck: "uv run --directory {{APP_PATH}} mypy ."
+      build: "uv build --directory {{APP_PATH}}"
 composition:
   skills:
     include:

@@ -15,7 +15,7 @@
  *   node .shiftstone/scripts/convert-skills-3tier.js
  *
  * Covers core skills (real dirs in .agents/skills) and active pack skills
- * (packs/<pack>/skills/ — phase 4); the pack field defaults from location.
+ * (.shiftstone/packs/<pack>/skills/ — phase 4); the pack field defaults from location.
  */
 
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';

@@ -1,4 +1,4 @@
-import { spawnSync } from 'node:child_process';
+import { execFile } from 'node:child_process';
 import { mkdtemp, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
@@ -15,6 +15,36 @@ import { Verifier } from '../../harness/verifier-ladder/verifier.ts';
 import { mapRunner, turn } from '../helpers.ts';
 
 const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
+
+interface CliResult {
+  stdout: string;
+  stderr: string;
+  status: number;
+}
+
+/**
+ * Resolves instead of rejecting on a non-zero exit so assertions keep reading
+ * `res.status` exactly as they did with spawnSync. Deliberately async: a worker
+ * parked in spawnSync cannot answer Vitest's main-thread RPC, and that RPC
+ * timeout is fixed at 60s while eval runs legitimately take minutes
+ * (audit W1 / REQ-06).
+ */
+function runEvalCli(args: string[], cwd: string): Promise<CliResult> {
+  return new Promise((resolve) => {
+    execFile(
+      process.execPath,
+      args,
+      { cwd, encoding: 'utf8', timeout: 120_000, env: process.env },
+      (error, stdout, stderr) => {
+        resolve({
+          stdout: stdout ?? '',
+          stderr: stderr ?? '',
+          status: !error ? 0 : typeof error.code === 'number' ? error.code : 1,
+        });
+      },
+    );
+  });
+}
 
 async function fixtureRoot(): Promise<string> {
   const root = await mkdtemp(path.join(tmpdir(), 'evals-'));
@@ -141,11 +171,10 @@ describe('verification.eval_suite gates the turn (B1 per-loop registration)', ()
 });
 
 describe('sample suite executes end-to-end (task 3.1 verification)', () => {
-  it('runs evals/harness-smoke via the CLI and writes results', () => {
-    const res = spawnSync(
-      process.execPath,
+  it('runs evals/harness-smoke via the CLI and writes results', async () => {
+    const res = await runEvalCli(
       [path.join(REPO_ROOT, '.shiftstone', 'harness', 'evals', 'run.js'), '--suite', 'harness-smoke', '--strict'],
-      { cwd: REPO_ROOT, encoding: 'utf8', timeout: 120_000 },
+      REPO_ROOT,
     );
     expect(res.status).toBe(0);
     expect(res.stdout).toContain('PASS  harness-smoke');
@@ -154,10 +183,9 @@ describe('sample suite executes end-to-end (task 3.1 verification)', () => {
 
   it('exits 1 when an eval regresses — the CI merge gate (task 3.2)', async () => {
     const root = await fixtureRoot();
-    const res = spawnSync(
-      process.execPath,
+    const res = await runEvalCli(
       [path.join(REPO_ROOT, '.shiftstone', 'harness', 'evals', 'run.js'), '--suite', 'flaky-suite', '--strict', '--root', root],
-      { cwd: REPO_ROOT, encoding: 'utf8', timeout: 120_000 },
+      REPO_ROOT,
     );
     expect(res.status).toBe(1);
     expect(res.stdout).toContain('REGRESSED  flaky-suite');

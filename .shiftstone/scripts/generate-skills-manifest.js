@@ -71,7 +71,7 @@ const CONFIG = {
   backlog: { paths: ['docs/backlog/**'], depends_on: [] },
   'research-methodology': { paths: ['docs/research/**'], depends_on: [] },
   'ss-docs': { paths: ['docs/bible/**', 'docs/backlog/**', 'docs/research/**'], depends_on: [] },
-  'ss-bookkeeping': { paths: ['docs/**', 'packs/**', '.agents/skills/**', '_config/**'], depends_on: [] },
+  'ss-bookkeeping': { paths: ['docs/**', '.shiftstone/packs/**', '.agents/skills/**', '_config/**'], depends_on: [] },
   'ss-sync-engine': { paths: ['.shiftstone/**', 'frameworks/**'], depends_on: [] },
 };
 
@@ -139,7 +139,7 @@ export function generateSkillsManifest({ root = ROOT, quiet = false, appPath, de
   const activePacks = readPackRegistry(root).activePacks;
 
   // Core skills live as real dirs in .agents/skills; pack skills live under
-  // packs/<pack>/skills/ and may be junctioned into .agents/skills (never
+  // .shiftstone/packs/<pack>/skills/ and may be junctioned into .agents/skills (never
   // scanned here — links would double-count their tracked source).
   const skillDirs = [
     ...listCoreSkills(root).map((name) => ({
@@ -176,18 +176,24 @@ export function generateSkillsManifest({ root = ROOT, quiet = false, appPath, de
 
     const instructions = readFileSync(instructionsPath, 'utf8');
     const isSsCore = dirName.startsWith('ss-');
-    const config = CONFIG[dirName] ?? (isSsCore ? { tier: 'manual-load', depends_on: [] } : { paths: ['**'], depends_on: [] });
+    const isPackLocal = locationPack && locationPack !== 'rr8-supabase-cf';
+    const config = isPackLocal
+      ? { paths: ['**'], depends_on: [] }
+      : (CONFIG[dirName] ?? (isSsCore ? { tier: 'manual-load', depends_on: [] } : { paths: ['**'], depends_on: [] }));
     let paths = config.paths;
     if (appPath && defaultAppPath && appPath !== defaultAppPath) {
       paths = paths?.map((p) => p.split(defaultAppPath).join(appPath));
     }
+    const depends_on = Array.isArray(frontmatter.depends_on)
+      ? frontmatter.depends_on
+      : (config.depends_on ?? []);
     skills.push({
       name,
       pack: locationPack ?? frontmatter.pack ?? 'core',
       tier: config.tier ?? (isSsCore ? 'manual-load' : 'path-scoped'),
       ...(paths ? { paths } : {}),
       tokenCost: Math.max(1, Math.ceil(instructions.length / 4)),
-      depends_on: config.depends_on ?? [],
+      depends_on,
       description: frontmatter.description ?? '',
       tags: frontmatter.tags ?? tagsFor(dirName),
     });

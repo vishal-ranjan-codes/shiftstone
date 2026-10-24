@@ -1,7 +1,6 @@
 /**
- * sveltekit-supabase scaffold (task 7.5 placeholder) — creates the app
- * skeleton. Replace the body with a starter clone when the pack graduates
- * from placeholder status.
+ * sveltekit-supabase scaffold (graduated to LOCK-B4 bar).
+ * Generates a SvelteKit project with Supabase SSR and Vitest health test.
  */
 
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
@@ -21,12 +20,99 @@ export function run(context) {
     created.push(appPath);
   }
   const files = {
-    'src/routes/+page.svelte': `<script lang="ts">\n  let { data } = $props();\n</script>\n\n<h1>{{PROJECT_NAME}}</h1>\n<p>SvelteKit + Supabase starter.</p>\n`,
-    'src/routes/+page.server.ts': `import type { PageServerLoad } from './$types';\n\nexport const load: PageServerLoad = async () => ({\n  status: 'ok',\n});\n`,
-    'svelte.config.js': `import adapter from '@sveltejs/adapter-cloudflare';\nimport { vitePreprocess } from '@sveltejs/vite-plugin-svelte';\n\nconst config = {\n  preprocess: vitePreprocess(),\n  kit: {\n    adapter: adapter(),\n  },\n};\n\nexport default config;\n`,
-    'package.json': `{\n  "name": "{{PROJECT_NAME_LOWER}}",\n  "version": "0.1.0",\n  "private": true,\n  "type": "module",\n  "scripts": {\n    "dev": "vite dev",\n    "build": "vite build",\n    "preview": "vite preview",\n    "check": "svelte-check --tsconfig ./tsconfig.json"\n  },\n  "dependencies": {\n    "@supabase/supabase-js": "^2",\n    "@sveltejs/adapter-cloudflare": "^4",\n    "@sveltejs/kit": "^2",\n    "svelte": "^5"\n  }\n}\n`,
-    'README.md': '# {{PROJECT_NAME}}\n\nSvelteKit + Supabase starter.\n\n```bash\npnpm install\npnpm dev\n```\n',
+    'package.json': `${JSON.stringify(
+      {
+        name: `${projectNameLower}-web`,
+        version: '0.1.0',
+        private: true,
+        type: 'module',
+        scripts: {
+          dev: 'vite dev',
+          build: 'vite build',
+          preview: 'vite preview',
+          test: 'vitest run',
+          'test:ui': 'vitest --ui',
+          lint: 'svelte-check && eslint .',
+          typecheck: 'svelte-check --tsconfig ./tsconfig.json',
+        },
+        dependencies: {
+          '@supabase/ssr': '^0.5.0',
+          '@supabase/supabase-js': '^2.45.0',
+          '@sveltejs/adapter-cloudflare': '^4.0.0',
+          '@sveltejs/kit': '^2.5.0',
+          svelte: '^5.0.0',
+        },
+        devDependencies: {
+          '@sveltejs/vite-plugin-svelte': '^4.0.0',
+          'svelte-check': '^4.0.0',
+          typescript: '^5.6.0',
+          vite: '^5.4.0',
+          vitest: '^3.0.0',
+        },
+      },
+      null,
+      2,
+    )}\n`,
+    'svelte.config.js': `import adapter from '@sveltejs/adapter-cloudflare';
+import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
+
+const config = {
+  preprocess: vitePreprocess(),
+  kit: {
+    adapter: adapter(),
+  },
+};
+
+export default config;
+`,
+    'src/routes/+layout.svelte': `<script lang="ts">
+  let { children } = $props();
+</script>
+
+<main>
+  {@render children()}
+</main>
+`,
+    'src/routes/+page.svelte': `<script lang="ts">
+  let { data } = $props();
+</script>
+
+<h1>{{PROJECT_NAME}}</h1>
+<p>SvelteKit + Supabase Starter</p>
+`,
+    'src/routes/health/+server.ts': `import { json } from '@sveltejs/kit';
+import type { RequestHandler } from './$types';
+
+export const GET: RequestHandler = async () => {
+  return json({ status: 'ok' });
+};
+`,
+    'src/routes/health/+server.test.ts': `import { describe, expect, it } from 'vitest';
+import { GET } from './+server';
+
+describe('GET /health endpoint', () => {
+  it('returns json status ok', async () => {
+    const res = await GET({} as any);
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body).toEqual({ status: 'ok' });
+  });
+});
+`,
+    'README.md': `# {{PROJECT_NAME}} — SvelteKit + Supabase
+
+\`\`\`bash
+pnpm dev
+\`\`\`
+
+Run tests:
+
+\`\`\`bash
+pnpm test
+\`\`\`
+`,
   };
+
   for (const [name, content] of Object.entries(files)) {
     const file = path.join(targetDir, name);
     if (existsSync(file)) continue;

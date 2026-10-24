@@ -87,6 +87,10 @@
             "onlyBuiltDependencies": {
               "type": "array",
               "items": { "type": "string" }
+            },
+            "backlogSeed": {
+              "type": "string",
+              "description": "Pack-relative directory (convention: backlog-seed/) composed into docs/backlog/ at init (LOCK-B3). Packs without a seed receive the generic three-phase template."
             }
           }
         }

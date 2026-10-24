@@ -19,7 +19,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
-const BUNDLE_LOGS = ['docs/bible/log.md', 'packs/log.md', '.agents/skills/log.md'];
+const BUNDLE_LOGS = ['docs/bible/log.md', '.shiftstone/packs/log.md', '.agents/skills/log.md'];
 const CHANGELOG_REL = 'docs/bible/CHANGELOG.md';
 const KIND_ORDER = ['Added', 'Changed', 'Fixed', 'Removed'];
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;

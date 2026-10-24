@@ -26,8 +26,7 @@ jobs:
           version: 9
 
       - name: Install harness dependencies
-        run: pnpm install --frozen-lockfile
-        working-directory: core
+        run: pnpm -C .shiftstone install --frozen-lockfile
 
       - name: Anti-duplication (shims, junctions, copied content)
         run: node .shiftstone/scripts/check-md-duplication.js --strict

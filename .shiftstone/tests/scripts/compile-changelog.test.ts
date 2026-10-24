@@ -50,7 +50,7 @@ function log(frontmatterType: string, rows: string[]): string {
 async function fixture(): Promise<string> {
   const root = await mkdtemp(path.join(tmpdir(), 'compile-changelog-'));
   await mkdir(path.join(root, 'docs', 'bible'), { recursive: true });
-  await mkdir(path.join(root, 'packs'), { recursive: true });
+  await mkdir(path.join(root, '.shiftstone', 'packs'), { recursive: true });
   await mkdir(path.join(root, '.agents', 'skills'), { recursive: true });
   await writeFile(path.join(root, 'docs', 'bible', 'CHANGELOG.md'), CHANGELOG, 'utf8');
   await writeFile(
@@ -64,7 +64,7 @@ async function fixture(): Promise<string> {
     'utf8',
   );
   await writeFile(
-    path.join(root, 'packs', 'log.md'),
+    path.join(root, '.shiftstone', 'packs', 'log.md'),
     log('log', ['| 2026-10-16 | packs/rr8-supabase-cf | Pack skill relocation note | Changed | |']),
     'utf8',
   );
@@ -80,7 +80,7 @@ describe('6.9 — compile-changelog (log.md → CHANGELOG.md)', () => {
 
     const pending = pendingEntries(root);
     expect(pending).toHaveLength(4); // 3 from bible + 1 from packs; the stamped row is excluded
-    expect(pending.some((p) => p.log === 'packs/log.md')).toBe(true);
+    expect(pending.some((p) => p.log === '.shiftstone/packs/log.md')).toBe(true);
     expect(pending.some((p) => p.change === 'Already compiled entry')).toBe(false);
   });
 

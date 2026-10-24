@@ -62,6 +62,7 @@ spec:
       deploy: "pnpm -C {{APP_PATH}} deploy"
       supabase:types: "pnpm -C {{APP_PATH}} supabase:types"
     onlyBuiltDependencies: [esbuild, workerd]
+    backlogSeed: backlog-seed
 composition:
   skills:
     include:

@@ -25,12 +25,12 @@ export const STRICT_SCOPE = [
   'docs/loops/README.md',
   'docs/loops/**/README.md',
   'docs/**/index.md',
-  'packs/index.md',
+  '.shiftstone/packs/index.md',
   '.agents/skills/index.md',
   '_config/**/*.md',
   '.agents/skills/**/SKILL.md',
-  'packs/*/skills/**/SKILL.md',
-  'packs/*/bible-overlays/**/*.md',
+  '.shiftstone/packs/*/skills/**/SKILL.md',
+  '.shiftstone/packs/*/bible-overlays/**/*.md',
   '**/CONTEXT.md',
 ];
 

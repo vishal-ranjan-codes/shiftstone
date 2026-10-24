@@ -127,7 +127,7 @@ describe('Unit U28: Trajectory & Telemetry Governance + Flywheel Recorder (UG-27
     const span1 = tracer.startSpan('pre-flight-check', {
       attributes: {
         toolName: 'agent-preflight.js',
-        targetPath: 'packs/rr8-supabase-cf/preflight-matrix.yaml',
+        targetPath: '.shiftstone/packs/rr8-supabase-cf/preflight-matrix.yaml',
         verificationLevel: 1,
         tokensUsed: 500,
       },

@@ -8,11 +8,12 @@ import { describe, expect, it } from 'vitest';
 import { checkFrontmatter } from '../../scripts/validate-okf-frontmatter.js';
 import { extractRelativeLinks } from '../../scripts/check-link-integrity.js';
 import { run as runDuplication } from '../../scripts/check-md-duplication.js';
-import { run as runFrontmatter, STRICT_SCOPE as FM_SCOPE } from '../../scripts/validate-okf-frontmatter.js';
+import { run as runFrontmatter, STRICT_SCOPE as FM_SCOPE, collectMdFiles } from '../../scripts/validate-okf-frontmatter.js';
 import { run as runLinks, STRICT_SCOPE as LINK_SCOPE } from '../../scripts/check-link-integrity.js';
 import { run as runManifestBudgets } from '../../scripts/validate-manifest-budgets.js';
 import { run as runLoopSpecs } from '../../scripts/validate-loop-specs.js';
 import { checkAll } from '../../governance/index-generator.ts';
+import { matchGlob } from '../../context/skills-loader.ts';
 
 const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
 
@@ -39,6 +40,35 @@ describe('C7 — OKF frontmatter validator', () => {
     const result = await runFrontmatter({ strict: true });
     expect(result.problems).toEqual([]);
     expect(result.checked).toBeGreaterThanOrEqual(60);
+  });
+
+  it('pack globs resolve under .shiftstone/packs/ after DEC-015 (no stale root-level scope)', async () => {
+    expect(FM_SCOPE.some((p) => p.startsWith('packs/')), 'stale root-level packs/ glob remains in STRICT_SCOPE').toBe(
+      false,
+    );
+
+    const files = await collectMdFiles(REPO_ROOT);
+    const rels = files.map((abs) => path.relative(REPO_ROOT, abs).replace(/\\/g, '/'));
+    const matchedBy = (pattern: string) => rels.filter((rel) => matchGlob(pattern, rel));
+
+    const packGlobs = [
+      '.shiftstone/packs/index.md',
+      '.shiftstone/packs/*/skills/**/SKILL.md',
+      '.shiftstone/packs/*/bible-overlays/**/*.md',
+    ];
+    for (const pattern of packGlobs) {
+      expect(FM_SCOPE, `${pattern} missing from STRICT_SCOPE`).toContain(pattern);
+      expect(matchedBy(pattern).length, `${pattern} matched zero files on disk`).toBeGreaterThan(0);
+    }
+
+    const flagshipSkills = rels.filter(
+      (rel) => rel.startsWith('.shiftstone/packs/rr8-supabase-cf/skills/') && rel.endsWith('SKILL.md'),
+    );
+    expect(flagshipSkills.length).toBeGreaterThan(0);
+    const covered = matchedBy('.shiftstone/packs/*/skills/**/SKILL.md');
+    for (const skill of flagshipSkills) {
+      expect(covered, `flagship pack skill not covered by the strict scope: ${skill}`).toContain(skill);
+    }
   });
 });
 

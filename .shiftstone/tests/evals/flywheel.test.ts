@@ -1,4 +1,4 @@
-import { spawnSync } from 'node:child_process';
+import { execFile } from 'node:child_process';
 import { mkdir, mkdtemp, readFile, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
@@ -10,8 +10,34 @@ const FLYWHEEL = path.join(REPO_ROOT, '.shiftstone', 'harness', 'evals', 'flywhe
 const CLI = path.join(REPO_ROOT, '.shiftstone', 'harness', 'cli.js');
 const LEDGER = path.join('.loops', 'quality-flywheel-loop', 'backlog-proposals.md');
 
-function runScript(args: string[], cwd: string) {
-  return spawnSync(process.execPath, args, { cwd, encoding: 'utf8', timeout: 120_000 });
+interface ScriptResult {
+  stdout: string;
+  stderr: string;
+  status: number;
+}
+
+/**
+ * Resolves instead of rejecting on a non-zero exit so assertions keep reading
+ * `res.status` exactly as they did with spawnSync. Deliberately async: a worker
+ * parked in spawnSync cannot answer Vitest's main-thread RPC, and that RPC
+ * timeout is fixed at 60s while these loop runs legitimately take minutes
+ * (audit W1 / REQ-06).
+ */
+function runScript(args: string[], cwd: string): Promise<ScriptResult> {
+  return new Promise((resolve) => {
+    execFile(
+      process.execPath,
+      args,
+      { cwd, encoding: 'utf8', timeout: 120_000, env: process.env },
+      (error, stdout, stderr) => {
+        resolve({
+          stdout: stdout ?? '',
+          stderr: stderr ?? '',
+          status: !error ? 0 : typeof error.code === 'number' ? error.code : 1,
+        });
+      },
+    );
+  });
 }
 
 async function workspaceWithFailures(): Promise<string> {
@@ -35,11 +61,11 @@ describe('quality-flywheel-loop turn — clusters produce backlog items (task 3.
   it('opens one backlog item per cluster and addresses every failing case', async () => {
     const root = await workspaceWithFailures();
 
-    const verifyBefore = runScript([FLYWHEEL, '--verify', '--root', root], root);
+    const verifyBefore = await runScript([FLYWHEEL, '--verify', '--root', root], root);
     expect(verifyBefore.status).toBe(1); // red-before: failures are uncovered
     expect(verifyBefore.stderr).toContain('case-a');
 
-    const turn = runScript([FLYWHEEL, '--root', root], root);
+    const turn = await runScript([FLYWHEEL, '--root', root], root);
     expect(turn.status).toBe(0);
     expect(turn.stdout).toContain('opened backlog item for cluster "root-cause-1"');
     expect(turn.stdout).toContain('opened backlog item for cluster "root-cause-2"');
@@ -55,26 +81,26 @@ describe('quality-flywheel-loop turn — clusters produce backlog items (task 3.
     expect(ledger).toContain('- Cases: case-c');
     expect(ledger).toContain('Regression-verify');
 
-    const verifyAfter = runScript([FLYWHEEL, '--verify', '--root', root], root);
+    const verifyAfter = await runScript([FLYWHEEL, '--verify', '--root', root], root);
     expect(verifyAfter.status).toBe(0); // green-after: all failures covered
     expect(verifyAfter.stdout).toContain('covered by open backlog items');
   }, 120_000);
 
   it('a second turn opens no duplicate items but keeps coverage', async () => {
     const root = await workspaceWithFailures();
-    runScript([FLYWHEEL, '--root', root], root);
+    await runScript([FLYWHEEL, '--root', root], root);
     const before = await readFile(path.join(root, LEDGER), 'utf8');
 
-    const again = runScript([FLYWHEEL, '--root', root], root);
+    const again = await runScript([FLYWHEEL, '--root', root], root);
     expect(again.status).toBe(0);
     expect(again.stdout).not.toContain('opened backlog item');
     const after = await readFile(path.join(root, LEDGER), 'utf8');
     expect(after).toBe(before);
-    expect(runScript([FLYWHEEL, '--verify', '--root', root], root).status).toBe(0);
+    expect((await runScript([FLYWHEEL, '--verify', '--root', root], root)).status).toBe(0);
   }, 120_000);
 
-  it('the loop runs E2E: green repo reaches TERMINAL: no_op', () => {
-    const res = runScript([CLI, 'run', 'quality-flywheel-loop'], REPO_ROOT);
+  it('the loop runs E2E: green repo reaches TERMINAL: no_op', async () => {
+    const res = await runScript([CLI, 'run', 'quality-flywheel-loop'], REPO_ROOT);
     expect(res.status).toBe(0);
     expect(res.stdout).toContain('TERMINAL: no_op');
   }, 180_000);

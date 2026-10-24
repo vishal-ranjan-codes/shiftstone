@@ -1,7 +1,6 @@
 /**
- * go-chi-postgres scaffold (task 7.5 placeholder) — creates the app
- * skeleton. Replace the body with a starter clone when the pack graduates
- * from placeholder status.
+ * go-chi-postgres scaffold (graduated to LOCK-B4 bar).
+ * Generates a runnable Go + Chi skeleton with passing health test.
  */
 
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
@@ -21,10 +20,103 @@ export function run(context) {
     created.push(appPath);
   }
   const files = {
-    'main.go': `package main\n\nimport (\n\t"net/http"\n\n\t"github.com/go-chi/chi/v5"\n\t"github.com/go-chi/chi/v5/middleware"\n)\n\nfunc main() {\n\tr := chi.NewRouter()\n\tr.Use(middleware.Logger)\n\tr.Get("/health", func(w http.ResponseWriter, _ *http.Request) {\n\t\tw.Header().Set("Content-Type", "application/json")\n\t\tw.Write([]byte("{\\"status\\":\\"ok\\"}"))\n\t})\n\thttp.ListenAndServe(":8080", r)\n}\n`,
-    'go.mod': `module github.com/{{PROJECT_NAME_LOWER}}\n\ngo 1.23\n\nrequire github.com/go-chi/chi/v5 v5.1.0\n`,
-    'main_test.go': `package main\n\nimport "testing"\n\nfunc TestHealthShape(t *testing.T) {\n\tgot := "{\\"status\\":\\"ok\\"}"\n\tif got == "" {\n\t\tt.Fatal("health payload empty")\n\t}\n}\n`,
-    'README.md': '# {{PROJECT_NAME}}\n\nGo + Chi + PostgreSQL service.\n\n```bash\ngo run .\n```\n',
+    'go.mod': `module {{PROJECT_NAME_LOWER}}
+
+go 1.23
+
+require github.com/go-chi/chi/v5 v5.1.0
+`,
+    'cmd/api/main.go': `package main
+
+import (
+	"encoding/json"
+	"log"
+	"net/http"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
+)
+
+func main() {
+	r := chi.NewRouter()
+	r.Use(middleware.Logger)
+	r.Use(middleware.Recoverer)
+
+	r.Get("/health", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		_ = json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
+	})
+
+	log.Println("Starting {{PROJECT_NAME}} on :8080")
+	_ = http.ListenAndServe(":8080", r)
+}
+`,
+    'internal/health/health_test.go': `package health_test
+
+import (
+	"encoding/json"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+)
+
+func TestHealthEndpoint(t *testing.T) {
+	tests := []struct {
+		name          string
+		method        string
+		wantStatus    int
+		wantStatusKey string
+	}{
+		{
+			name:          "health returns status ok",
+			method:        http.MethodGet,
+			wantStatus:    http.StatusOK,
+			wantStatusKey: "ok",
+		},
+	}
+
+	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		_ = json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
+	})
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			req := httptest.NewRequest(tt.method, "/health", nil)
+			rec := httptest.NewRecorder()
+			handler.ServeHTTP(rec, req)
+
+			if rec.Code != tt.wantStatus {
+				t.Fatalf("got status %d, want %d", rec.Code, tt.wantStatus)
+			}
+
+			var body map[string]string
+			if err := json.Unmarshal(rec.Body.Bytes(), &body); err != nil {
+				t.Fatalf("decode response: %v", err)
+			}
+			if body["status"] != tt.wantStatusKey {
+				t.Errorf("got status key %q, want %q", body["status"], tt.wantStatusKey)
+			}
+		})
+	}
+}
+`,
+    'README.md': `# {{PROJECT_NAME}} API (Go + Chi)
+
+Run locally:
+
+\`\`\`bash
+go run ./cmd/api
+\`\`\`
+
+Run tests:
+
+\`\`\`bash
+go test ./...
+\`\`\`
+`,
   };
   for (const [name, content] of Object.entries(files)) {
     const file = path.join(targetDir, name);

@@ -6,7 +6,7 @@
  *   1. Universal Synthetic Harness Trials (T1–T3) in .shiftstone/harness/evals/trials/
  *      Adversarially certifies that context budgets, superseded inputs, anti-gaming diffs,
  *      checker collusion, and protected action gates deterministically block defects.
- *   2. Pack Factory Capability Trials (F1–F6) in packs/<pack>/trials/
+ *   2. Pack Factory Capability Trials (F1–F6) in .shiftstone/packs/<pack>/trials/
  *      Certifies end-to-end vertical-slice capability (routes, RLS, edge workers, tokens, rate limits, E2E).
  *   3. Emits trajectory/v1 provenance records and telemetry/v1 flywheel records to .logs/telemetry/flywheel.jsonl.
  *
@@ -27,12 +27,58 @@ import { checkProtectedAction } from './validate-protected-actions.js';
 import { computeJaccardSimilarity, extractRecordTokens } from './validate-learning.js';
 import { buildProposalContent, allocateProposalId } from './sync-bible-proposal.js';
 import { validateSingleCheckerLens } from './validate-checker-lenses.js';
+import { parse as parseYaml } from 'yaml';
+import { listPackNames } from '../init/pack-loader.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 const HARNESS_TRIALS_DIR = path.join(ROOT, '.shiftstone', 'harness', 'evals', 'trials');
 
 function loadJson(filePath) {
   return JSON.parse(readFileSync(filePath, 'utf8'));
+}
+
+export function validatePackNames(packNames, root = ROOT) {
+  const validPacks = new Set(listPackNames(root));
+  for (const pack of packNames) {
+    if (!validPacks.has(pack)) {
+      throw new Error(`Unknown pack "${pack}" (known packs: ${[...validPacks].sort().join(', ')})`);
+    }
+  }
+}
+
+/**
+ * Resolves active packs from .shiftstone/packs/_registry.yaml (falling back to workspace-manifest or default).
+ * Validates that all resolved pack names exist physically in the packs directory.
+ */
+export function getActivePacks(root = ROOT) {
+  const regPath = path.join(root, '.shiftstone', 'packs', '_registry.yaml');
+  let active = null;
+  if (existsSync(regPath)) {
+    try {
+      const parsed = parseYaml(readFileSync(regPath, 'utf8'));
+      if (Array.isArray(parsed?.activePacks) && parsed.activePacks.length > 0) {
+        active = parsed.activePacks;
+      }
+    } catch (err) {
+      throw new Error(`Failed to parse pack registry at ${regPath}: ${err.message}`);
+    }
+  }
+
+  if (!active) {
+    const wsManifestPath = path.join(root, '.shiftstone', 'governance', 'workspace-manifest.json');
+    if (existsSync(wsManifestPath)) {
+      try {
+        const wsManifest = loadJson(wsManifestPath);
+        if (Array.isArray(wsManifest.spec?.activePacks) && wsManifest.spec.activePacks.length > 0) {
+          active = wsManifest.spec.activePacks;
+        }
+      } catch {}
+    }
+  }
+
+  const resolved = active && active.length > 0 ? active : ['rr8-supabase-cf'];
+  validatePackNames(resolved, root);
+  return resolved;
 }
 
 /**
@@ -449,9 +495,7 @@ ${sc.outputs.map((out) => `  - path: ${out.path}\n    description: ${out.descrip
   });
   let lensesOk = true;
   for (const lensRelPath of trialData.checkerLenses) {
-    const fullLensPath = existsSync(path.join(root, lensRelPath))
-      ? path.join(root, lensRelPath)
-      : path.join(root, lensRelPath.replace(/^packs\//, '.shiftstone/packs/'));
+    const fullLensPath = path.join(root, lensRelPath);
     if (!existsSync(fullLensPath)) {
       lensesOk = false;
       break;
@@ -529,14 +573,18 @@ ${sc.outputs.map((out) => `  - path: ${out.path}\n    description: ${out.descrip
 export async function runCertificationTrials(options = {}) {
   const root = options.root ? path.resolve(options.root) : ROOT;
   const suite = options.suite ?? 'all';
-  const pack = options.pack ?? 'rr8-supabase-cf';
+  const activePacks = options.activePacks || (options.pack ? [options.pack] : getActivePacks(root));
+  validatePackNames(activePacks, root);
+  const activePackSet = new Set(activePacks);
   const shouldRecord = options.record !== false;
 
   const results = {
     harness: [],
     factory: [],
+    skipped: [],
     totalPassed: 0,
     totalFailed: 0,
+    totalSkipped: 0,
   };
 
   // Run Harness Trials (T1–T3)
@@ -574,15 +622,36 @@ export async function runCertificationTrials(options = {}) {
 
   // Run Factory Trials (F1–F6)
   if (suite === 'factory' || suite === 'all') {
-    const factoryDir = path.join(root, '.shiftstone', 'packs', pack, 'trials');
-    if (existsSync(factoryDir)) {
+    const knownPacks = listPackNames(root);
+
+    for (const p of knownPacks) {
+      const factoryDir = path.join(root, '.shiftstone', 'packs', p, 'trials');
+      if (!existsSync(factoryDir)) continue;
+
       const trialFiles = readdirSync(factoryDir)
         .filter((f) => f.startsWith('F') && f.endsWith('.trial.json'))
         .sort();
 
       for (const file of trialFiles) {
+        const trialId = file.replace(/\.trial\.json$/, '');
+
+        if (!activePackSet.has(p)) {
+          // Explicit skip line for inactive pack trials
+          const activeListStr = activePacks.join(', ');
+          const skipEntry = {
+            trialId,
+            name: trialId,
+            pack: p,
+            status: 'skipped',
+            reason: `inactive pack: ${p} (active: ${activeListStr})`,
+          };
+          results.skipped.push(skipEntry);
+          results.totalSkipped++;
+          continue;
+        }
+
         const fullPath = path.join(factoryDir, file);
-        const fRes = runFactoryTrial(fullPath, pack, root);
+        const fRes = runFactoryTrial(fullPath, p, root);
         results.factory.push(fRes);
 
         if (fRes.status === 'passed') results.totalPassed++;
@@ -611,15 +680,17 @@ if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(fileURLToP
     suite = 'factory';
   }
 
-  let pack = 'rr8-supabase-cf';
+  let activePacks;
   if (args.includes('--pack')) {
-    pack = args[args.indexOf('--pack') + 1] || 'rr8-supabase-cf';
+    activePacks = [args[args.indexOf('--pack') + 1]];
+  } else {
+    activePacks = getActivePacks(ROOT);
   }
 
   console.log(`=== ShiftStone Framework Certification Trials (UG-28, UG-29) ===`);
-  console.log(`  Suite: ${suite} | Active Pack: ${pack}\n`);
+  console.log(`  Suite: ${suite} | Active Pack(s): ${activePacks.join(', ')}\n`);
 
-  runCertificationTrials({ suite, pack })
+  runCertificationTrials({ suite, activePacks })
     .then((res) => {
       if (res.harness.length > 0) {
         console.log('--- Synthetic Harness Certification Trials (T1–T3) ---');
@@ -631,7 +702,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(fileURLToP
       }
 
       if (res.factory.length > 0) {
-        console.log(`--- Pack Factory Capability Trials (F1–F6: ${pack}) ---`);
+        console.log(`--- Pack Factory Capability Trials (Active Packs: ${activePacks.join(', ')}) ---`);
         for (const f of res.factory) {
           const mark = f.status === 'passed' ? '✓' : '✗';
           console.log(`  ${mark} ${f.trialId.padEnd(46)} [${f.status.toUpperCase()}] Score: ${f.score}/100`);
@@ -639,9 +710,18 @@ if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(fileURLToP
         console.log('');
       }
 
+      if (res.skipped.length > 0) {
+        console.log('--- Skipped Factory Trials (Inactive Packs) ---');
+        for (const s of res.skipped) {
+          console.log(`  - ${s.trialId.padEnd(46)} SKIPPED (${s.reason})`);
+        }
+        console.log('');
+      }
+
       console.log(`=============================================================`);
-      console.log(`  Total Trials Passed: ${res.totalPassed}`);
-      console.log(`  Total Trials Failed: ${res.totalFailed}`);
+      console.log(`  Total Trials Passed:  ${res.totalPassed}`);
+      console.log(`  Total Trials Failed:  ${res.totalFailed}`);
+      console.log(`  Total Trials Skipped: ${res.totalSkipped}`);
 
       if (res.totalFailed > 0) {
         console.error('\nFAIL — Certification trial suite encountered defects.');

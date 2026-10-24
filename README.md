@@ -126,6 +126,19 @@ Docs: [`.shiftstone/ide-shims/opencode/README.md`](./.shiftstone/ide-shims/openc
 
 ## ⚡ Quick Start — 3 Ways to Start a Project
 
+### 🌅 Day-0 order (clone → install → scaffold → run)
+
+```sh
+git clone https://github.com/vishal-ranjan-codes/shiftstone.git my-app
+cd my-app
+pnpm install                                                                # engine + tooling
+node .shiftstone/packs/rr8-supabase-cf/scaffold-script.js --root=. --yes    # scaffold apps/web
+npm run dev                                                                 # develop the application
+npm test                                                                    # test the application (apps/web)
+```
+
+The core six scripts (`dev` / `build` / `start` / `test` / `typecheck` / `lint`) target **your application** in `apps/web`; framework engine checks are namespaced as `test:engine` / `typecheck:engine` / `lint:engine`. **Before scaffolding, `npm run test:engine` is the only green test command** — `apps/web` does not exist yet.
+
 ### 🥇 Option 1: IDE-First (recommended for AI IDEs — zero folder renaming)
 
 1. Create an empty folder and open it in your AI IDE (Antigravity / Claude Code / Command Code / OpenCode).

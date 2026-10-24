@@ -2,7 +2,7 @@
 apiVersion: context/v1
 kind: SkillsManifest
 metadata:
-  generated: 2026-10-23T21:41:08.742Z
+  generated: 2026-10-24T02:36:18.344Z
   coreVersion: 2.1.0
   activePacks:
     - rr8-supabase-cf
@@ -340,7 +340,7 @@ spec:
       tier: manual-load
       paths:
         - docs/**
-        - packs/**
+        - .shiftstone/packs/**
         - .agents/skills/**
         - _config/**
       tokenCost: 789

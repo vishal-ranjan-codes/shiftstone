@@ -39,6 +39,9 @@ export async function makeWorkspace(): Promise<string> {
     copy('packs');
   }
   copy('docs/bible');
+  if (existsSync(path.join(TEMPLATE_ROOT, '.shiftstone', 'governance'))) {
+    copy('.shiftstone/governance');
+  }
   copy('.shiftstone/static-rules');
   copy('.shiftstone/path-scoped-rules');
   copy('.shiftstone/workflows');

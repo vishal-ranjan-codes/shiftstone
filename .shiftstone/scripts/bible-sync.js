@@ -6,7 +6,7 @@
  *   code       docs/bible chapter directories on disk (the structure) and the
  *              workspace paths the bible references
  *   bible      docs/bible/README.md table of contents + chapter index.md files
- *   decisions  docs/bible/DECISIONS.md ADRs + packs/<pack>/decisions-seed.yaml ADRs
+ *   decisions  docs/bible/DECISIONS.md ADRs + .shiftstone/packs/<pack>/decisions-seed.yaml ADRs
  *
  * Modes:
  *   --check      exit 0 only when all 3 sources agree; exit 1 on drift/missing
@@ -25,7 +25,7 @@ const root = process.cwd();
 const BLOCKED_EXIT = 78;
 const BIBLE = path.join(root, 'docs', 'bible');
 const CORE_SOURCES = ['README.md', 'DECISIONS.md', 'index.md'];
-const CODE_PREFIXES = ['.shiftstone/', 'core/', 'docs/', 'packs/', 'evals/', '_config/'];
+const CODE_PREFIXES = ['.shiftstone/', 'core/', 'docs/', 'evals/', '_config/'];
 
 function listMarkdown(dir) {
   const out = [];
@@ -150,7 +150,7 @@ function buildDrift() {
     if (!isAutoCompiled && localIds.includes(seed.id)) {
       drift.push({
         kind: 'adr-seed-collision',
-        detail: `${seed.id} exists in both DECISIONS.md and packs/${seed.pack}/decisions-seed.yaml`,
+        detail: `${seed.id} exists in both DECISIONS.md and .shiftstone/packs/${seed.pack}/decisions-seed.yaml`,
       });
     }
   }

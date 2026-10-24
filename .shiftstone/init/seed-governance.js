@@ -12,12 +12,47 @@
 import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { parse as parseYaml, stringify as stringifyYaml } from 'yaml';
+import { generateAll } from '../governance/index-generator.ts';
 import { generateSkillsManifest } from '../scripts/generate-skills-manifest.js';
 import { linkIdeFolders } from '../scripts/link-ide-folders.js';
 
 /** Marker in docs/bible/DECISIONS.md where pack seeds are rendered. */
 export const DECISIONS_MARKER =
   '<!-- Pack-seeded ADRs are inserted here at init (packs/<archetype>/decisions-seed.yaml). New ADRs append below the seeded block. -->';
+
+/**
+ * Lab-maintenance scripts stripped from the user-facing root package.json
+ * when init merges an archetype (LOCK-B1). They remain reachable inside
+ * `.shiftstone/` for maintainers. `sync:engine` variants are matched by
+ * prefix in `isLabOnlyScript`.
+ */
+export const LAB_ONLY_SCRIPTS = [
+  'parity',
+  'manifest',
+  'validate:budgets',
+  'validate:integrity',
+  'validate:junctions',
+  'validate:parity',
+  'validate:manifest',
+  'validate:contracts',
+  'validate:plans',
+  'validate:lenses',
+  'validate:reports',
+  'validate:anti-gaming',
+  'validate:learning',
+  'validate:decisions',
+  'compile:decisions',
+  'sync:bible:proposal',
+  'validate:protected',
+  'validate:release',
+  'trials',
+  'validate:telemetry',
+  'validate:workspace',
+];
+
+export function isLabOnlyScript(key) {
+  return LAB_ONLY_SCRIPTS.includes(key) || key === 'sync:engine' || key.startsWith('sync:engine:');
+}
 
 const DOCS_DIRS = [
   'docs/plans',
@@ -28,11 +63,6 @@ const DOCS_DIRS = [
   'docs/research/_template',
   'docs/bugs',
   'docs/backlog',
-  'docs/backlog/Phase 1 - Foundation & Auth Setup',
-  'docs/backlog/Phase 2 - Core SaaS Features',
-  'docs/backlog/Phase 3 - Storage & Background Jobs',
-  'docs/backlog/Phase 4 - Testing & Telemetry',
-  'docs/backlog/Phase 5 - Launch & Polish',
 ];
 
 function renderDecision(decision) {
@@ -205,6 +235,164 @@ ${DECISIONS_MARKER}
   return true;
 }
 
+/**
+ * LOCK-B3 generic three-phase template for packs without a backlog seed:
+ * stack-neutral wording only (never carries archetype vocabulary).
+ */
+const GENERIC_BACKLOG_PHASES = [
+  {
+    dir: 'Phase 1 - Foundation',
+    file: '1.1-project-setup.md',
+    title: 'Phase 1.1: Project Setup',
+    focus: 'Repository configuration, tooling, environment wiring, and the architecture baseline.',
+    tasks: [
+      '- [ ] **[P1]** Initialize the application skeleton for the chosen stack',
+      '- [ ] **[P1]** Configure environment variables and the local secrets file',
+      '- [ ] **[P2]** Document the architecture baseline in docs/bible/',
+    ],
+  },
+  {
+    dir: 'Phase 2 - Feature',
+    file: '2.1-core-features.md',
+    title: 'Phase 2.1: Core Features',
+    focus: 'Primary user-facing functionality of the product.',
+    tasks: [
+      '- [ ] **[P1]** Define and implement the first end-to-end user journey',
+      '- [ ] **[P2]** Add input validation and typed error handling across boundaries',
+    ],
+  },
+  {
+    dir: 'Phase 3 - Ship',
+    file: '3.1-launch-checklist.md',
+    title: 'Phase 3.1: Launch Checklist',
+    focus: 'Testing, deployment, observability, and launch readiness.',
+    tasks: [
+      '- [ ] **[P1]** Establish the automated test suite and CI quality gates',
+      '- [ ] **[P1]** Deploy to production with a documented rollback procedure',
+      '- [ ] **[P2]** Wire up logging, metrics, and alerting',
+    ],
+  },
+];
+
+function renderGenericTaskFile(phase, today) {
+  const phaseNumber = phase.file.split('.')[0];
+  return `---
+title: "${phase.title}"
+status: "planned"
+type: "backlog"
+tags: ["backlog", "phase-${phaseNumber}"]
+phase: "${phase.file.replace('.md', '')}"
+lastUpdated: "${today}"
+component: "core"
+---
+
+# ${phase.title} Backlog
+
+${phase.focus}
+
+## Status: Planned 📋
+
+## Tasks
+
+${phase.tasks.join('\n')}
+
+## Change Log
+
+| Date | Task | Action | Assignee |
+|---|---|---|---|
+`;
+}
+
+function renderGenericMoc(today) {
+  const listings = GENERIC_BACKLOG_PHASES.map((phase) => {
+    const shortName = phase.dir.replace('Phase ', '');
+    const fileStem = phase.file.replace('.md', '');
+    return `### ${shortName.replace(' - ', ': ')}\n*${phase.focus}*\n- [[${phase.dir}/${fileStem}\\|${phase.title.replace(/^Phase /, '')}]] 📁 *Planned*`;
+  }).join('\n\n');
+  return `---
+title: "Backlog Map of Content"
+status: "active"
+type: "overview"
+tags: ["backlog", "moc", "roadmap"]
+lastUpdated: "${today}"
+component: "core"
+---
+
+# Backlog Map of Content (MOC)
+
+This Map of Content serves as the single source of truth for the {{PROJECT_NAME}} roadmap and task hierarchy. Tasks are broken down into granular, small-scoped files to prevent AI context overload.
+
+---
+
+## Roadmap 📂
+
+${listings}
+
+---
+
+## How to Work with this Backlog
+
+- Format: \`- [ ] **[Priority]** Task Description\` (where Priority is \`[P1]\`, \`[P2]\`, or \`[P3]\`).
+- \`[ ]\` → \`[/]\` when work starts; \`[/]\` → \`[x]\` **only** after \`/ss-verify <task-id>\` returns a Checker verdict ≥ 0.8.
+- No active backlog file should exceed **12 unresolved tasks** — run \`/ss-backlog-sync\` to split.
+`;
+}
+
+/** First active pack whose seed directory resolves (declared or conventional). */
+function findBacklogSeed(composition) {
+  for (const archetype of composition.archetypes) {
+    const declared = archetype.manifest?.spec?.workspace?.backlogSeed;
+    if (typeof declared === 'string') {
+      const dir = path.join(archetype.dir, declared.replace(/^\.\//, ''));
+      if (!existsSync(dir)) {
+        throw new Error(`pack "${archetype.name}": declared workspace.backlogSeed "${declared}" does not exist`);
+      }
+      return { pack: archetype.name, dir };
+    }
+    const conventional = path.join(archetype.dir, 'backlog-seed');
+    if (existsSync(conventional)) return { pack: archetype.name, dir: conventional };
+  }
+  return null;
+}
+
+/**
+ * Archetype-aware backlog composition (LOCK-B3): purge phase directories
+ * and the composed MOC belonging to a previously composed archetype, then
+ * compose docs/backlog/ from the active pack's seed — or the generic
+ * three-phase template when no active pack ships one. Governance indexes
+ * are regenerated so `governance/index.js --check` stays green.
+ */
+async function composeBacklog(root, composition) {
+  const backlogDir = path.join(root, 'docs', 'backlog');
+  mkdirSync(backlogDir, { recursive: true });
+
+  const seed = findBacklogSeed(composition);
+  const keep = new Set(seed ? readdirSync(seed.dir, { withFileTypes: true }).filter((e) => e.isDirectory()).map((e) => e.name) : []);
+  const purged = [];
+  for (const entry of readdirSync(backlogDir, { withFileTypes: true })) {
+    const isComposed =
+      (entry.isDirectory() && /^Phase \d+ - /.test(entry.name) && !keep.has(entry.name)) ||
+      (entry.isFile() && entry.name === 'MOC.md');
+    if (!isComposed) continue;
+    rmSync(path.join(backlogDir, entry.name), { recursive: true, force: true });
+    purged.push(entry.isDirectory() ? `${entry.name}/` : entry.name);
+  }
+
+  if (seed) {
+    cpSync(seed.dir, backlogDir, { recursive: true });
+  } else {
+    const today = new Date().toISOString().slice(0, 10);
+    for (const phase of GENERIC_BACKLOG_PHASES) {
+      const dir = path.join(backlogDir, phase.dir);
+      mkdirSync(dir, { recursive: true });
+      writeFileSync(path.join(dir, phase.file), renderGenericTaskFile(phase, today), 'utf8');
+    }
+    writeFileSync(path.join(backlogDir, 'MOC.md'), renderGenericMoc(today), 'utf8');
+  }
+  await generateAll(backlogDir);
+  return { purged, source: seed ? `pack:${seed.pack}` : 'generic-template' };
+}
+
 /** Monorepo workspace files from the primary archetype's spec (section 5.4). */
 function writeWorkspaceFiles(root, composition, answers) {
   const primary = composition.archetypes[0];
@@ -221,22 +409,80 @@ function writeWorkspaceFiles(root, composition, answers) {
     }
   }
 
+  // LOCK-B6: non-pnpm packaging modes receive the equivalent root TypeScript
+  // solution config when absent, so IDE language servers resolve imports at
+  // the repository root on a fresh checkout. The pnpm distribution ships its
+  // own committed copy, and an existing user tsconfig is never touched.
+  const tsconfigPath = path.join(root, 'tsconfig.json');
+  if (spec.packaging !== 'pnpm' && !existsSync(tsconfigPath)) {
+    const appPath = primary.effectiveAppPath ?? spec.defaultAppPath;
+    const tsconfig = {
+      compilerOptions: {
+        strict: true,
+        noEmit: true,
+        target: 'es2023',
+        module: 'nodenext',
+        moduleResolution: 'nodenext',
+        resolveJsonModule: true,
+        skipLibCheck: true,
+        forceConsistentCasingInFileNames: true,
+      },
+      files: [],
+      references: [{ path: `./${appPath}` }, { path: './.shiftstone' }],
+    };
+    writeFileSync(tsconfigPath, `${JSON.stringify(tsconfig, null, 2)}\n`, 'utf8');
+    written.push('tsconfig.json');
+  }
+
   const workspace = spec.workspace;
+  if (!workspace) return written;
   const rootPkgPath = path.join(root, 'package.json');
-  if (workspace && !existsSync(rootPkgPath)) {
-    const lower = answers.projectName.toLowerCase().replace(/[^a-z0-9]/g, '-');
+  const lower = answers.projectName.toLowerCase().replace(/[^a-z0-9]/g, '-');
+
+  if (!existsSync(rootPkgPath)) {
     const pkg = {
       name: `${lower}-workspace`,
       version: '0.1.0',
       private: true,
-      scripts: workspace.rootScripts ?? {},
+      scripts: {
+        ...(workspace.rootScripts ?? {}),
+        'test:engine': 'pnpm -C .shiftstone test',
+        'typecheck:engine': 'pnpm -C .shiftstone typecheck',
+        'lint:engine': 'pnpm -C .shiftstone lint',
+      },
     };
     if (Array.isArray(workspace.onlyBuiltDependencies)) {
       pkg.pnpm = { onlyBuiltDependencies: workspace.onlyBuiltDependencies };
     }
     writeFileSync(rootPkgPath, `${JSON.stringify(pkg, null, 2)}\n`, 'utf8');
     written.push('package.json');
+    return written;
   }
+
+  // Merge mode (LOCK-B2): an existing root package.json is never skipped —
+  // archetype rootScripts win per-key, the project is renamed from the
+  // interview answer, lab-only scripts are stripped, and every unrelated
+  // user field survives.
+  let pkg;
+  try {
+    pkg = JSON.parse(readFileSync(rootPkgPath, 'utf8'));
+  } catch (error) {
+    throw new Error(
+      `root package.json is not valid JSON — cannot merge archetype scripts: ${error instanceof Error ? error.message : String(error)}`,
+    );
+  }
+  pkg.name = `${lower}-workspace`;
+  const scripts = { ...(pkg.scripts ?? {}) };
+  for (const key of Object.keys(scripts)) {
+    if (isLabOnlyScript(key)) delete scripts[key];
+  }
+  Object.assign(scripts, workspace.rootScripts ?? {});
+  pkg.scripts = scripts;
+  if (Array.isArray(workspace.onlyBuiltDependencies)) {
+    pkg.pnpm = { ...(pkg.pnpm ?? {}), onlyBuiltDependencies: workspace.onlyBuiltDependencies };
+  }
+  writeFileSync(rootPkgPath, `${JSON.stringify(pkg, null, 2)}\n`, 'utf8');
+  written.push('package.json');
   return written;
 }
 
@@ -464,7 +710,7 @@ Companion to [SKILL.md](./SKILL.md).
  *
  * @param {{ root: string, composition: any, answers: Record<string, any>, quiet?: boolean }} params
  */
-export function seedGovernance({ root, composition, answers, quiet = false }) {
+export async function seedGovernance({ root, composition, answers, quiet = false }) {
   const log = (message) => {
     if (!quiet) console.log(message);
   };
@@ -473,6 +719,7 @@ export function seedGovernance({ root, composition, answers, quiet = false }) {
     overlays: [],
     surfaceOverlays: [],
     decisionsSeeded: false,
+    backlog: { purged: [], source: 'generic-template' },
     workspaceFiles: [],
     prunedSkillLinks: [],
     opencodeUpdated: false,
@@ -481,6 +728,9 @@ export function seedGovernance({ root, composition, answers, quiet = false }) {
 
   result.docsDirs = writeSeedDocs(root, answers.projectName);
   log(`   📂 docs tree: ${result.docsDirs.length} entries ensured`);
+
+  result.backlog = await composeBacklog(root, composition);
+  log(`   🗂️  docs/backlog composed from ${result.backlog.source}${result.backlog.purged.length ? ` (purged ${result.backlog.purged.length} previously composed entries)` : ''}`);
 
   // Registry first: skill discovery, junctions and manifest all read it.
   writeRegistry(root, composition);

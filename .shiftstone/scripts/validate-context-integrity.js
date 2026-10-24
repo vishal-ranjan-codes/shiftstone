@@ -5,7 +5,7 @@
  * Verifies:
  *   1. Universal contradiction pairs defined in .shiftstone/governance/context-integrity-rules.yaml
  *   2. Core stack decoupling (core/ static and path-scoped rules contain zero pack stack terms)
- *   3. Stack-specific forbidden legacy directives declared in pack configs (e.g. packs/rr8-supabase-cf/pack.yaml)
+ *   3. Stack-specific forbidden legacy directives declared in pack configs (e.g. .shiftstone/packs/rr8-supabase-cf/pack.yaml)
  *
  * Exit code 0 on clean pass; exit code 1 with CONTRADICTION_DETECTED / STACK_LEAK_DETECTED on violation.
  */

@@ -1,12 +1,10 @@
-# packs/go-chi-postgres — starter archetype placeholder (task 7.5).
-# Alternative-stack journey: a Go + Chi API service. Owns apps/api-go, so it
-# composes with fastapi-pg (apps/api) in a polyglot monorepo without conflict.
+# packs/go-chi-postgres — starter archetype (graduated to LOCK-B4 bar).
 apiVersion: workspace/v1
 kind: StackArchetype
 metadata:
   name: go-chi-postgres
   displayName: Go + Chi + PostgreSQL
-  version: 0.1.0
+  version: 1.0.0
   tier: starter
   tags: [go, chi, postgresql, api]
 spec:
@@ -28,6 +26,12 @@ spec:
       type: string
       default: "Go 1.23, chi router, pgx, PostgreSQL, go test"
       description: Stack identity line injected into .shiftstone/static-rules/product.md.
+  workspace:
+    rootScripts:
+      dev: "cd {{APP_PATH}} && go run ./cmd/api"
+      test: "cd {{APP_PATH}} && go test ./..."
+      lint: "cd {{APP_PATH}} && golangci-lint run"
+      build: "cd {{APP_PATH}} && go build -o bin/api ./cmd/api"
 composition:
   skills:
     include:

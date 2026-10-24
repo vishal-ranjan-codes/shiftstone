@@ -11,9 +11,10 @@
  *      workflows) byte-identical, 9 seeded ADRs, 37 pack skills junctioned
  */
 
-import { existsSync, lstatSync, readdirSync, readFileSync, statSync } from 'node:fs';
+import { cpSync, existsSync, lstatSync, mkdirSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { checkAll } from '../../governance/index-generator.ts';
 import { main } from '../../init.js';
 import { composeArchetypes } from '../../init/compose.js';
 import { buildVariables } from '../../init/variables.js';
@@ -400,5 +401,74 @@ describe('project-skill template parameterization (pack variables over core defa
     expect(instructions).not.toMatch(STACK_TOKENS);
     const manifest = readFileSync(path.join(root, '.shiftstone', 'context', 'skills-manifest.yaml'), 'utf8');
     expect(manifest).toContain('- name: payments');
+  }, 60_000);
+});
+
+describe('exit criterion — archetype-aware backlog seeding (LOCK-B3)', () => {
+  const backlogSeedDir = (root: string) => {
+    const namespaced = path.join(root, '.shiftstone', 'packs', 'rr8-supabase-cf', 'backlog-seed');
+    return existsSync(namespaced)
+      ? namespaced
+      : path.join(root, 'packs', 'rr8-supabase-cf', 'backlog-seed');
+  };
+
+  it('flagship init composes docs/backlog from the pack seed (golden parity)', async () => {
+    const root = await makeWorkspace();
+    const code = await main([`--root=${root}`, '--name=BacklogApp', '--layout=monorepo', '-y']);
+    expect(code).toBe(0);
+
+    const seedDir = backlogSeedDir(root);
+    const seedFiles = walkFiles(seedDir);
+    expect(seedFiles.length).toBeGreaterThan(0);
+
+    const composition = composeArchetypes({}, { root });
+    const { map } = buildVariables({
+      answers: { projectName: 'BacklogApp', layout: 'monorepo', packageManager: 'pnpm' },
+      composition,
+    });
+    for (const rel of seedFiles) {
+      const composedPath = path.join(root, 'docs', 'backlog', rel);
+      expect(existsSync(composedPath), `docs/backlog/${rel} must be composed`).toBe(true);
+      if (rel.endsWith('index.md')) continue; // governance-regenerated, checked below
+      let expected = readFileSync(path.join(seedDir, rel), 'utf8');
+      for (const [key, value] of Object.entries(map)) expected = expected.split(key).join(value);
+      expect(readFileSync(composedPath, 'utf8'), `docs/backlog/${rel}`).toBe(expected);
+    }
+    const moc = readFileSync(path.join(root, 'docs', 'backlog', 'MOC.md'), 'utf8');
+    expect(moc).toContain('BacklogApp');
+
+    const check = await checkAll(path.join(root, 'docs', 'backlog'));
+    expect([...check.missing, ...check.stale]).toEqual([]);
+  }, 60_000);
+
+  it('composing fastapi-pg over a flagship-seeded backlog purges flagship files and seeds the generic template', async () => {
+    const root = await makeWorkspace();
+    // Simulate a workspace previously composed from the flagship seed.
+    const backlog = path.join(root, 'docs', 'backlog');
+    mkdirSync(backlog, { recursive: true });
+    cpSync(backlogSeedDir(root), backlog, { recursive: true });
+    expect(existsSync(path.join(backlog, 'Phase 1 - Foundation & Auth Setup', '1.2-supabase-database.md'))).toBe(true);
+
+    const code = await main([`--root=${root}`, '--archetype=fastapi-pg', '--name=PyApp', '--layout=monorepo', '-y']);
+    expect(code).toBe(0);
+
+    const files = walkFiles(backlog);
+    // Zero flagship-titled task files, zero stack tokens anywhere in the backlog
+    for (const rel of files) {
+      expect(rel, `purged file resurfaced: ${rel}`).not.toMatch(STACK_TOKENS);
+      expect(readFileSync(path.join(backlog, rel), 'utf8'), `stack token in ${rel}`).not.toMatch(STACK_TOKENS);
+    }
+    expect(files.some((f) => f.startsWith('Phase 1 - Foundation/'))).toBe(true);
+    expect(files.some((f) => f.startsWith('Phase 2 - Feature/'))).toBe(true);
+    expect(files.some((f) => f.startsWith('Phase 3 - Ship/'))).toBe(true);
+
+    // MOC.md lists only the composed generic entries
+    const moc = readFileSync(path.join(backlog, 'MOC.md'), 'utf8');
+    expect(moc).toContain('PyApp');
+    expect(moc).toContain('Phase 1 - Foundation');
+    expect(moc).not.toContain('Foundation & Auth Setup');
+
+    const check = await checkAll(backlog);
+    expect([...check.missing, ...check.stale]).toEqual([]);
   }, 60_000);
 });

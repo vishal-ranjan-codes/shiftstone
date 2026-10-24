@@ -9,7 +9,7 @@ This ledger is auto-compiled from individual OKF decision files in `docs/decisio
 
 ---
 
-<!-- Pack-seeded ADRs are inserted here at init (packs/<archetype>/decisions-seed.yaml). New ADRs append below the seeded block. -->
+<!-- Pack-seeded ADRs are inserted here at init (.shiftstone/packs/<archetype>/decisions-seed.yaml). New ADRs append below the seeded block. -->
 
 ## Architecture Decisions Ledger
 

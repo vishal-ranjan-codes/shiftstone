@@ -1,13 +1,10 @@
-# packs/sveltekit-supabase — starter archetype placeholder (task 7.5).
-# Alternative-stack journey: a SvelteKit web frontend on Supabase. Declares
-# conflicts with the packs that own the web frontend at apps/web
-# (blueprint section 10.4 decision D).
+# packs/sveltekit-supabase — starter archetype (graduated to LOCK-B4 bar).
 apiVersion: workspace/v1
 kind: StackArchetype
 metadata:
   name: sveltekit-supabase
   displayName: SvelteKit + Supabase
-  version: 0.1.0
+  version: 1.0.0
   tier: starter
   tags: [svelte, sveltekit, supabase, typescript]
 spec:
@@ -29,6 +26,15 @@ spec:
       type: string
       default: "SvelteKit, Supabase (PostgreSQL + Auth + RLS), TypeScript strict, Tailwind CSS v4"
       description: Stack identity line injected into .shiftstone/static-rules/product.md.
+  workspace:
+    rootScripts:
+      dev: "pnpm -C {{APP_PATH}} dev"
+      build: "pnpm -C {{APP_PATH}} build"
+      start: "pnpm -C {{APP_PATH}} preview"
+      test: "pnpm -C {{APP_PATH}} test"
+      test:ui: "pnpm -C {{APP_PATH}} test:ui"
+      lint: "pnpm -C {{APP_PATH}} lint"
+      typecheck: "pnpm -C {{APP_PATH}} typecheck"
 composition:
   skills:
     include:
