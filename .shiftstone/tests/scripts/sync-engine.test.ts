@@ -77,6 +77,8 @@ describe('sync-engine.js — Bi-Directional Engine Synchronization (DEC-014)', (
     expect(UNIVERSAL_SYNC_AREAS).toContain('init');
     expect(UNIVERSAL_SYNC_AREAS).toContain('static-rules');
     expect(UNIVERSAL_SYNC_AREAS).toContain('path-scoped-rules');
+    expect(UNIVERSAL_SYNC_AREAS).toContain('governance');
+    expect(UNIVERSAL_SYNC_AREAS).toContain('schemas');
     expect(TEMPLATED_SYNC_AREAS).toEqual(['static-rules', 'path-scoped-rules']);
     expect(isTemplatedArea('static-rules/verification.md')).toBe(true);
     expect(isTemplatedArea('path-scoped-rules/research-rules.md')).toBe(true);
@@ -293,4 +295,30 @@ describe('sync-engine.js — templated governance rule parity (REQ-08 / audit W5
       }
     },
   );
+
+  it('TS-U13-01 / TS-U13-02 / TS-U13-03: verifies planning lifecycle toolchain is syncable without drift', () => {
+    const { parentTemp, childTemp, cleanup } = makePair();
+    try {
+      write(parentTemp, 'scripts/plan.js', '// plan cli\n');
+      write(parentTemp, 'scripts/lib/plan-schema.js', '// schema\n');
+      write(parentTemp, 'governance/schemas/plan-manifest-v1.schema.json', '{"schema":"plan-manifest/v1"}\n');
+      write(parentTemp, 'governance/schemas/plan-state-v1.schema.json', '{"schema":"plan-state/v1"}\n');
+      write(parentTemp, 'governance/schemas/plan-handoff-v1.schema.json', '{"schema":"plan-handoff/v1"}\n');
+
+      const dry = syncEngine({ parentRoot: parentTemp, childRoot: childTemp, direction: 'outward', dryRun: true });
+      expect(dry.ok).toBe(true);
+      expect(dry.stats.created).toBe(5);
+
+      const sync = syncEngine({ parentRoot: parentTemp, childRoot: childTemp, direction: 'outward', dryRun: false });
+      expect(sync.ok).toBe(true);
+      expect(sync.stats.actionsApplied).toBe(5);
+
+      const check = syncEngine({ parentRoot: parentTemp, childRoot: childTemp, direction: 'outward', check: true });
+      expect(check.ok).toBe(true);
+      expect(check.stats.identical).toBe(5);
+    } finally {
+      cleanup();
+    }
+  });
 });
+

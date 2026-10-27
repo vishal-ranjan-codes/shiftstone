@@ -1,6 +1,6 @@
 {
   "name": "shiftstone",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "private": true,
   "description": "ShiftStone — Universal Autonomous AI Development Workspace Framework. Application code lives in apps/ — scaffold the flagship app with node .shiftstone/packs/rr8-supabase-cf/scaffold-script.js --root=. --yes (or run node .shiftstone/init.js for full governance composition); harness code lives in .shiftstone/.",
   "scripts": {

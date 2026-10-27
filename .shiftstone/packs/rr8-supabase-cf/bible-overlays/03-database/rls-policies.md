@@ -1,8 +1,13 @@
 ---
-type: chapter
-timestamp: 2026-09-05T14:49:56.618Z
+type: chapter-topic
+title: "Row-Level Security Policies"
+chapter: "03-database"
+file: "rls-policies.md"
+timestamp: 2026-10-26T12:00:00.000Z
+description: "Row Level Security (RLS) policies per table, access matrices, and tenant isolation helper functions."
 ---
-# 03 — Row-Level Security (RLS) Policies
+
+# Database — Row-Level Security (RLS) Policies
 
 All tables must have Row-Level Security enabled. No exceptions.
 
@@ -43,6 +48,6 @@ CREATE POLICY "Admins can view all profiles"
 
 ## Policy Performance Rules
 
-1. Wrap subqueries in `(select ...)` so PostgreSQL caches query results across rows.
+1. Wrap subqueries in `(SELECT 1 FROM ...)` so PostgreSQL caches query results across evaluated rows.
 2. Ensure columns used in `USING` or `WITH CHECK` clauses (such as `user_id`, `role`, `team_id`) are properly indexed.
-3. Test policies locally before deploying to production.
+3. Test policies locally via `supabase test db` before deploying migrations to production.

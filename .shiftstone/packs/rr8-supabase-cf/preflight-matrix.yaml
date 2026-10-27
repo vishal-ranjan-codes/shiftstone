@@ -15,7 +15,7 @@ rules:
       - react-router-routing
       - react-router-data-loading
     bible:
-      - docs/bible/08-api-contracts/route-contracts.md
+      - docs/bible/08-api-contracts/route-loaders.md
     suggestedVerifyCmd: "pnpm test"
 
   - id: form-actions-and-validation
@@ -29,7 +29,7 @@ rules:
       - react-router-actions-forms
       - zod-validation
     bible:
-      - docs/bible/08-api-contracts/route-contracts.md
+      - docs/bible/08-api-contracts/route-actions.md
     suggestedVerifyCmd: "pnpm test"
 
   - id: server-middleware-and-auth
@@ -43,7 +43,7 @@ rules:
       - react-router-middleware
       - supabase-auth
     bible:
-      - docs/bible/04-auth-and-rbac/auth-overview.md
+      - docs/bible/04-auth-and-rbac/route-guards.md
     suggestedVerifyCmd: "pnpm test"
 
   - id: database-migrations-and-rls
@@ -73,7 +73,7 @@ rules:
       - theme-management
       - tailwind-v4
     bible:
-      - docs/bible/07-frontend/ui-architecture.md
+      - docs/bible/07-frontend/component-standards.md
     suggestedVerifyCmd: "pnpm test"
 
   - id: scheduled-workers-and-cron

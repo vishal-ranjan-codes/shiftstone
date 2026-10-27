@@ -110,6 +110,7 @@ describe('exit criterion — --archetype=fastapi-pg produces zero RR8/Supabase/C
       'ss-backlog-sync',
       'ss-bookkeeping',
       'ss-brainstorm',
+      'ss-brand',
       'ss-brand-naming',
       'ss-bug-report',
       'ss-deploy',
@@ -176,7 +177,7 @@ describe('exit criterion — default flagship init preserves pre-refactor UX', (
     const code = await main([`--root=${root}`, '--name=ParityApp', '--layout=monorepo', '-y']);
     expect(code).toBe(0);
 
-    // 1. All 10 stack chapters come from the pack overlays verbatim
+    // 1. All modular stack chapters come from the pack overlays verbatim (v2.2 modular standard)
     //    (composed files additionally carry the substituted placeholders)
     const composition = composeArchetypes({}, { root });
     const { map } = buildVariables({
@@ -187,7 +188,7 @@ describe('exit criterion — default flagship init preserves pre-refactor UX', (
       ? path.join('.shiftstone', 'packs', 'rr8-supabase-cf', 'bible-overlays')
       : path.join('packs', 'rr8-supabase-cf', 'bible-overlays');
     const overlayFiles = walkFiles(path.join(root, overlayRel));
-    expect(overlayFiles.length).toBe(10);
+    expect(overlayFiles.length).toBe(29);
     for (const rel of overlayFiles) {
       const composed = readFileSync(path.join(root, 'docs', 'bible', rel), 'utf8');
       let expected = readFileSync(path.join(root, overlayRel, rel), 'utf8');
@@ -248,12 +249,12 @@ describe('exit criterion — default flagship init preserves pre-refactor UX', (
       if (lstatSync(path.join(skillsDir, name)).isSymbolicLink()) junctions += 1;
     }
     expect(junctions).toBe(37);
-    expect(skillNames.size).toBe(69);
+    expect(skillNames.size).toBe(70);
 
-    // 4. Generated manifest: 69 skills, flagship active, INDEX refreshed
+    // 4. Generated manifest: 70 skills, flagship active, INDEX refreshed
     const manifest = readFileSync(path.join(root, '.shiftstone', 'context', 'skills-manifest.yaml'), 'utf8');
     expect(manifest).toContain('- rr8-supabase-cf');
-    expect((manifest.match(/^ {4}- name: /gm) ?? []).length).toBe(69);
+    expect((manifest.match(/^ {4}- name: /gm) ?? []).length).toBe(70);
     const agents = readFileSync(path.join(root, 'AGENTS.md'), 'utf8');
     expect(agents).toContain('react-router-routing');
     expect(agents).toContain('loop-author');
@@ -315,11 +316,11 @@ describe('exit criterion — polyglot monorepo with two independent git remotes'
     expect(new Set(metadata.archetypes.map((a: { remote: string }) => a.remote)).size).toBe(2);
 
     // Both stacks coexist: rr8 bible overlays + fastapi scaffold
-    const architecture = readFileSync(
-      path.join(root, 'docs', 'bible', '01-architecture', 'architecture-overview.md'),
+    const topology = readFileSync(
+      path.join(root, 'docs', 'bible', '01-architecture', 'topology.md'),
       'utf8',
     );
-    expect(architecture).toContain('Cloudflare'); // rr8 overlay applied
+    expect(topology).toContain('Cloudflare'); // rr8 overlay applied
     expect(existsSync(path.join(root, 'apps', 'api', 'main.py'))).toBe(true);
 
     // Primary archetype owns the active skills + identity

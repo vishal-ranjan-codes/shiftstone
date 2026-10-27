@@ -48,6 +48,7 @@ export const UNIVERSAL_SYNC_AREAS = [
   'packs',
   'static-rules',
   'path-scoped-rules',
+  'schemas',
   'migrate-v1-to-v2.js',
   'vitest.config.ts',
   'tsconfig.json',

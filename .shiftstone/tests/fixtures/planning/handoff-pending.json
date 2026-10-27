@@ -1,0 +1,223 @@
+{
+  "schema": "plan-handoff/v1",
+  "suiteId": "synthetic-planning",
+  "phaseId": "P1",
+  "attempt": 1,
+  "previousRef": null,
+  "definitionSha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  "recordedAt": "2026-10-23T00:00:00Z",
+  "actor": {
+    "id": "synthetic-maker",
+    "role": "maker"
+  },
+  "event": "interrupted",
+  "implementation": "implemented",
+  "terminalState": "blocked",
+  "summary": "Synthetic accordion-like boundary: implemented, required browser blocked, review blocked; no milestone approval.",
+  "changes": [
+    {
+      "path": "docs/schemas/plan-unit-v1.schema.json",
+      "reason": "Synthetic example only; the actual v1 schema is unchanged.",
+      "unitIds": [
+        "U1"
+      ]
+    }
+  ],
+  "deviations": [],
+  "materialContext": [
+    {
+      "id": "fixture-only",
+      "decision": "Use synthetic hashes.",
+      "rationale": "Fixtures must not masquerade as actual execution.",
+      "provenance": "P1 fixture authoring.",
+      "downstreamPhaseIds": [
+        "P2"
+      ]
+    }
+  ],
+  "issues": [
+    {
+      "id": "browser-pending",
+      "summary": "Required visual behavior is unobserved.",
+      "owner": "synthetic-runtime-owner",
+      "impact": "Milestone approval withheld.",
+      "blockingPhaseIds": [
+        "P1",
+        "P2"
+      ],
+      "evidenceRefs": [
+        {
+          "path": "test/fixtures/planning/evidence/blank-canvas.txt",
+          "sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+        }
+      ]
+    }
+  ],
+  "entrySnapshot": {
+    "head": "synthetic-head",
+    "branch": "synthetic-branch",
+    "scopePaths": [
+      "docs/schemas"
+    ],
+    "scopeDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "environmentDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "files": [
+      {
+        "path": "docs/schemas/plan-unit-v1.schema.json",
+        "tracked": true,
+        "worktreeSha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "indexBlob": "synthetic-index-blob"
+      }
+    ],
+    "environment": [
+      {
+        "key": "node-version",
+        "valueSha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+      }
+    ]
+  },
+  "exitSnapshot": {
+    "head": "synthetic-head",
+    "branch": "synthetic-branch",
+    "scopePaths": [
+      "docs/schemas"
+    ],
+    "scopeDigest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "environmentDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "files": [
+      {
+        "path": "docs/schemas/plan-unit-v1.schema.json",
+        "tracked": true,
+        "worktreeSha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "indexBlob": "synthetic-index-blob"
+      },
+      {
+        "path": "docs/schemas/synthetic-new.json",
+        "tracked": false,
+        "worktreeSha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "indexBlob": null
+      },
+      {
+        "path": "docs/schemas/synthetic-deleted.json",
+        "tracked": true,
+        "worktreeSha256": null,
+        "indexBlob": "synthetic-deleted-blob"
+      }
+    ],
+    "environment": [
+      {
+        "key": "node-version",
+        "valueSha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+      }
+    ]
+  },
+  "checks": [
+    {
+      "checkId": "contracts",
+      "result": "passed",
+      "observedAt": "2026-10-23T00:00:00Z",
+      "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "environmentDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "exitCode": 0,
+      "evidenceRefs": [
+        {
+          "path": "test/fixtures/planning/evidence/automated.txt",
+          "sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+        }
+      ],
+      "reason": "Synthetic observation; not a real check or approval."
+    },
+    {
+      "checkId": "visual",
+      "result": "blocked",
+      "observedAt": "2026-10-23T00:00:00Z",
+      "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "environmentDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "exitCode": null,
+      "evidenceRefs": [],
+      "reason": "Synthetic empty canvas prevents required browser observation."
+    },
+    {
+      "checkId": "unstarted",
+      "result": "not-run",
+      "observedAt": null,
+      "sourceDigest": null,
+      "environmentDigest": null,
+      "exitCode": null,
+      "evidenceRefs": [],
+      "reason": "Synthetic observation; not a real check or approval."
+    },
+    {
+      "checkId": "optional-diagnostic",
+      "result": "failed",
+      "observedAt": "2026-10-23T00:00:00Z",
+      "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "environmentDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "exitCode": 1,
+      "evidenceRefs": [
+        {
+          "path": "test/fixtures/planning/evidence/failure.txt",
+          "sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+        }
+      ],
+      "reason": "Synthetic observation; not a real check or approval."
+    },
+    {
+      "checkId": "optional-platform",
+      "result": "skipped",
+      "observedAt": "2026-10-23T00:00:00Z",
+      "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "environmentDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "exitCode": null,
+      "evidenceRefs": [],
+      "reason": "Optional procedure does not apply in this synthetic environment."
+    }
+  ],
+  "reviewRefs": [
+    {
+      "path": "test/fixtures/planning/evidence/blocked-review.txt",
+      "sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+    }
+  ],
+  "approvalRefs": [],
+  "reviewRequest": {
+    "requestedAt": "2026-10-23T00:00:00Z",
+    "requestedBy": "synthetic-maker"
+  },
+  "next": {
+    "phaseId": "P1",
+    "entryConditions": [
+      "Observe browser behavior and obtain actual independent review."
+    ],
+    "firstAction": "Remediate the empty canvas; do not start downstream implementation."
+  },
+  "preservation": [
+    {
+      "path": "unrelated/existing.md",
+      "state": "unstaged",
+      "origin": "unknown",
+      "action": "preserve",
+      "reason": "Inventory only; unrelated content was not read.",
+      "entrySha256": null,
+      "exitSha256": null
+    },
+    {
+      "path": "docs/schemas/plan-unit-v1.schema.json",
+      "state": "staged",
+      "origin": "pre-existing",
+      "action": "preserve",
+      "reason": "Preserve distinct index and worktree state.",
+      "entrySha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "exitSha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+    },
+    {
+      "path": "docs/schemas/synthetic-new.json",
+      "state": "untracked",
+      "origin": "this-phase",
+      "action": "intentional-edit",
+      "reason": "Synthetic scoped addition affects inventory.",
+      "entrySha256": null,
+      "exitSha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+    }
+  ]
+}

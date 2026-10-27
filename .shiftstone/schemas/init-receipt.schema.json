@@ -1,0 +1,68 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "init-receipt/v1",
+  "title": "WorkspaceInitReceipt",
+  "type": "object",
+  "required": [
+    "version",
+    "session_id",
+    "status",
+    "started_at",
+    "completed_at",
+    "archetypes",
+    "completed_steps",
+    "skipped_steps",
+    "suggested_next_steps"
+  ],
+  "properties": {
+    "version": {
+      "type": "string"
+    },
+    "session_id": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["completed"]
+    },
+    "started_at": {
+      "type": "string"
+    },
+    "completed_at": {
+      "type": "string"
+    },
+    "elapsed_sec": {
+      "type": "number"
+    },
+    "archetypes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "completed_steps": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "skipped_steps": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "context_summary": {
+      "type": "object"
+    },
+    "skills_curation": {
+      "type": "object"
+    },
+    "suggested_next_steps": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    }
+  }
+}

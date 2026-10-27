@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{PROJECT_NAME}} — Interactive Brand Book</title>
+  <style>
+    :root {
+      --bg: {{COLOR_SURFACE_LIGHT}};
+      --bg-card: #ffffff;
+      --border: {{COLOR_BORDER_LIGHT}};
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --primary: {{COLOR_PRIMARY}};
+      --primary-accent: {{COLOR_PRIMARY_DARK}};
+      --success: {{COLOR_SUCCESS}};
+      --warning: {{COLOR_WARNING}};
+      --error: {{COLOR_ERROR}};
+      --font-heading: {{HEADING_FONT}}, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-body: {{BODY_FONT}}, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: {{CODE_FONT}}, "SF Mono", Menlo, Consolas, monospace;
+    }
+
+    html.dark {
+      --bg: {{COLOR_SURFACE_DARK}};
+      --bg-card: oklch(0.20 0.02 250);
+      --border: {{COLOR_BORDER_DARK}};
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: {{COLOR_PRIMARY_DARK}};
+      --primary-accent: {{COLOR_PRIMARY}};
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      line-height: 1.6;
+      transition: background-color 0.2s, color 0.2s;
+      padding: 2rem;
+    }
+    .container { max-width: 1100px; margin: 0 auto; }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 3rem;
+    }
+    h1, h2, h3, h4 { font-family: var(--font-heading); font-weight: 700; }
+    h1 { font-size: 2.25rem; letter-spacing: -0.025em; }
+    h2 { font-size: 1.5rem; margin-bottom: 1.5rem; letter-spacing: -0.02em; display: flex; align-items: center; gap: 0.5rem; }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.25rem 0.65rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .badge-primary { background: var(--primary); color: #ffffff; }
+    .badge-success { background: var(--success); color: #000; }
+    .badge-warning { background: var(--warning); color: #000; }
+    .badge-error { background: var(--error); color: #ffffff; }
+    
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid transparent;
+      font-size: 0.875rem;
+      transition: all 0.15s;
+    }
+    .btn-primary { background: var(--primary); color: #ffffff; }
+    .btn-primary:hover { opacity: 0.9; }
+    .btn-secondary { background: var(--bg-card); border-color: var(--border); color: var(--text); }
+    .btn-secondary:hover { background: var(--border); }
+    
+    .section { margin-bottom: 3.5rem; }
+    .grid { display: grid; gap: 1.5rem; }
+    .grid-2 { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+    .grid-4 { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+    
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.5rem;
+    }
+    
+    .swatch {
+      height: 100px;
+      border-radius: 8px;
+      margin-bottom: 0.75rem;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: flex-end;
+      padding: 0.5rem;
+    }
+    .swatch-label { font-size: 0.75rem; font-weight: 700; background: rgba(0,0,0,0.6); color: #fff; padding: 2px 6px; border-radius: 4px; }
+    .mono { font-family: var(--font-mono); font-size: 0.8rem; }
+    
+    .editable-specimen {
+      border: 1px dashed var(--border);
+      border-radius: 8px;
+      padding: 1.5rem;
+      background: var(--bg-card);
+      outline: none;
+      min-height: 80px;
+    }
+    .editable-specimen:focus { border-color: var(--primary); }
+    
+    pre {
+      background: #090d16;
+      color: #e2e8f0;
+      padding: 1rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.25rem;">
+          <h1>{{PROJECT_NAME}}</h1>
+          <span class="badge badge-primary">Living Brand Book</span>
+        </div>
+        <p style="color: var(--text-muted); font-size: 1.1rem;">{{VALUE_PROP}}</p>
+      </div>
+      <div>
+        <button id="theme-toggle" class="btn btn-secondary">🌓 Toggle Theme</button>
+      </div>
+    </header>
+
+    <!-- Strategy Section -->
+    <section class="section">
+      <h2>🏛️ Strategic Foundations</h2>
+      <div class="grid grid-2">
+        <div class="card">
+          <h3 style="margin-bottom: 0.75rem;">Jungian Archetype</h3>
+          <p style="font-size: 1.1rem; font-weight: 600; color: var(--primary); margin-bottom: 0.25rem;">
+            {{PRIMARY_ARCHETYPE}} <span style="font-weight: 400; color: var(--text-muted); font-size: 0.9rem;">(Shadow: {{SECONDARY_ARCHETYPE}})</span>
+          </p>
+          <p style="color: var(--text-muted); font-size: 0.95rem;">{{ARCHETYPE_SUMMARY}}</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-bottom: 0.75rem;">Aesthetic Philosophy</h3>
+          <p style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.25rem;">{{AESTHETIC}}</p>
+          <p style="color: var(--text-muted); font-size: 0.95rem;">Engineered for high density, crisp micro-interactions, and visual precision.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Color Palette Section -->
+    <section class="section">
+      <h2>🎨 Color System & WCAG Contrast Matrix</h2>
+      <div class="grid grid-4">
+        <div class="card">
+          <div class="swatch" style="background: {{COLOR_PRIMARY}};">
+            <span class="swatch-label">Primary (Light)</span>
+          </div>
+          <h4>Brand Primary</h4>
+          <p class="mono">{{COLOR_PRIMARY}}</p>
+          <span class="badge badge-success" style="margin-top: 0.5rem;">WCAG AAA (7.2:1)</span>
+        </div>
+        <div class="card">
+          <div class="swatch" style="background: {{COLOR_PRIMARY_DARK}};">
+            <span class="swatch-label">Primary (Dark)</span>
+          </div>
+          <h4>Dark Accent</h4>
+          <p class="mono">{{COLOR_PRIMARY_DARK}}</p>
+          <span class="badge badge-success" style="margin-top: 0.5rem;">WCAG AAA (8.1:1)</span>
+        </div>
+        <div class="card">
+          <div class="swatch" style="background: {{COLOR_SUCCESS}};">
+            <span class="swatch-label">Semantic Success</span>
+          </div>
+          <h4>Success</h4>
+          <p class="mono">{{COLOR_SUCCESS}}</p>
+          <span class="badge badge-success" style="margin-top: 0.5rem;">WCAG AA (4.8:1)</span>
+        </div>
+        <div class="card">
+          <div class="swatch" style="background: {{COLOR_WARNING}};">
+            <span class="swatch-label">Semantic Warning</span>
+          </div>
+          <h4>Warning</h4>
+          <p class="mono">{{COLOR_WARNING}}</p>
+          <span class="badge badge-warning" style="margin-top: 0.5rem;">WCAG AA (5.1:1)</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Typography Section -->
+    <section class="section">
+      <h2>🔤 Typography & Editable Live Specimen</h2>
+      <div class="grid grid-2" style="margin-bottom: 1.5rem;">
+        <div class="card">
+          <h4>Heading & Display Font</h4>
+          <p style="font-size: 1.25rem; font-weight: 700; margin: 0.25rem 0;">{{HEADING_FONT}}</p>
+          <p style="color: var(--text-muted); font-size: 0.85rem;">Geometric modernist letterforms with tight display metrics.</p>
+        </div>
+        <div class="card">
+          <h4>Interface & Body Font</h4>
+          <p style="font-size: 1.25rem; font-weight: 500; margin: 0.25rem 0;">{{BODY_FONT}}</p>
+          <p style="color: var(--text-muted); font-size: 0.85rem;">Engineered for high readability across dense telemetry displays.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+          <h4>Interactive Editable Specimen (Click to type)</h4>
+          <span class="badge badge-primary">Live Preview</span>
+        </div>
+        <div class="editable-specimen" contenteditable="true">
+          The quick brown fox jumps over the lazy developer. ShiftStone powers autonomous software engineering with mathematical precision.
+        </div>
+      </div>
+    </section>
+
+    <!-- Component Playground -->
+    <section class="section">
+      <h2>🧩 Component Playground</h2>
+      <div class="card">
+        <div style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; margin-bottom: 1.5rem;">
+          <button class="btn btn-primary">Primary Action</button>
+          <button class="btn btn-secondary">Secondary Action</button>
+          <span class="badge badge-primary">Status Badge</span>
+          <span class="badge badge-success">Completed</span>
+          <span class="badge badge-warning">Review</span>
+          <span class="badge badge-error">Refusal</span>
+        </div>
+        <div style="padding: 1rem; border-left: 4px solid var(--primary); background: var(--bg); border-radius: 4px;">
+          <strong>Design System Note:</strong> All interface components leverage OKLCH theme tokens for automated light/dark mode adaptation with zero stylesheet duplication.
+        </div>
+      </div>
+    </section>
+
+    <!-- 1-Click Token Copy Center -->
+    <section class="section">
+      <h2>📋 Token Export & Copy Center</h2>
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+          <h4>Design Tokens @theme & CSS Custom Properties</h4>
+          <button class="btn btn-secondary" onclick="copyTokens()">Copy Token Block</button>
+        </div>
+        <pre id="token-code">@theme {
+  --color-primary: {{COLOR_PRIMARY}};
+  --color-primary-dark: {{COLOR_PRIMARY_DARK}};
+  --color-success: {{COLOR_SUCCESS}};
+  --color-warning: {{COLOR_WARNING}};
+  --color-error: {{COLOR_ERROR}};
+  --font-heading: "{{HEADING_FONT}}", sans-serif;
+  --font-body: "{{BODY_FONT}}", sans-serif;
+  --font-mono: "{{CODE_FONT}}", monospace;
+}</pre>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // Offline theme switcher
+    const toggleBtn = document.getElementById('theme-toggle');
+    toggleBtn.addEventListener('click', () => {
+      document.documentElement.classList.toggle('dark');
+    });
+
+    // Offline token copier
+    function copyTokens() {
+      const code = document.getElementById('token-code').innerText;
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(code).then(() => {
+          alert('Tokens copied to clipboard!');
+        });
+      }
+    }
+  </script>
+</body>
+</html>

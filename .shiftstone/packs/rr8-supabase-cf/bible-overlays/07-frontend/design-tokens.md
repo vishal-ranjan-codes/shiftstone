@@ -1,18 +1,23 @@
 ---
-type: chapter
-timestamp: 2026-09-06T00:18:02.984Z
+type: chapter-topic
+title: "Design Tokens & Theme Architecture"
+chapter: "07-frontend"
+file: "design-tokens.md"
+timestamp: 2026-10-26T12:00:00.000Z
+description: "Tailwind CSS v4 @theme configuration, semantic design tokens, OKLCH color palettes, and zero-FOUC theme scripts."
 ---
-# 07 — Frontend & UI Architecture
 
-## Styling System
+# Frontend — Design Tokens & Theme Architecture
 
-{{PROJECT_NAME}} uses **Tailwind CSS v4** layered with a custom semantic design token system in `{{APP_PATH}}/app/globals.css`.
+## 1. Styling System
+
+The application uses **Tailwind CSS v4** layered with a custom semantic design token system in `apps/web/app/globals.css`.
 - **CSS-First Configuration**: Tailwind v4 removes `tailwind.config.js`. All fonts, theme variables, and keyframes are defined inside CSS `@theme` blocks.
 - **Vite Integration**: Compiled via `@tailwindcss/vite` in `vite.config.ts`.
 
 ---
 
-## Semantic Design Tokens
+## 2. Semantic Design Tokens
 
 | UI Role | Semantic Class | Light Mode | Dark Mode | Usage |
 |---|---|---|---|---|
@@ -27,18 +32,9 @@ timestamp: 2026-09-06T00:18:02.984Z
 
 ---
 
-## Theme Management (`app/lib/theme.ts`)
+## 3. Theme Management (`app/lib/theme.ts`)
 
 Instead of relying on Next.js-specific `next-themes`, the framework uses a lightweight helper:
 - Persists theme choice (`light`, `dark`, `system`) to `localStorage`.
 - Listens to `(prefers-color-scheme: dark)` media query for system changes.
 - Injects an inline blocking `<ThemeScript />` in `<head>` of `app/root.tsx` to immediately apply `.dark` before the first paint, eliminating Flash of Unstyled Content (FOUC).
-
----
-
-## Component Standards
-
-- **Primitives**: Built with **shadcn/ui** primitives located under `{{APP_PATH}}/app/components/ui/` using the `~/` path alias.
-- **Card Design**: Subtle borders (`theme-card-bg theme-border-color border`) without aggressive hover drop-shadows.
-- **Touch Targets**: All mobile interactive buttons and links must measure at least **44x44px**.
-- **Typography**: Inter Variable font self-hosted in `public/fonts/` (no external CDN dependencies).

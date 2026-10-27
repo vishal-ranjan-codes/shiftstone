@@ -2,7 +2,7 @@
 apiVersion: context/v1
 kind: SkillsManifest
 metadata:
-  generated: 2026-10-24T02:36:18.344Z
+  generated: 2026-10-27T14:42:58.119Z
   coreVersion: 2.1.0
   activePacks:
     - rr8-supabase-cf
@@ -363,6 +363,18 @@ spec:
       tags:
         - shiftstone
         - core
+    - name: ss-brand
+      pack: core
+      tier: manual-load
+      tokenCost: 1321
+      depends_on: []
+      description: Full-spectrum branding and design token engine — crafts brand
+        strategy, Jungian archetypes, tone-of-voice sliders, accessible OKLCH
+        color palettes, typography scales, design tokens, and a living
+        interactive Brand Book.
+      tags:
+        - shiftstone
+        - core
     - name: ss-brand-naming
       pack: core
       tier: manual-load
@@ -445,7 +457,7 @@ spec:
     - name: ss-init
       pack: core
       tier: manual-load
-      tokenCost: 1141
+      tokenCost: 2297
       depends_on: []
       description: Autonomous product-architecting and workspace initialization engine
         — runs 5-Gate Socratic interview, Gate 4.5 brand naming, mechanical
@@ -654,7 +666,7 @@ spec:
     - name: ss-verify
       pack: core
       tier: manual-load
-      tokenCost: 1273
+      tokenCost: 1810
       depends_on: []
       description: Mandatory outer gate — executes the 5-Step Verification Ladder,
         spawns a disjoint Checker subagent, and blocks task completion when

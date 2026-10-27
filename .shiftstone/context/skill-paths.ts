@@ -23,15 +23,21 @@ export interface PackSkill {
   dir: string;
 }
 
-export function readPackRegistry(root: string): { activePacks: string[]; namespacedSkills: Set<string> } {
+export function readPackRegistry(root: string): {
+  activePacks: string[];
+  namespacedSkills: Set<string>;
+  excludedSkills: Set<string>;
+} {
   const registryPath = path.join(root, '.shiftstone', 'packs', '_registry.yaml');
-  if (!existsSync(registryPath)) return { activePacks: [], namespacedSkills: new Set() };
+  if (!existsSync(registryPath)) return { activePacks: [], namespacedSkills: new Set(), excludedSkills: new Set() };
   const doc = parseYaml(readFileSync(registryPath, 'utf8')) as Record<string, unknown> | null;
   const activePacks = Array.isArray(doc?.activePacks) ? doc.activePacks : [];
   const namespaced = Array.isArray(doc?.namespacedSkills) ? doc.namespacedSkills : [];
+  const excluded = Array.isArray(doc?.excludedSkills) ? doc.excludedSkills : [];
   return {
     activePacks: activePacks.filter((p): p is string => typeof p === 'string'),
     namespacedSkills: new Set(namespaced.filter((p): p is string => typeof p === 'string')),
+    excludedSkills: new Set(excluded.filter((p): p is string => typeof p === 'string')),
   };
 }
 
@@ -47,9 +53,13 @@ function listSkillDirs(dir: string): string[] {
 export function listActivePackSkills(root: string): PackSkill[] {
   const out: PackSkill[] = [];
   const seen = new Set<string>();
-  for (const pack of readPackRegistry(root).activePacks) {
+  const registry = readPackRegistry(root);
+  for (const pack of registry.activePacks) {
     const skillsRoot = path.join(root, '.shiftstone', 'packs', pack, 'skills');
     for (const name of listSkillDirs(skillsRoot)) {
+      if (registry.excludedSkills.has(name)) {
+        continue;
+      }
       if (seen.has(name)) {
         throw new Error(
           `skill name collision: "${name}" is provided by more than one active pack (use --force-namespace at init to namespace colliding skills)`,
@@ -77,6 +87,8 @@ export function listCoreSkills(root: string): string[] {
  * Order: .agents/skills (junction or real dir) -> active pack skills.
  */
 export function resolveSkillDir(root: string, name: string): string | null {
+  const registry = readPackRegistry(root);
+  if (registry.excludedSkills.has(name)) return null;
   const agentsDir = path.join(root, '.agents', 'skills', name);
   if (existsSync(agentsDir)) return agentsDir;
   const packSkill = listActivePackSkills(root).find((s) => s.name === name);

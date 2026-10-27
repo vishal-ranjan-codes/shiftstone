@@ -55,6 +55,8 @@ evals/runs.jsonl
 
 # Workspace initialization receipt
 .workspace-init-receipt.json
+.workspace-init-state.json
+.workspace-init-state.json.tmp*
 
 # Ephemeral runtime logs
 .logs/

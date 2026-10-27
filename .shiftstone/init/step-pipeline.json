@@ -1,0 +1,95 @@
+{
+  "version": "2.2.0",
+  "pipeline_name": "shiftstone_core_init_pipeline",
+  "steps": [
+    {
+      "id": "gate_1_problem_space",
+      "phase": "discovery",
+      "title": "Problem Space & Value Proposition",
+      "is_optional": false,
+      "baseline_sec": 90,
+      "substeps": ["value_proposition", "core_goals", "anti_goals"],
+      "description": "Elicit problem definition, value proposition, core goals, and anti-goals."
+    },
+    {
+      "id": "gate_2_actors_rbac",
+      "phase": "discovery",
+      "title": "Actors, Personas & RBAC Hierarchy",
+      "is_optional": false,
+      "baseline_sec": 90,
+      "substeps": ["user_personas", "tenancy_model", "permissions"],
+      "description": "Identify user personas, system actors, and RBAC hierarchy."
+    },
+    {
+      "id": "gate_3_entity_modeling",
+      "phase": "discovery",
+      "title": "Domain Entity Modeling & Invariants",
+      "is_optional": false,
+      "baseline_sec": 120,
+      "substeps": ["primary_entities", "relationships", "business_invariants"],
+      "description": "Model primary domain entities and non-negotiable business rules."
+    },
+    {
+      "id": "gate_4_tenant_security",
+      "phase": "discovery",
+      "title": "Tenant Isolation & Security Posture",
+      "is_optional": false,
+      "baseline_sec": 90,
+      "substeps": ["isolation_strategy", "compliance", "audit_logging"],
+      "description": "Determine database isolation, compliance, and security posture."
+    },
+    {
+      "id": "step_5_branding",
+      "phase": "branding",
+      "title": "Brand Identity & Design Tokens",
+      "is_optional": true,
+      "baseline_sec": 180,
+      "substeps": ["name_selection", "color_palette", "typography", "brand_book"],
+      "description": "Formulate brand strategy, accessible OKLCH palette, and living Brand Book.",
+      "skip_behavior": {
+        "prompt": "Skip full brand identity configuration for now?",
+        "post_init_suggestion": "/ss-brand"
+      }
+    },
+    {
+      "id": "step_6_stack_archetype",
+      "phase": "discovery",
+      "title": "Stack Archetype Confirmation",
+      "is_optional": false,
+      "baseline_sec": 60,
+      "substeps": ["select_archetype", "package_manager", "integrations"],
+      "description": "Confirm stack archetype, package manager, and third-party services."
+    },
+    {
+      "id": "step_7_research",
+      "phase": "research",
+      "title": "Pre-Scaffold Tech Research",
+      "is_optional": true,
+      "baseline_sec": 120,
+      "substeps": ["service_investigation", "dossier_synthesis"],
+      "description": "Conduct evidence-grounded research for third-party integrations.",
+      "skip_behavior": {
+        "prompt": "Skip pre-scaffold research?",
+        "post_init_suggestion": "/ss-research"
+      }
+    },
+    {
+      "id": "step_8_mechanical_scaffold",
+      "phase": "scaffold",
+      "title": "Mechanical Workspace Scaffolding",
+      "is_optional": false,
+      "baseline_sec": 60,
+      "substeps": ["pack_validation", "starter_scaffold", "repo_setup"],
+      "description": "Execute init.js engine, seed governance, and establish git boundaries."
+    },
+    {
+      "id": "step_9_bible_backlog_synthesis",
+      "phase": "synthesis",
+      "title": "Deep Bible & Backlog Synthesis",
+      "is_optional": false,
+      "baseline_sec": 240,
+      "substeps": ["database_schema", "rls_policies", "domain_rules", "route_contracts", "task_backlog"],
+      "description": "Synthesize full modular Development Bible and actionable task backlog."
+    }
+  ]
+}

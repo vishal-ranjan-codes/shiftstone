@@ -298,6 +298,22 @@ export function validateAllSkills(options = {}) {
     }
   }
 
+  // Minimum required counts per Phase 5 Unit U14 (AC-U14-01 / REQ-INIT-13)
+  if (ssCount < 31) {
+    violations.push({
+      code: 'INSUFFICIENT_SS_SKILLS',
+      file: '.agents/skills/',
+      message: `Expected at least 31 ss-* core skills, found ${ssCount}`,
+    });
+  }
+  if (allSkills.length < 66) {
+    violations.push({
+      code: 'INSUFFICIENT_TOTAL_SKILLS',
+      file: '.agents/skills/',
+      message: `Expected at least 66 total workspace skills, found ${allSkills.length}`,
+    });
+  }
+
   return {
     ok: violations.length === 0,
     totalSkills: allSkills.length,

@@ -1,0 +1,1102 @@
+[
+  {
+    "name": "all-required-fresh-and-approved",
+    "input": {
+      "implementation": "implemented",
+      "checks": [
+        {
+          "required": true,
+          "result": "passed",
+          "fresh": true
+        }
+      ],
+      "requiredReview": true,
+      "reviewVerdict": "APPROVED",
+      "reviewRequested": true,
+      "reviewFresh": true,
+      "disjoint": true,
+      "distinctActor": true,
+      "humanApprovalRequired": false,
+      "humanApprovalValid": false,
+      "blockingIssue": false,
+      "definitionFresh": true,
+      "terminalState": "success",
+      "dependency": {
+        "requires": "complete",
+        "reason": "Strict predecessor acceptance."
+      },
+      "mode": "implement"
+    },
+    "expected": {
+      "verification": "passed",
+      "review": "approved",
+      "acceptance": "complete",
+      "entryReady": true,
+      "remediationAllowed": false
+    }
+  },
+  {
+    "name": "required-failure",
+    "input": {
+      "implementation": "implemented",
+      "checks": [
+        {
+          "required": true,
+          "result": "failed",
+          "fresh": true
+        }
+      ],
+      "requiredReview": true,
+      "reviewVerdict": "APPROVED",
+      "reviewRequested": true,
+      "reviewFresh": true,
+      "disjoint": true,
+      "distinctActor": true,
+      "humanApprovalRequired": false,
+      "humanApprovalValid": false,
+      "blockingIssue": false,
+      "definitionFresh": true,
+      "terminalState": "success",
+      "dependency": {
+        "requires": "complete",
+        "reason": "Strict predecessor acceptance."
+      },
+      "mode": "implement"
+    },
+    "expected": {
+      "verification": "failed",
+      "review": "approved",
+      "acceptance": "open",
+      "entryReady": false,
+      "remediationAllowed": false
+    }
+  },
+  {
+    "name": "accordion-browser-pending",
+    "input": {
+      "implementation": "implemented",
+      "checks": [
+        {
+          "required": true,
+          "result": "passed",
+          "fresh": true
+        },
+        {
+          "required": true,
+          "result": "blocked",
+          "fresh": true
+        }
+      ],
+      "requiredReview": true,
+      "reviewVerdict": "blocked",
+      "reviewRequested": true,
+      "reviewFresh": true,
+      "disjoint": true,
+      "distinctActor": true,
+      "humanApprovalRequired": false,
+      "humanApprovalValid": false,
+      "blockingIssue": false,
+      "definitionFresh": true,
+      "terminalState": "success",
+      "dependency": {
+        "requires": "complete",
+        "reason": "Strict predecessor acceptance."
+      },
+      "mode": "implement"
+    },
+    "expected": {
+      "verification": "pending",
+      "review": "blocked",
+      "acceptance": "open",
+      "entryReady": false,
+      "remediationAllowed": false
+    }
+  },
+  {
+    "name": "rejected-review",
+    "input": {
+      "implementation": "implemented",
+      "checks": [
+        {
+          "required": true,
+          "result": "passed",
+          "fresh": true
+        }
+      ],
+      "requiredReview": true,
+      "reviewVerdict": "REJECTED",
+      "reviewRequested": true,
+      "reviewFresh": true,
+      "disjoint": true,
+      "distinctActor": true,
+      "humanApprovalRequired": false,
+      "humanApprovalValid": false,
+      "blockingIssue": false,
+      "definitionFresh": true,
+      "terminalState": "success",
+      "dependency": {
+        "requires": "complete",
+        "reason": "Strict predecessor acceptance."
+      },
+      "mode": "implement"
+    },
+    "expected": {
+      "verification": "passed",
+      "review": "rejected",
+      "acceptance": "open",
+      "entryReady": false,
+      "remediationAllowed": false
+    }
+  },
+  {
+    "name": "same-head-stale-source",
+    "input": {
+      "implementation": "implemented",
+      "checks": [
+        {
+          "required": true,
+          "result": "passed",
+          "fresh": false
+        }
+      ],
+      "requiredReview": true,
+      "reviewVerdict": "APPROVED",
+      "reviewRequested": true,
+      "reviewFresh": false,
+      "disjoint": true,
+      "distinctActor": true,
+      "humanApprovalRequired": false,
+      "humanApprovalValid": false,
+      "blockingIssue": false,
+      "definitionFresh": true,
+      "terminalState": "success",
+      "dependency": {
+        "requires": "complete",
+        "reason": "Strict predecessor acceptance."
+      },
+      "mode": "implement"
+    },
+    "expected": {
+      "verification": "pending",
+      "review": "pending",
+      "acceptance": "open",
+      "entryReady": false,
+      "remediationAllowed": false
+    }
+  },
+  {
+    "name": "stale-definition",
+    "input": {
+      "implementation": "implemented",
+      "checks": [
+        {
+          "required": true,
+          "result": "passed",
+          "fresh": true
+        }
+      ],
+      "requiredReview": true,
+      "reviewVerdict": "APPROVED",
+      "reviewRequested": true,
+      "reviewFresh": true,
+      "disjoint": true,
+      "distinctActor": true,
+      "humanApprovalRequired": false,
+      "humanApprovalValid": false,
+      "blockingIssue": false,
+      "definitionFresh": false,
+      "terminalState": "success",
+      "dependency": {
+        "requires": "complete",
+        "reason": "Strict predecessor acceptance."
+      },
+      "mode": "implement"
+    },
+    "expected": {
+      "verification": "pending",
+      "review": "pending",
+      "acceptance": "open",
+      "entryReady": false,
+      "remediationAllowed": false
+    }
+  },
+  {
+    "name": "optional-failure-visible",
+    "input": {
+      "implementation": "implemented",
+      "checks": [
+        {
+          "required": true,
+          "result": "passed",
+          "fresh": true
+        },
+        {
+          "required": false,
+          "result": "failed",
+          "fresh": true
+        }
+      ],
+      "requiredReview": true,
+      "reviewVerdict": "APPROVED",
+      "reviewRequested": true,
+      "reviewFresh": true,
+      "disjoint": true,
+      "distinctActor": true,
+      "humanApprovalRequired": false,
+      "humanApprovalValid": false,
+      "blockingIssue": false,
+      "definitionFresh": true,
+      "terminalState": "success",
+      "dependency": {
+        "requires": "complete",
+        "reason": "Strict predecessor acceptance."
+      },
+      "mode": "implement"
+    },
+    "expected": {
+      "verification": "passed",
+      "review": "approved",
+      "acceptance": "complete",
+      "entryReady": true,
+      "remediationAllowed": false
+    }
+  },
+  {
+    "name": "blocking-issue",
+    "input": {
+      "implementation": "implemented",
+      "checks": [
+        {
+          "required": true,
+          "result": "passed",
+          "fresh": true
+        }
+      ],
+      "requiredReview": true,
+      "reviewVerdict": "APPROVED",
+      "reviewRequested": true,
+      "reviewFresh": true,
+      "disjoint": true,
+      "distinctActor": true,
+      "humanApprovalRequired": false,
+      "humanApprovalValid": false,
+      "blockingIssue": true,
+      "definitionFresh": true,
+      "terminalState": "success",
+      "dependency": {
+        "requires": "complete",
+        "reason": "Strict predecessor acceptance."
+      },
+      "mode": "implement"
+    },
+    "expected": {
+      "verification": "passed",
+      "review": "approved",
+      "acceptance": "open",
+      "entryReady": false,
+      "remediationAllowed": false
+    }
+  },
+  {
+    "name": "no-checks-attempted",
+    "input": {
+      "implementation": "implemented",
+      "checks": [
+        {
+          "required": true,
+          "result": "not-run",
+          "fresh": false
+        }
+      ],
+      "requiredReview": true,
+      "reviewVerdict": "APPROVED",
+      "reviewRequested": true,
+      "reviewFresh": true,
+      "disjoint": true,
+      "distinctActor": true,
+      "humanApprovalRequired": false,
+      "humanApprovalValid": false,
+      "blockingIssue": false,
+      "definitionFresh": true,
+      "terminalState": "success",
+      "dependency": {
+        "requires": "complete",
+        "reason": "Strict predecessor acceptance."
+      },
+      "mode": "implement"
+    },
+    "expected": {
+      "verification": "not-run",
+      "review": "approved",
+      "acceptance": "open",
+      "entryReady": false,
+      "remediationAllowed": false
+    }
+  },
+  {
+    "name": "missing-required-observation",
+    "input": {
+      "implementation": "implemented",
+      "checks": [
+        {
+          "required": true,
+          "result": "missing",
+          "fresh": false
+        }
+      ],
+      "requiredReview": true,
+      "reviewVerdict": "APPROVED",
+      "reviewRequested": true,
+      "reviewFresh": true,
+      "disjoint": true,
+      "distinctActor": true,
+      "humanApprovalRequired": false,
+      "humanApprovalValid": false,
+      "blockingIssue": false,
+      "definitionFresh": true,
+      "terminalState": "success",
+      "dependency": {
+        "requires": "complete",
+        "reason": "Strict predecessor acceptance."
+      },
+      "mode": "implement"
+    },
+    "expected": {
+      "verification": "not-run",
+      "review": "approved",
+      "acceptance": "open",
+      "entryReady": false,
+      "remediationAllowed": false
+    }
+  },
+  {
+    "name": "missing-required-after-other-attempt",
+    "input": {
+      "implementation": "implemented",
+      "checks": [
+        {
+          "required": true,
+          "result": "missing",
+          "fresh": false
+        },
+        {
+          "required": false,
+          "result": "passed",
+          "fresh": true
+        }
+      ],
+      "requiredReview": true,
+      "reviewVerdict": "APPROVED",
+      "reviewRequested": true,
+      "reviewFresh": true,
+      "disjoint": true,
+      "distinctActor": true,
+      "humanApprovalRequired": false,
+      "humanApprovalValid": false,
+      "blockingIssue": false,
+      "definitionFresh": true,
+      "terminalState": "success",
+      "dependency": {
+        "requires": "complete",
+        "reason": "Strict predecessor acceptance."
+      },
+      "mode": "implement"
+    },
+    "expected": {
+      "verification": "pending",
+      "review": "approved",
+      "acceptance": "open",
+      "entryReady": false,
+      "remediationAllowed": false
+    }
+  },
+  {
+    "name": "required-skip",
+    "input": {
+      "implementation": "implemented",
+      "checks": [
+        {
+          "required": true,
+          "result": "skipped",
+          "fresh": true
+        }
+      ],
+      "requiredReview": true,
+      "reviewVerdict": "APPROVED",
+      "reviewRequested": true,
+      "reviewFresh": true,
+      "disjoint": true,
+      "distinctActor": true,
+      "humanApprovalRequired": false,
+      "humanApprovalValid": false,
+      "blockingIssue": false,
+      "definitionFresh": true,
+      "terminalState": "success",
+      "dependency": {
+        "requires": "complete",
+        "reason": "Strict predecessor acceptance."
+      },
+      "mode": "implement"
+    },
+    "expected": {
+      "verification": "pending",
+      "review": "approved",
+      "acceptance": "open",
+      "entryReady": false,
+      "remediationAllowed": false
+    }
+  },
+  {
+    "name": "failure-precedes-pending",
+    "input": {
+      "implementation": "implemented",
+      "checks": [
+        {
+          "required": true,
+          "result": "blocked",
+          "fresh": true
+        },
+        {
+          "required": true,
+          "result": "failed",
+          "fresh": true
+        }
+      ],
+      "requiredReview": true,
+      "reviewVerdict": "APPROVED",
+      "reviewRequested": true,
+      "reviewFresh": true,
+      "disjoint": true,
+      "distinctActor": true,
+      "humanApprovalRequired": false,
+      "humanApprovalValid": false,
+      "blockingIssue": false,
+      "definitionFresh": true,
+      "terminalState": "success",
+      "dependency": {
+        "requires": "complete",
+        "reason": "Strict predecessor acceptance."
+      },
+      "mode": "implement"
+    },
+    "expected": {
+      "verification": "failed",
+      "review": "approved",
+      "acceptance": "open",
+      "entryReady": false,
+      "remediationAllowed": false
+    }
+  },
+  {
+    "name": "no-review-report",
+    "input": {
+      "implementation": "implemented",
+      "checks": [
+        {
+          "required": true,
+          "result": "passed",
+          "fresh": true
+        }
+      ],
+      "requiredReview": true,
+      "reviewVerdict": null,
+      "reviewRequested": false,
+      "reviewFresh": true,
+      "disjoint": true,
+      "distinctActor": true,
+      "humanApprovalRequired": false,
+      "humanApprovalValid": false,
+      "blockingIssue": false,
+      "definitionFresh": true,
+      "terminalState": "success",
+      "dependency": {
+        "requires": "complete",
+        "reason": "Strict predecessor acceptance."
+      },
+      "mode": "implement"
+    },
+    "expected": {
+      "verification": "passed",
+      "review": "not-requested",
+      "acceptance": "open",
+      "entryReady": false,
+      "remediationAllowed": false
+    }
+  },
+  {
+    "name": "requested-without-report",
+    "input": {
+      "implementation": "implemented",
+      "checks": [
+        {
+          "required": true,
+          "result": "passed",
+          "fresh": true
+        }
+      ],
+      "requiredReview": true,
+      "reviewVerdict": null,
+      "reviewRequested": true,
+      "reviewFresh": true,
+      "disjoint": true,
+      "distinctActor": true,
+      "humanApprovalRequired": false,
+      "humanApprovalValid": false,
+      "blockingIssue": false,
+      "definitionFresh": true,
+      "terminalState": "success",
+      "dependency": {
+        "requires": "complete",
+        "reason": "Strict predecessor acceptance."
+      },
+      "mode": "implement"
+    },
+    "expected": {
+      "verification": "passed",
+      "review": "pending",
+      "acceptance": "open",
+      "entryReady": false,
+      "remediationAllowed": false
+    }
+  },
+  {
+    "name": "legacy-pass-verdict",
+    "input": {
+      "implementation": "implemented",
+      "checks": [
+        {
+          "required": true,
+          "result": "passed",
+          "fresh": true
+        }
+      ],
+      "requiredReview": true,
+      "reviewVerdict": "pass",
+      "reviewRequested": true,
+      "reviewFresh": true,
+      "disjoint": true,
+      "distinctActor": true,
+      "humanApprovalRequired": false,
+      "humanApprovalValid": false,
+      "blockingIssue": false,
+      "definitionFresh": true,
+      "terminalState": "success",
+      "dependency": {
+        "requires": "complete",
+        "reason": "Strict predecessor acceptance."
+      },
+      "mode": "implement"
+    },
+    "expected": {
+      "verification": "passed",
+      "review": "approved",
+      "acceptance": "complete",
+      "entryReady": true,
+      "remediationAllowed": false
+    }
+  },
+  {
+    "name": "legacy-fail-verdict",
+    "input": {
+      "implementation": "implemented",
+      "checks": [
+        {
+          "required": true,
+          "result": "passed",
+          "fresh": true
+        }
+      ],
+      "requiredReview": true,
+      "reviewVerdict": "fail",
+      "reviewRequested": true,
+      "reviewFresh": true,
+      "disjoint": true,
+      "distinctActor": true,
+      "humanApprovalRequired": false,
+      "humanApprovalValid": false,
+      "blockingIssue": false,
+      "definitionFresh": true,
+      "terminalState": "success",
+      "dependency": {
+        "requires": "complete",
+        "reason": "Strict predecessor acceptance."
+      },
+      "mode": "implement"
+    },
+    "expected": {
+      "verification": "passed",
+      "review": "rejected",
+      "acceptance": "open",
+      "entryReady": false,
+      "remediationAllowed": false
+    }
+  },
+  {
+    "name": "legacy-review-unbound",
+    "input": {
+      "implementation": "implemented",
+      "checks": [
+        {
+          "required": true,
+          "result": "passed",
+          "fresh": true
+        }
+      ],
+      "requiredReview": true,
+      "reviewVerdict": "APPROVED",
+      "reviewRequested": true,
+      "reviewFresh": false,
+      "disjoint": true,
+      "distinctActor": true,
+      "humanApprovalRequired": false,
+      "humanApprovalValid": false,
+      "blockingIssue": false,
+      "definitionFresh": true,
+      "terminalState": "success",
+      "dependency": {
+        "requires": "complete",
+        "reason": "Strict predecessor acceptance."
+      },
+      "mode": "implement"
+    },
+    "expected": {
+      "verification": "passed",
+      "review": "pending",
+      "acceptance": "open",
+      "entryReady": false,
+      "remediationAllowed": false
+    }
+  },
+  {
+    "name": "self-review",
+    "input": {
+      "implementation": "implemented",
+      "checks": [
+        {
+          "required": true,
+          "result": "passed",
+          "fresh": true
+        }
+      ],
+      "requiredReview": true,
+      "reviewVerdict": "APPROVED",
+      "reviewRequested": true,
+      "reviewFresh": true,
+      "disjoint": true,
+      "distinctActor": false,
+      "humanApprovalRequired": false,
+      "humanApprovalValid": false,
+      "blockingIssue": false,
+      "definitionFresh": true,
+      "terminalState": "success",
+      "dependency": {
+        "requires": "complete",
+        "reason": "Strict predecessor acceptance."
+      },
+      "mode": "implement"
+    },
+    "expected": {
+      "verification": "passed",
+      "review": "pending",
+      "acceptance": "open",
+      "entryReady": false,
+      "remediationAllowed": false
+    }
+  },
+  {
+    "name": "non-disjoint-review",
+    "input": {
+      "implementation": "implemented",
+      "checks": [
+        {
+          "required": true,
+          "result": "passed",
+          "fresh": true
+        }
+      ],
+      "requiredReview": true,
+      "reviewVerdict": "APPROVED",
+      "reviewRequested": true,
+      "reviewFresh": true,
+      "disjoint": false,
+      "distinctActor": true,
+      "humanApprovalRequired": false,
+      "humanApprovalValid": false,
+      "blockingIssue": false,
+      "definitionFresh": true,
+      "terminalState": "success",
+      "dependency": {
+        "requires": "complete",
+        "reason": "Strict predecessor acceptance."
+      },
+      "mode": "implement"
+    },
+    "expected": {
+      "verification": "passed",
+      "review": "pending",
+      "acceptance": "open",
+      "entryReady": false,
+      "remediationAllowed": false
+    }
+  },
+  {
+    "name": "required-human-approval-absent",
+    "input": {
+      "implementation": "implemented",
+      "checks": [
+        {
+          "required": true,
+          "result": "passed",
+          "fresh": true
+        }
+      ],
+      "requiredReview": true,
+      "reviewVerdict": "APPROVED",
+      "reviewRequested": true,
+      "reviewFresh": true,
+      "disjoint": true,
+      "distinctActor": true,
+      "humanApprovalRequired": true,
+      "humanApprovalValid": false,
+      "blockingIssue": false,
+      "definitionFresh": true,
+      "terminalState": "success",
+      "dependency": {
+        "requires": "complete",
+        "reason": "Strict predecessor acceptance."
+      },
+      "mode": "implement"
+    },
+    "expected": {
+      "verification": "passed",
+      "review": "approved",
+      "acceptance": "open",
+      "entryReady": false,
+      "remediationAllowed": false
+    }
+  },
+  {
+    "name": "required-human-approval-valid",
+    "input": {
+      "implementation": "implemented",
+      "checks": [
+        {
+          "required": true,
+          "result": "passed",
+          "fresh": true
+        }
+      ],
+      "requiredReview": true,
+      "reviewVerdict": "APPROVED",
+      "reviewRequested": true,
+      "reviewFresh": true,
+      "disjoint": true,
+      "distinctActor": true,
+      "humanApprovalRequired": true,
+      "humanApprovalValid": true,
+      "blockingIssue": false,
+      "definitionFresh": true,
+      "terminalState": "success",
+      "dependency": {
+        "requires": "complete",
+        "reason": "Strict predecessor acceptance."
+      },
+      "mode": "implement"
+    },
+    "expected": {
+      "verification": "passed",
+      "review": "approved",
+      "acceptance": "complete",
+      "entryReady": true,
+      "remediationAllowed": false
+    }
+  },
+  {
+    "name": "success-is-not-acceptance",
+    "input": {
+      "implementation": "in-progress",
+      "checks": [
+        {
+          "required": true,
+          "result": "passed",
+          "fresh": true
+        }
+      ],
+      "requiredReview": true,
+      "reviewVerdict": "APPROVED",
+      "reviewRequested": true,
+      "reviewFresh": true,
+      "disjoint": true,
+      "distinctActor": true,
+      "humanApprovalRequired": false,
+      "humanApprovalValid": false,
+      "blockingIssue": false,
+      "definitionFresh": true,
+      "terminalState": "success",
+      "dependency": {
+        "requires": "complete",
+        "reason": "Strict predecessor acceptance."
+      },
+      "mode": "implement"
+    },
+    "expected": {
+      "verification": "passed",
+      "review": "approved",
+      "acceptance": "open",
+      "entryReady": false,
+      "remediationAllowed": false
+    }
+  },
+  {
+    "name": "blocked-run-can-retain-accepted-evidence",
+    "input": {
+      "implementation": "implemented",
+      "checks": [
+        {
+          "required": true,
+          "result": "passed",
+          "fresh": true
+        }
+      ],
+      "requiredReview": true,
+      "reviewVerdict": "APPROVED",
+      "reviewRequested": true,
+      "reviewFresh": true,
+      "disjoint": true,
+      "distinctActor": true,
+      "humanApprovalRequired": false,
+      "humanApprovalValid": false,
+      "blockingIssue": false,
+      "definitionFresh": true,
+      "terminalState": "blocked",
+      "dependency": {
+        "requires": "complete",
+        "reason": "Strict predecessor acceptance."
+      },
+      "mode": "implement"
+    },
+    "expected": {
+      "verification": "passed",
+      "review": "approved",
+      "acceptance": "complete",
+      "entryReady": true,
+      "remediationAllowed": false
+    }
+  },
+  {
+    "name": "review-optional-narrow-entry",
+    "input": {
+      "implementation": "implemented",
+      "checks": [
+        {
+          "required": true,
+          "result": "passed",
+          "fresh": true
+        }
+      ],
+      "requiredReview": false,
+      "reviewVerdict": null,
+      "reviewRequested": false,
+      "reviewFresh": true,
+      "disjoint": true,
+      "distinctActor": true,
+      "humanApprovalRequired": false,
+      "humanApprovalValid": false,
+      "blockingIssue": false,
+      "definitionFresh": true,
+      "terminalState": "success",
+      "dependency": {
+        "requires": "implementation-verified",
+        "reason": "No independent gate applies to this synthetic dependency."
+      },
+      "mode": "implement"
+    },
+    "expected": {
+      "verification": "passed",
+      "review": "not-requested",
+      "acceptance": "complete",
+      "entryReady": true,
+      "remediationAllowed": false
+    }
+  },
+  {
+    "name": "narrow-dependency-cannot-waive-browser",
+    "input": {
+      "implementation": "implemented",
+      "checks": [
+        {
+          "required": true,
+          "result": "blocked",
+          "fresh": true
+        }
+      ],
+      "requiredReview": true,
+      "reviewVerdict": "APPROVED",
+      "reviewRequested": true,
+      "reviewFresh": true,
+      "disjoint": true,
+      "distinctActor": true,
+      "humanApprovalRequired": false,
+      "humanApprovalValid": false,
+      "blockingIssue": false,
+      "definitionFresh": true,
+      "terminalState": "success",
+      "dependency": {
+        "requires": "implementation-verified",
+        "reason": "A narrower dependency still cannot waive required checks."
+      },
+      "mode": "implement"
+    },
+    "expected": {
+      "verification": "pending",
+      "review": "approved",
+      "acceptance": "open",
+      "entryReady": false,
+      "remediationAllowed": false
+    }
+  },
+  {
+    "name": "narrow-dependency-cannot-waive-review",
+    "input": {
+      "implementation": "implemented",
+      "checks": [
+        {
+          "required": true,
+          "result": "passed",
+          "fresh": true
+        }
+      ],
+      "requiredReview": true,
+      "reviewVerdict": "blocked",
+      "reviewRequested": true,
+      "reviewFresh": true,
+      "disjoint": true,
+      "distinctActor": true,
+      "humanApprovalRequired": false,
+      "humanApprovalValid": false,
+      "blockingIssue": false,
+      "definitionFresh": true,
+      "terminalState": "success",
+      "dependency": {
+        "requires": "implementation-verified",
+        "reason": "Relevant required review is retained."
+      },
+      "mode": "implement"
+    },
+    "expected": {
+      "verification": "passed",
+      "review": "blocked",
+      "acceptance": "open",
+      "entryReady": false,
+      "remediationAllowed": false
+    }
+  },
+  {
+    "name": "narrow-dependency-requires-reason",
+    "input": {
+      "implementation": "implemented",
+      "checks": [
+        {
+          "required": true,
+          "result": "passed",
+          "fresh": true
+        }
+      ],
+      "requiredReview": true,
+      "reviewVerdict": "APPROVED",
+      "reviewRequested": true,
+      "reviewFresh": true,
+      "disjoint": true,
+      "distinctActor": true,
+      "humanApprovalRequired": false,
+      "humanApprovalValid": false,
+      "blockingIssue": false,
+      "definitionFresh": true,
+      "terminalState": "success",
+      "dependency": {
+        "requires": "implementation-verified",
+        "reason": ""
+      },
+      "mode": "implement"
+    },
+    "expected": {
+      "verification": "passed",
+      "review": "approved",
+      "acceptance": "complete",
+      "entryReady": false,
+      "remediationAllowed": false
+    }
+  },
+  {
+    "name": "remediation-keeps-downstream-blocked",
+    "input": {
+      "implementation": "implemented",
+      "checks": [
+        {
+          "required": true,
+          "result": "blocked",
+          "fresh": true
+        }
+      ],
+      "requiredReview": true,
+      "reviewVerdict": "blocked",
+      "reviewRequested": true,
+      "reviewFresh": true,
+      "disjoint": true,
+      "distinctActor": true,
+      "humanApprovalRequired": false,
+      "humanApprovalValid": false,
+      "blockingIssue": false,
+      "definitionFresh": true,
+      "terminalState": "success",
+      "dependency": {
+        "requires": "complete",
+        "reason": "Strict predecessor acceptance."
+      },
+      "mode": "remediate"
+    },
+    "expected": {
+      "verification": "pending",
+      "review": "blocked",
+      "acceptance": "open",
+      "entryReady": false,
+      "remediationAllowed": true
+    }
+  },
+  {
+    "name": "planned-legacy-unknown",
+    "input": {
+      "implementation": "planned",
+      "checks": [
+        {
+          "required": true,
+          "result": "not-run",
+          "fresh": false
+        }
+      ],
+      "requiredReview": true,
+      "reviewVerdict": null,
+      "reviewRequested": false,
+      "reviewFresh": true,
+      "disjoint": true,
+      "distinctActor": true,
+      "humanApprovalRequired": false,
+      "humanApprovalValid": false,
+      "blockingIssue": false,
+      "definitionFresh": true,
+      "terminalState": "success",
+      "dependency": {
+        "requires": "complete",
+        "reason": "Strict predecessor acceptance."
+      },
+      "mode": "implement"
+    },
+    "expected": {
+      "verification": "not-run",
+      "review": "not-requested",
+      "acceptance": "open",
+      "entryReady": false,
+      "remediationAllowed": false
+    }
+  }
+]

@@ -1,12 +1,17 @@
 ---
-type: chapter
-timestamp: 2026-09-06T00:17:26.736Z
+type: chapter-topic
+title: "Identity Providers & Multi-Method Auth"
+chapter: "04-auth-and-rbac"
+file: "identity-providers.md"
+timestamp: 2026-10-26T12:00:00.000Z
+description: "Multi-Method Authentication Architecture (Email+Password, OTP, Magic Link, Google OAuth) and SSR client initialization."
 ---
-# 04 — Auth & Role-Based Access Control (RBAC)
 
-## Supabase Auth & SSR Architecture
+# Auth & RBAC — Identity Providers & Multi-Method Auth
 
-{{PROJECT_NAME}} implements a **middleware-first authentication pipeline** using `@supabase/ssr` (0.12+) and React Router 8 native middleware:
+## 1. Supabase Auth & SSR Architecture
+
+The application implements a **middleware-first authentication pipeline** using `@supabase/ssr` (0.12+) and React Router 8 native middleware:
 
 ```
 Incoming Request
@@ -36,9 +41,9 @@ Outgoing Response (app/middleware/supabase.ts appends serialized Set-Cookie head
 
 ---
 
-## Multi-Method Authentication Architecture
+## 2. Multi-Method Authentication Architecture
 
-{{PROJECT_NAME}} supports 4 authentication methods configured centrally in `app/lib/auth/config.ts`:
+The system supports 4 authentication methods configured centrally in `app/lib/auth/config.ts`:
 
 | # | Method | Sign-In | Sign-Up | Default State | Implementation |
 |---|--------|---------|---------|---------------|----------------|
@@ -60,45 +65,3 @@ export const authConfig: AuthConfig = {
   passwordMinLength: 8,
 };
 ```
-
-To enable or disable any method, toggle the boolean flags in `authConfig.methods`. No other code changes are needed.
-
----
-
-## Route Guarding Patterns
-
-### 1. User Authentication Guard (`authMiddleware`)
-Applied to user dashboards and account routes:
-```typescript
-export const middleware: Route.MiddlewareFunction[] = [
-  supabaseMiddleware,
-  authMiddleware,
-];
-```
-
-### 2. Admin RBAC Guard (`adminMiddleware`)
-Applied to `/admin` route trees:
-- Verifies user is authenticated via `supabase.auth.getUser()`.
-- Queries `profiles.role === 'admin'`.
-- If unauthorized: silently redirects to `/dashboard` (hiding the existence of the admin route).
-
----
-
-## User Roles & Assignment Rules
-
-The system recognizes two roles stored in `public.profiles.role`:
-
-| Role | Access Scope | How to Assign |
-|---|---|---|
-| `user` | `/dashboard/*` and public routes | **Automatic** on sign-up via the `handle_new_user()` database trigger |
-| `admin` | `/admin/*`, `/dashboard/*`, and public routes | **Strictly Manual** — direct database update or admin RPC only |
-
-Public sign-up forms NEVER permit users to choose or request the `admin` role.
-
----
-
-## Token Verification & Best Practices
-
-- `getClaims()`: Used in middleware for fast cryptographic token verification via cached JWKS. Does NOT make a network round-trip for valid tokens.
-- `getUser()`: Used in `authMiddleware` when active authorization against the database is required.
-- `getSession()`: **STRICTLY FORBIDDEN** for server-side authorization decisions because the session data is unverified and untrusted.

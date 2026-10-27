@@ -128,12 +128,67 @@ export function checkAntiGaming(options = {}) {
       : hasActiveGovernanceApproval(root));
   const allowConfigMutation = options.allowConfigMutation ?? false;
 
+  // Resolve plan manifest if specified or present in active preflight receipt
+  let manifest = options.manifest || null;
+  if (!manifest && options.suite) {
+    const manifestPath = path.isAbsolute(options.suite)
+      ? path.join(options.suite, 'plan-manifest.json')
+      : path.join(root, options.suite, 'plan-manifest.json');
+    if (existsSync(manifestPath)) {
+      try {
+        manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
+      } catch {}
+    }
+  }
+  if (!manifest) {
+    const receiptPath = path.join(root, '.agent-preflight-receipt.json');
+    if (existsSync(receiptPath)) {
+      try {
+        const receipt = JSON.parse(readFileSync(receiptPath, 'utf8'));
+        if (receipt.planSuite) {
+          const mp = path.isAbsolute(receipt.planSuite)
+            ? path.join(receipt.planSuite, 'plan-manifest.json')
+            : path.join(root, receipt.planSuite, 'plan-manifest.json');
+          if (existsSync(mp)) {
+            manifest = JSON.parse(readFileSync(mp, 'utf8'));
+          }
+        }
+      } catch {}
+    }
+  }
+
+  const manifestTestFiles = new Set();
+  if (manifest && Array.isArray(manifest.phases)) {
+    for (const phase of manifest.phases) {
+      for (const check of phase.checks || []) {
+        for (const sp of check.sourcePaths || []) {
+          if (TEST_FILE_PATTERN.test(sp)) {
+            manifestTestFiles.add(sp.replace(/\\/g, '/'));
+          }
+        }
+        if (check.runner?.args) {
+          for (const arg of check.runner.args) {
+            if (TEST_FILE_PATTERN.test(arg)) {
+              manifestTestFiles.add(arg.replace(/\\/g, '/'));
+            }
+          }
+        }
+      }
+    }
+  }
+
   let totalAddedAssertions = 0;
   let totalRemovedAssertions = 0;
 
   for (const file of diffFiles) {
+    const normFilePath = file.filePath.replace(/\\/g, '/');
     const isTestFile = TEST_FILE_PATTERN.test(file.filePath);
     const isProtectedConfig = PROTECTED_CONFIG_PATTERN.test(file.filePath);
+    const isManifestTestFile =
+      manifestTestFiles.has(normFilePath) ||
+      [...manifestTestFiles].some(
+        (mf) => normFilePath.endsWith(mf) || mf.endsWith(normFilePath)
+      );
 
     // 1. Test File Deletion
     if (file.isDeleted && isTestFile) {
@@ -156,14 +211,54 @@ export function checkAntiGaming(options = {}) {
     }
 
     // Assertion count tracking for test files
+    let fileAddedAssertions = 0;
+    let fileRemovedAssertions = 0;
     if (isTestFile && !file.isDeleted) {
       for (const line of file.addedLines) {
         const matches = line.match(/\b(?:it|test|expect)\s*\(/g);
-        if (matches) totalAddedAssertions += matches.length;
+        if (matches) {
+          totalAddedAssertions += matches.length;
+          fileAddedAssertions += matches.length;
+        }
       }
       for (const line of file.removedLines) {
         const matches = line.match(/\b(?:it|test|expect)\s*\(/g);
-        if (matches) totalRemovedAssertions += matches.length;
+        if (matches) {
+          totalRemovedAssertions += matches.length;
+          fileRemovedAssertions += matches.length;
+        }
+      }
+    }
+
+    // Manifest Check Integrity: prevent commenting out, skipping, or weakening tests in manifest checks
+    if (isManifestTestFile && !file.isDeleted) {
+      for (const line of file.addedLines) {
+        if (/^\s*(?:\/\/|\/\*|\*)\s*(?:it|test|expect|assert)\s*\(/.test(line)) {
+          violations.push({
+            code: 'MANIFEST_CHECK_TEST_COMMENTED_OUT',
+            file: file.filePath,
+            line: line.trim(),
+            message: `Test assertion in manifest check "${file.filePath}" was commented out: "${line.trim()}"`,
+          });
+        }
+        for (const bypass of BYPASS_MODIFIER_PATTERNS) {
+          if (bypass.pattern.test(line)) {
+            violations.push({
+              code: 'MANIFEST_CHECK_TEST_SKIPPED',
+              file: file.filePath,
+              line: line.trim(),
+              message: `Test in manifest check "${file.filePath}" was skipped or marked todo: "${line.trim()}"`,
+            });
+          }
+        }
+      }
+
+      if (fileRemovedAssertions > fileAddedAssertions && !hasApproval) {
+        violations.push({
+          code: 'MANIFEST_CHECK_TEST_WEAKENED',
+          file: file.filePath,
+          message: `Test assertions in manifest check "${file.filePath}" were weakened or reduced (added: ${fileAddedAssertions}, removed: ${fileRemovedAssertions}) without approval`,
+        });
       }
     }
 
@@ -354,6 +449,33 @@ diff --git a/.shiftstone/vitest.config.ts b/.shiftstone/vitest.config.ts
     testsPassed.push('Harness Config Tampering Blocked');
   } else {
     testsFailed.push('Harness Config Tampering Blocked failed to catch violation');
+  }
+
+  // Scenario 7: Manifest check test assertion commented out blocked
+  const manifestTestDiff = `
+diff --git a/.shiftstone/tests/unit.test.ts b/.shiftstone/tests/unit.test.ts
+--- a/.shiftstone/tests/unit.test.ts
++++ b/.shiftstone/tests/unit.test.ts
+@@ -1,1 +1,1 @@
+-it('asserts', () => { expect(1).toBe(1); });
++// it('asserts', () => { expect(1).toBe(1); });
+`;
+  const mockManifest = {
+    phases: [
+      {
+        checks: [
+          {
+            sourcePaths: ['.shiftstone/tests/unit.test.ts'],
+          },
+        ],
+      },
+    ],
+  };
+  const res7 = checkAntiGaming({ diff: manifestTestDiff, manifest: mockManifest, hasApproval: false });
+  if (!res7.ok && res7.violations.some((v) => v.code === 'MANIFEST_CHECK_TEST_COMMENTED_OUT')) {
+    testsPassed.push('Manifest Check Test Commented Out Blocked');
+  } else {
+    testsFailed.push('Manifest Check Test Commented Out Blocked failed to catch violation');
   }
 
   return {

@@ -304,10 +304,86 @@ export function searchCompoundingContext(keywords, root = ROOT) {
 /** Execute 4-Layer Pre-Flight Gate */
 export function runPreflight(options = {}) {
   const root = options.root ? path.resolve(options.root) : ROOT;
-  const targets = options.targets || (options.target ? [options.target] : []);
+  const targets = options.targets ? [...options.targets] : options.target ? [options.target] : [];
   const declaredSkills = options.skills || [];
   const declaredBible = options.bible || [];
-  const verifyCmd = (options.verifyCmd || '').trim();
+  let verifyCmd = (options.verifyCmd || '').trim();
+  const suite = options.suite || null;
+  const phaseId = options.phase || null;
+  let planningDefinitionHash = null;
+
+  if (suite && phaseId) {
+    const manifestPath = path.isAbsolute(suite)
+      ? path.join(suite, 'plan-manifest.json')
+      : path.join(root, suite, 'plan-manifest.json');
+    if (!existsSync(manifestPath)) {
+      return {
+        ok: false,
+        code: 'MANIFEST_NOT_FOUND',
+        message: `Plan manifest not found at ${manifestPath}`,
+        violations: [`Missing plan-manifest.json for suite: ${suite}`],
+      };
+    }
+    const raw = readFileSync(manifestPath, 'utf8');
+    planningDefinitionHash = sha256(raw);
+    let manifest;
+    try {
+      manifest = JSON.parse(raw);
+    } catch (err) {
+      return {
+        ok: false,
+        code: 'INVALID_MANIFEST',
+        message: `Failed to parse manifest at ${manifestPath}: ${err.message}`,
+        violations: [`Corrupt plan-manifest.json: ${err.message}`],
+      };
+    }
+
+    const phase = (manifest.phases || []).find((p) => p.phaseId === phaseId);
+    if (!phase) {
+      return {
+        ok: false,
+        code: 'PHASE_NOT_FOUND',
+        message: `Phase "${phaseId}" not found in suite "${suite}"`,
+        violations: [`Phase not found: ${phaseId}`],
+      };
+    }
+
+    const phaseScopePaths = phase.sourcePaths || [];
+
+    if (targets.length === 0) {
+      targets.push(...phaseScopePaths);
+    } else {
+      // Validate that requested targets fall within declared phase.sourcePaths
+      for (const target of targets) {
+        const normTarget = target.replace(/\\/g, '/');
+        const allowed = phaseScopePaths.some((p) => {
+          const normP = p.replace(/\\/g, '/');
+          return (
+            matchGlob(normP, normTarget) ||
+            normTarget === normP ||
+            normTarget.startsWith(normP.endsWith('/') ? normP : `${normP}/`)
+          );
+        });
+        if (!allowed) {
+          return {
+            ok: false,
+            code: 'TARGET_OUTSIDE_PHASE_SCOPE',
+            message: `Target file "${target}" is outside declared phase sourcePaths: ${phaseScopePaths.join(', ')}`,
+            violations: [
+              `Target file "${target}" is outside declared phase sourcePaths: ${phaseScopePaths.join(', ')}`,
+            ],
+          };
+        }
+      }
+    }
+
+    if (!verifyCmd && phase.checks && phase.checks.length > 0) {
+      const cmds = phase.checks
+        .filter((c) => c.runner)
+        .map((c) => [c.runner.executable, ...(c.runner.args || [])].join(' '));
+      if (cmds.length > 0) verifyCmd = cmds.join(' && ');
+    }
+  }
 
   if (targets.length === 0) {
     return {
@@ -383,6 +459,9 @@ export function runPreflight(options = {}) {
     timestamp: now.toISOString(),
     expiresAt: expiresAt.toISOString(),
     targetGlobs: targets,
+    ...(suite ? { planSuite: suite } : {}),
+    ...(phaseId ? { targetPhase: phaseId } : {}),
+    ...(planningDefinitionHash ? { planningDefinitionHash } : {}),
     verifiedSkills: resolved.requiredSkills,
     verifiedBibleDocs: resolved.requiredBibleDocs,
     verifyCmd,
@@ -405,7 +484,7 @@ export function runPreflight(options = {}) {
 }
 
 /** Check existing receipt against a target file */
-export function checkReceipt(targetFile, root = ROOT) {
+export function checkReceipt(targetFile, root = ROOT, options = {}) {
   const receiptPath = path.join(root, PREFLIGHT_RECEIPT_FILENAME);
   if (!existsSync(receiptPath)) {
     return {
@@ -433,6 +512,22 @@ export function checkReceipt(targetFile, root = ROOT) {
       ok: false,
       code: 'PREFLIGHT_RECEIPT_EXPIRED',
       message: `Pre-flight receipt expired at ${receipt.expiresAt} (current: ${now.toISOString()}). Re-run agent-preflight.js.`,
+    };
+  }
+
+  if (options.suite && receipt.planSuite && receipt.planSuite !== options.suite) {
+    return {
+      ok: false,
+      code: 'PREFLIGHT_SUITE_MISMATCH',
+      message: `Pre-flight receipt suite mismatch: expected "${options.suite}", found "${receipt.planSuite}"`,
+    };
+  }
+
+  if (options.phase && receipt.targetPhase && receipt.targetPhase !== options.phase) {
+    return {
+      ok: false,
+      code: 'PREFLIGHT_PHASE_MISMATCH',
+      message: `Pre-flight receipt phase mismatch: expected "${options.phase}", found "${receipt.targetPhase}"`,
     };
   }
 
@@ -527,6 +622,8 @@ if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(fileURLToP
   let skills = [];
   let bible = [];
   let verifyCmd = '';
+  let suite = '';
+  let phase = '';
 
   for (let i = 0; i < args.length; i += 1) {
     const arg = args[i];
@@ -542,10 +639,16 @@ if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(fileURLToP
     } else if (arg === '--verify-cmd' && args[i + 1]) {
       verifyCmd = args[i + 1];
       i += 1;
+    } else if (arg === '--suite' && args[i + 1]) {
+      suite = args[i + 1];
+      i += 1;
+    } else if (arg === '--phase' && args[i + 1]) {
+      phase = args[i + 1];
+      i += 1;
     }
   }
 
-  const res = runPreflight({ targets, skills, bible, verifyCmd, root: ROOT });
+  const res = runPreflight({ targets, skills, bible, verifyCmd, suite, phase, root: ROOT });
   if (!res.ok) {
     console.error('=== Agent Pre-Flight Gate Refusal (UG-11) ===');
     console.error(`Error Code: ${res.code}`);
@@ -556,6 +659,9 @@ if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(fileURLToP
   }
 
   console.log('=== Agent Pre-Flight Gate PASSED (UG-11) ===');
+  if (res.receipt.planSuite) console.log(`  Plan Suite:      ${res.receipt.planSuite}`);
+  if (res.receipt.targetPhase) console.log(`  Target Phase:    ${res.receipt.targetPhase}`);
+  if (res.receipt.planningDefinitionHash) console.log(`  Plan Def Hash:   ${res.receipt.planningDefinitionHash.slice(0, 16)}...`);
   console.log(`  Targets:         ${res.resolved.targets.join(', ')}`);
   console.log(`  Verified Skills: ${res.resolved.requiredSkills.join(', ') || 'none'}`);
   console.log(`  Verified Bible:  ${res.resolved.requiredBibleDocs.join(', ') || 'none'}`);

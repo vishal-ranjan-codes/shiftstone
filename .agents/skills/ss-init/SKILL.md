@@ -4,8 +4,8 @@ description: Autonomous product-architecting and workspace initialization engine
 pack: core
 tier: manual-load
 type: skill
-timestamp: 2026-10-21T00:00:00.000Z
-version: 2.1.0
+timestamp: 2026-10-26T18:00:00.000Z
+version: 2.2.0
 ---
 
 # ss-init

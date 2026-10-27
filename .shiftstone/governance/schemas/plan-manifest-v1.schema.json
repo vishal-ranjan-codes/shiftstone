@@ -1,0 +1,483 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://universal-workspace.local/schemas/plan-manifest-v1.schema.json",
+  "title": "Static planning phase manifest v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "suiteId",
+    "definitionRevision",
+    "phases"
+  ],
+  "properties": {
+    "schema": {
+      "const": "plan-manifest/v1"
+    },
+    "suiteId": {
+      "$ref": "#/$defs/Slug"
+    },
+    "definitionRevision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "phases": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Phase"
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    }
+  },
+  "$defs": {
+    "Nonempty": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "Slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "PhaseId": {
+      "type": "string",
+      "pattern": "^P[1-9][0-9]*[a-z]?$"
+    },
+    "UnitId": {
+      "type": "string",
+      "pattern": "^U[1-9][0-9]*[a-z]?$"
+    },
+    "AcceptanceId": {
+      "type": "string",
+      "pattern": "^(acc|ACC|ac|AC)-[A-Za-z0-9-]+$"
+    },
+    "RepoPath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?:\\.|(?![A-Za-z][A-Za-z0-9+.-]*:)(?!/)(?!.*[\\\\:\\u0000-\\u001f\\u007f?#])(?!.*(?:^|/)\\.{1,2}(?:/|$))(?!.*//)[^/]+(?:/[^/]+)*)$",
+      "description": "Normalized repository-relative path; dot denotes repository cwd. Resolve real paths and reject symlink/junction escapes at execution (U5/U6); lexical validation alone cannot inspect the filesystem."
+    },
+    "SHA256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "Timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?Z$"
+    },
+    "EvidenceRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "sha256"
+      ],
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/RepoPath"
+        },
+        "sha256": {
+          "$ref": "#/$defs/SHA256"
+        }
+      }
+    },
+    "Actor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "role"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "role": {
+          "enum": [
+            "maker",
+            "reviewer",
+            "human"
+          ]
+        }
+      }
+    },
+    "Issue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "summary",
+        "owner",
+        "impact",
+        "blockingPhaseIds",
+        "evidenceRefs"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Slug"
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "owner": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "impact": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "blockingPhaseIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PhaseId"
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "evidenceRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        }
+      }
+    },
+    "Decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "decision",
+        "rationale",
+        "provenance",
+        "downstreamPhaseIds"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Slug"
+        },
+        "decision": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "rationale": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "provenance": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "downstreamPhaseIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PhaseId"
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        }
+      }
+    },
+    "Phase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "phaseId",
+        "contract",
+        "unitIds",
+        "dependsOn",
+        "sourcePaths",
+        "checks",
+        "requiredReview",
+        "humanApprovalRequired",
+        "recovery"
+      ],
+      "properties": {
+        "phaseId": {
+          "$ref": "#/$defs/PhaseId"
+        },
+        "contract": {
+          "$ref": "#/$defs/RepoPath"
+        },
+        "unitIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/UnitId"
+          },
+          "minItems": 1,
+          "uniqueItems": true,
+          "maxItems": 8
+        },
+        "dependsOn": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Dependency"
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "sourcePaths": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/RepoPath"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Check"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "requiredReview": {
+          "type": "boolean"
+        },
+        "humanApprovalRequired": {
+          "type": "boolean"
+        },
+        "recovery": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "retry",
+            "rollback"
+          ],
+          "properties": {
+            "retry": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "rollback": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            }
+          }
+        }
+      }
+    },
+    "Dependency": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "phaseId",
+        "requires",
+        "reason"
+      ],
+      "properties": {
+        "phaseId": {
+          "$ref": "#/$defs/PhaseId"
+        },
+        "requires": {
+          "enum": [
+            "complete",
+            "implementation-verified"
+          ],
+          "default": "complete",
+          "description": "Authoring default only; serialized dependencies still require this field. A narrower dependency cannot waive relevant required checks, issues or protected actions."
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        }
+      }
+    },
+    "Check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "acceptanceIds",
+        "level",
+        "kind",
+        "required",
+        "regressionFor",
+        "sourcePaths",
+        "environmentKeys"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Slug"
+        },
+        "acceptanceIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AcceptanceId"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "level": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5
+        },
+        "kind": {
+          "enum": [
+            "automated",
+            "manual"
+          ]
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "regressionFor": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PhaseId"
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "sourcePaths": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/RepoPath"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "environmentKeys": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "runner": {
+          "$ref": "#/$defs/Runner"
+        },
+        "procedure": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "automated"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "required": [
+              "runner"
+            ],
+            "not": {
+              "required": [
+                "procedure"
+              ],
+              "properties": {
+                "procedure": {}
+              }
+            },
+            "properties": {
+              "runner": {}
+            }
+          },
+          "else": {
+            "required": [
+              "procedure"
+            ],
+            "not": {
+              "required": [
+                "runner"
+              ],
+              "properties": {
+                "runner": {}
+              }
+            },
+            "properties": {
+              "procedure": {}
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "level": {
+                "enum": [
+                  4,
+                  5
+                ]
+              }
+            },
+            "required": [
+              "level"
+            ]
+          },
+          "then": {
+            "properties": {
+              "kind": {
+                "const": "manual"
+              }
+            },
+            "not": {
+              "required": [
+                "runner"
+              ],
+              "properties": {
+                "runner": {}
+              }
+            }
+          }
+        }
+      ]
+    },
+    "Runner": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "executable",
+        "args",
+        "cwd"
+      ],
+      "properties": {
+        "executable": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "args": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 0
+        },
+        "cwd": {
+          "$ref": "#/$defs/RepoPath"
+        }
+      }
+    }
+  },
+  "description": "Static intended scope, never execution progress. Unique keyed IDs, DAG membership, acceptance mapping and path resolution require U5 semantic validation; uniqueItems rejects identical records only. Dependencies default to complete at authoring."
+}

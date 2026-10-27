@@ -15,9 +15,12 @@ import { parse as parseYaml, stringify as stringifyYaml } from 'yaml';
 import { generateAll } from '../governance/index-generator.ts';
 import { generateSkillsManifest } from '../scripts/generate-skills-manifest.js';
 import { linkIdeFolders } from '../scripts/link-ide-folders.js';
+import { curateSkills } from './skill-curator.js';
 
 /** Marker in docs/bible/DECISIONS.md where pack seeds are rendered. */
 export const DECISIONS_MARKER =
+  '<!-- Pack-seeded ADRs are inserted here at init (.shiftstone/packs/<archetype>/decisions-seed.yaml). New ADRs append below the seeded block. -->';
+export const LEGACY_DECISIONS_MARKER =
   '<!-- Pack-seeded ADRs are inserted here at init (packs/<archetype>/decisions-seed.yaml). New ADRs append below the seeded block. -->';
 
 /**
@@ -229,9 +232,14 @@ ${DECISIONS_MARKER}
   const decisionsPath = path.join(root, 'docs', 'bible', 'DECISIONS.md');
   if (!existsSync(decisionsPath)) return false;
   const content = readFileSync(decisionsPath, 'utf8');
-  if (!content.includes(DECISIONS_MARKER)) return false; // already seeded
+  const marker = content.includes(DECISIONS_MARKER)
+    ? DECISIONS_MARKER
+    : content.includes(LEGACY_DECISIONS_MARKER)
+      ? LEGACY_DECISIONS_MARKER
+      : null;
+  if (!marker) return false; // already seeded
   const block = renders.join('\n\n---\n\n');
-  writeFileSync(decisionsPath, content.replace(DECISIONS_MARKER, () => block), 'utf8');
+  writeFileSync(decisionsPath, content.replace(marker, () => block), 'utf8');
   return true;
 }
 
@@ -487,7 +495,7 @@ function writeWorkspaceFiles(root, composition, answers) {
 }
 
 /** Remove pack-skill junctions that no longer belong to an active pack. */
-function pruneStaleSkillLinks(root, desired) {
+export function pruneStaleSkillLinks(root, desired) {
   const skillsRoot = path.join(root, '.agents', 'skills');
   if (!existsSync(skillsRoot)) return [];
   const removed = [];
@@ -500,7 +508,7 @@ function pruneStaleSkillLinks(root, desired) {
   return removed;
 }
 
-function writeRegistry(root, composition) {
+export function writeRegistry(root, composition) {
   const doc = {
     apiVersion: 'workspace/v1',
     kind: 'PackRegistry',
@@ -510,6 +518,9 @@ function writeRegistry(root, composition) {
     ...new Set(composition.skills.filter((s) => s.as !== s.name).map((s) => s.name)),
   ].sort();
   if (namespaced.length > 0) doc.namespacedSkills = namespaced;
+  if (Array.isArray(composition.excludedSkills) && composition.excludedSkills.length > 0) {
+    doc.excludedSkills = [...new Set(composition.excludedSkills)].sort();
+  }
   writeFileSync(
     path.join(root, '.shiftstone', 'packs', '_registry.yaml'),
     `${stringifyYaml(doc)}`,
@@ -710,7 +721,7 @@ Companion to [SKILL.md](./SKILL.md).
  *
  * @param {{ root: string, composition: any, answers: Record<string, any>, quiet?: boolean }} params
  */
-export async function seedGovernance({ root, composition, answers, quiet = false }) {
+export async function seedGovernance({ root, composition, answers, context, quiet = false }) {
   const log = (message) => {
     if (!quiet) console.log(message);
   };
@@ -724,6 +735,10 @@ export async function seedGovernance({ root, composition, answers, quiet = false
     prunedSkillLinks: [],
     opencodeUpdated: false,
     customSkills: [],
+    curatedSkills: [],
+    excludedSkills: [],
+    tokenSavings: 0,
+    savingsPercent: 0,
   };
 
   result.docsDirs = writeSeedDocs(root, answers.projectName);
@@ -731,6 +746,22 @@ export async function seedGovernance({ root, composition, answers, quiet = false
 
   result.backlog = await composeBacklog(root, composition);
   log(`   🗂️  docs/backlog composed from ${result.backlog.source}${result.backlog.purged.length ? ` (purged ${result.backlog.purged.length} previously composed entries)` : ''}`);
+
+  // Dynamic skill curation based on interview context / answers (REQ-INIT-10, Unit U11)
+  const curation = curateSkills({
+    skills: composition.skills,
+    context: context || answers,
+    answers,
+  });
+  if (curation.excludedSkills.length > 0) {
+    composition.skills = curation.curatedSkills;
+    composition.excludedSkills = curation.excludedSkills;
+    result.curatedSkills = curation.curatedSkills.map((s) => s.name || s.as);
+    result.excludedSkills = curation.excludedSkills;
+    result.tokenSavings = curation.tokenSavings;
+    result.savingsPercent = curation.savingsPercent;
+    log(`   ✂️  curated skills: pruned ${curation.excludedSkills.length} unneeded skills (${Math.round(curation.savingsPercent)}% token reduction)`);
+  }
 
   // Registry first: skill discovery, junctions and manifest all read it.
   writeRegistry(root, composition);
@@ -779,6 +810,7 @@ export async function seedGovernance({ root, composition, answers, quiet = false
     quiet: true,
     appPath: primary?.effectiveAppPath,
     defaultAppPath: primary?.manifest?.spec?.defaultAppPath,
+    excludedSkills: composition.excludedSkills,
   });
   log('   🧠 skills manifest + AGENTS.md INDEX regenerated');
 

@@ -135,8 +135,13 @@ function fail(message, quiet) {
  * @param {{ root?: string, quiet?: boolean, appPath?: string, defaultAppPath?: string }} [options]
  * @returns {{ skills: any[], activePacks: string[] }}
  */
-export function generateSkillsManifest({ root = ROOT, quiet = false, appPath, defaultAppPath } = {}) {
-  const activePacks = readPackRegistry(root).activePacks;
+export function generateSkillsManifest({ root = ROOT, quiet = false, appPath, defaultAppPath, excludedSkills } = {}) {
+  const registry = readPackRegistry(root);
+  const activePacks = registry.activePacks;
+  const excludedSet = new Set([
+    ...(registry.excludedSkills || []),
+    ...(Array.isArray(excludedSkills) ? excludedSkills : []),
+  ]);
 
   // Core skills live as real dirs in .agents/skills; pack skills live under
   // .shiftstone/packs/<pack>/skills/ and may be junctioned into .agents/skills (never
@@ -148,7 +153,9 @@ export function generateSkillsManifest({ root = ROOT, quiet = false, appPath, de
       pack: null,
     })),
     ...listActivePackSkills(root).map(({ name, pack, dir }) => ({ name, dir, pack })),
-  ].sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
+  ]
+    .filter((s) => !excludedSet.has(s.name))
+    .sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
 
   const skills = [];
   const errors = [];

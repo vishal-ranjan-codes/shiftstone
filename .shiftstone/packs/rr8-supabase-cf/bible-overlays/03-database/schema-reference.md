@@ -1,12 +1,17 @@
 ---
-type: chapter
-timestamp: 2026-09-06T00:17:45.689Z
+type: chapter-topic
+title: "Database Schema Reference"
+chapter: "03-database"
+file: "schema-reference.md"
+timestamp: 2026-10-26T12:00:00.000Z
+description: "PostgreSQL DDL, core entity tables, column definitions, constraints, foreign keys, and indexes."
 ---
-# 03 — Database Schema Reference
+
+# Database — Schema Reference
 
 ## Primary Data Models
 
-All primary models in {{PROJECT_NAME}} adhere to strict naming conventions, UUID primary keys, and timestamp audit triggers.
+All primary models in the application adhere to strict naming conventions, UUID primary keys, and timestamp audit triggers.
 
 ---
 
@@ -93,4 +98,4 @@ CREATE TRIGGER set_items_updated_at
    ```sql
    ALTER TABLE <table_name> ENABLE ROW LEVEL SECURITY;
    ```
-4. Regenerate TypeScript types after any migration: `{{SUPABASE_TYPES_CMD}}`.
+4. Regenerate TypeScript types after any migration: `pnpm --filter @<project>/web supabase:types`.

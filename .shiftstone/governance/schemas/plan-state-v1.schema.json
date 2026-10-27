@@ -1,0 +1,336 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://universal-workspace.local/schemas/plan-state-v1.schema.json",
+  "title": "Evidence-derived current planning state v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "suiteId",
+    "revision",
+    "definitionSha256",
+    "updatedAt",
+    "phases"
+  ],
+  "properties": {
+    "schema": {
+      "const": "plan-state/v1"
+    },
+    "suiteId": {
+      "$ref": "#/$defs/Slug"
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "definitionSha256": {
+      "$ref": "#/$defs/SHA256"
+    },
+    "updatedAt": {
+      "$ref": "#/$defs/Timestamp"
+    },
+    "phases": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/PhaseState"
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    }
+  },
+  "$defs": {
+    "Nonempty": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "Slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "PhaseId": {
+      "type": "string",
+      "pattern": "^P[1-9][0-9]*[a-z]?$"
+    },
+    "UnitId": {
+      "type": "string",
+      "pattern": "^U[1-9][0-9]*[a-z]?$"
+    },
+    "AcceptanceId": {
+      "type": "string",
+      "pattern": "^(acc|ACC|ac|AC)-[A-Za-z0-9-]+$"
+    },
+    "RepoPath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?:\\.|(?![A-Za-z][A-Za-z0-9+.-]*:)(?!/)(?!.*[\\\\:\\u0000-\\u001f\\u007f?#])(?!.*(?:^|/)\\.{1,2}(?:/|$))(?!.*//)[^/]+(?:/[^/]+)*)$",
+      "description": "Normalized repository-relative path; dot denotes repository cwd. Resolve real paths and reject symlink/junction escapes at execution (U5/U6); lexical validation alone cannot inspect the filesystem."
+    },
+    "SHA256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "Timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?Z$"
+    },
+    "EvidenceRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "sha256"
+      ],
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/RepoPath"
+        },
+        "sha256": {
+          "$ref": "#/$defs/SHA256"
+        }
+      }
+    },
+    "Actor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "role"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "role": {
+          "enum": [
+            "maker",
+            "reviewer",
+            "human"
+          ]
+        }
+      }
+    },
+    "Issue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "summary",
+        "owner",
+        "impact",
+        "blockingPhaseIds",
+        "evidenceRefs"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Slug"
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "owner": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "impact": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "blockingPhaseIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PhaseId"
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "evidenceRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        }
+      }
+    },
+    "Decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "decision",
+        "rationale",
+        "provenance",
+        "downstreamPhaseIds"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Slug"
+        },
+        "decision": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "rationale": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "provenance": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "downstreamPhaseIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PhaseId"
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        }
+      }
+    },
+    "PhaseState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "phaseId",
+        "selectedHandoffRef",
+        "implementation",
+        "verification",
+        "review",
+        "acceptance"
+      ],
+      "properties": {
+        "phaseId": {
+          "$ref": "#/$defs/PhaseId"
+        },
+        "selectedHandoffRef": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/EvidenceRef"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "implementation": {
+          "enum": [
+            "planned",
+            "in-progress",
+            "implemented"
+          ]
+        },
+        "verification": {
+          "enum": [
+            "not-run",
+            "pending",
+            "failed",
+            "passed"
+          ]
+        },
+        "review": {
+          "enum": [
+            "not-requested",
+            "pending",
+            "blocked",
+            "rejected",
+            "approved"
+          ]
+        },
+        "acceptance": {
+          "enum": [
+            "open",
+            "complete"
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "selectedHandoffRef": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "selectedHandoffRef"
+            ]
+          },
+          "then": {
+            "properties": {
+              "implementation": {
+                "const": "planned"
+              },
+              "verification": {
+                "const": "not-run"
+              },
+              "review": {
+                "const": "not-requested"
+              },
+              "acceptance": {
+                "const": "open"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "acceptance": {
+                "const": "complete"
+              }
+            },
+            "required": [
+              "acceptance"
+            ]
+          },
+          "then": {
+            "properties": {
+              "implementation": {
+                "const": "implemented"
+              },
+              "verification": {
+                "const": "passed"
+              },
+              "selectedHandoffRef": {
+                "$ref": "#/$defs/EvidenceRef"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "implementation": {
+                "const": "planned"
+              }
+            },
+            "required": [
+              "implementation"
+            ]
+          },
+          "then": {
+            "properties": {
+              "selectedHandoffRef": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "description": "Authoritative current summary, not independent evidence. U6 must recompute from manifest, selected handoffs and actual reports. Completion additionally requires applicable fresh independent/human approval and no blocking issue. No checks attempted -> not-run; required failure -> failed; missing/stale/skipped/blocked required -> pending; all required fresh passes -> passed. Optional failures remain visible. Stale review -> effective pending without rewriting historical verdict. Unit active/retired lifecycle remains unchanged."
+}

@@ -1,0 +1,28 @@
+{
+  "schema": "plan-state/v1",
+  "suiteId": "synthetic-planning",
+  "revision": 1,
+  "definitionSha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  "updatedAt": "2026-10-23T00:00:00Z",
+  "phases": [
+    {
+      "phaseId": "P1",
+      "selectedHandoffRef": {
+        "path": "test/fixtures/planning/evidence/handoff-pending.txt",
+        "sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+      },
+      "implementation": "implemented",
+      "verification": "pending",
+      "review": "blocked",
+      "acceptance": "open"
+    },
+    {
+      "phaseId": "P2",
+      "selectedHandoffRef": null,
+      "implementation": "planned",
+      "verification": "not-run",
+      "review": "not-requested",
+      "acceptance": "open"
+    }
+  ]
+}

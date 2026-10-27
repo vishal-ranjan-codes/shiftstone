@@ -1,0 +1,155 @@
+{
+  "schema": "plan-manifest/v1",
+  "suiteId": "synthetic-planning",
+  "definitionRevision": 1,
+  "phases": [
+    {
+      "phaseId": "P1",
+      "contract": "docs/plans/workspace-planning-upgrade/01-phase-1-lifecycle-contracts.md",
+      "unitIds": [
+        "U1"
+      ],
+      "dependsOn": [],
+      "sourcePaths": [
+        "docs/schemas",
+        "test/planning-contracts.test.js",
+        "test/fixtures/planning",
+        "package.json",
+        "docs/plans/workspace-planning-upgrade/plan-units/U1.json",
+        "docs/plans/workspace-planning-upgrade/plan-units/U4.json",
+        "package-lock.json"
+      ],
+      "checks": [
+        {
+          "id": "contracts",
+          "acceptanceIds": [
+            "acc-plan-phase-manifest"
+          ],
+          "level": 1,
+          "kind": "automated",
+          "required": true,
+          "regressionFor": [],
+          "sourcePaths": [
+            "docs/schemas",
+            "test/planning-contracts.test.js",
+            "test/fixtures/planning",
+            "package.json",
+            "docs/plans/workspace-planning-upgrade/plan-units/U1.json",
+            "docs/plans/workspace-planning-upgrade/plan-units/U4.json",
+            "package-lock.json"
+          ],
+          "environmentKeys": [
+            "node-version"
+          ],
+          "runner": {
+            "executable": "node",
+            "args": [
+              "--test",
+              "test/planning-contracts.test.js"
+            ],
+            "cwd": "."
+          }
+        }
+      ],
+      "requiredReview": true,
+      "humanApprovalRequired": false,
+      "recovery": {
+        "retry": "Inspect the failed observation, repair only the declared scope and recheck.",
+        "rollback": "Revert only reviewed phase changes; preserve pre-existing work."
+      }
+    },
+    {
+      "phaseId": "P2",
+      "contract": "docs/plans/workspace-planning-upgrade/02-phase-2-validation-and-evidence.md",
+      "unitIds": [
+        "U4"
+      ],
+      "dependsOn": [
+        {
+          "phaseId": "P1",
+          "requires": "complete",
+          "reason": "Phase two consumes accepted lifecycle definitions."
+        }
+      ],
+      "sourcePaths": [
+        "docs/schemas",
+        "test/planning-contracts.test.js",
+        "test/fixtures/planning",
+        "package.json",
+        "docs/plans/workspace-planning-upgrade/plan-units/U1.json",
+        "docs/plans/workspace-planning-upgrade/plan-units/U4.json",
+        "package-lock.json"
+      ],
+      "checks": [
+        {
+          "id": "validation",
+          "acceptanceIds": [
+            "acc-plan-full-schema"
+          ],
+          "level": 1,
+          "kind": "automated",
+          "required": true,
+          "regressionFor": [],
+          "sourcePaths": [
+            "docs/schemas",
+            "test/planning-contracts.test.js",
+            "test/fixtures/planning",
+            "package.json",
+            "docs/plans/workspace-planning-upgrade/plan-units/U1.json",
+            "docs/plans/workspace-planning-upgrade/plan-units/U4.json",
+            "package-lock.json"
+          ],
+          "environmentKeys": [
+            "node-version"
+          ],
+          "runner": {
+            "executable": "node",
+            "args": [
+              "--test",
+              "test/planning-contracts.test.js"
+            ],
+            "cwd": "."
+          }
+        },
+        {
+          "id": "contracts-regression",
+          "acceptanceIds": [
+            "acc-plan-full-schema"
+          ],
+          "level": 1,
+          "kind": "automated",
+          "required": true,
+          "regressionFor": [
+            "P1"
+          ],
+          "sourcePaths": [
+            "docs/schemas",
+            "test/planning-contracts.test.js",
+            "test/fixtures/planning",
+            "package.json",
+            "docs/plans/workspace-planning-upgrade/plan-units/U1.json",
+            "docs/plans/workspace-planning-upgrade/plan-units/U4.json",
+            "package-lock.json"
+          ],
+          "environmentKeys": [
+            "node-version"
+          ],
+          "runner": {
+            "executable": "node",
+            "args": [
+              "--test",
+              "test/planning-contracts.test.js"
+            ],
+            "cwd": "."
+          }
+        }
+      ],
+      "requiredReview": true,
+      "humanApprovalRequired": false,
+      "recovery": {
+        "retry": "Inspect the failed observation, repair only the declared scope and recheck.",
+        "rollback": "Revert only reviewed phase changes; preserve pre-existing work."
+      }
+    }
+  ]
+}

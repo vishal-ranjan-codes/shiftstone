@@ -1,0 +1,825 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://universal-workspace.local/schemas/plan-handoff-v1.schema.json",
+  "title": "Observed source-bound planning handoff v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "suiteId",
+    "phaseId",
+    "attempt",
+    "previousRef",
+    "definitionSha256",
+    "recordedAt",
+    "actor",
+    "event",
+    "implementation",
+    "terminalState",
+    "summary",
+    "changes",
+    "deviations",
+    "materialContext",
+    "issues",
+    "entrySnapshot",
+    "exitSnapshot",
+    "checks",
+    "reviewRefs",
+    "approvalRefs",
+    "reviewRequest",
+    "next",
+    "preservation"
+  ],
+  "properties": {
+    "schema": {
+      "const": "plan-handoff/v1"
+    },
+    "suiteId": {
+      "$ref": "#/$defs/Slug"
+    },
+    "phaseId": {
+      "$ref": "#/$defs/PhaseId"
+    },
+    "attempt": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "previousRef": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/EvidenceRef"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "definitionSha256": {
+      "$ref": "#/$defs/SHA256"
+    },
+    "recordedAt": {
+      "$ref": "#/$defs/Timestamp"
+    },
+    "actor": {
+      "$ref": "#/$defs/Actor"
+    },
+    "event": {
+      "enum": [
+        "checkpoint",
+        "interrupted",
+        "close"
+      ]
+    },
+    "implementation": {
+      "enum": [
+        "planned",
+        "in-progress",
+        "implemented"
+      ]
+    },
+    "terminalState": {
+      "enum": [
+        "pending",
+        "success",
+        "no-op",
+        "blocked",
+        "stalled",
+        "exhausted"
+      ]
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "changes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Change"
+      },
+      "minItems": 0,
+      "uniqueItems": true
+    },
+    "deviations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Decision"
+      },
+      "minItems": 0,
+      "uniqueItems": true
+    },
+    "materialContext": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Decision"
+      },
+      "minItems": 0,
+      "uniqueItems": true
+    },
+    "issues": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Issue"
+      },
+      "minItems": 0,
+      "uniqueItems": true
+    },
+    "entrySnapshot": {
+      "$ref": "#/$defs/SourceSnapshot"
+    },
+    "exitSnapshot": {
+      "$ref": "#/$defs/SourceSnapshot"
+    },
+    "checks": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/CheckResult"
+      },
+      "minItems": 0,
+      "uniqueItems": true
+    },
+    "reviewRefs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/EvidenceRef"
+      },
+      "minItems": 0,
+      "uniqueItems": true
+    },
+    "approvalRefs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/EvidenceRef"
+      },
+      "minItems": 0,
+      "uniqueItems": true
+    },
+    "reviewRequest": {
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "requestedAt",
+            "requestedBy"
+          ],
+          "properties": {
+            "requestedAt": {
+              "$ref": "#/$defs/Timestamp"
+            },
+            "requestedBy": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            }
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "next": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "phaseId",
+        "entryConditions",
+        "firstAction"
+      ],
+      "properties": {
+        "phaseId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PhaseId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "entryConditions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "firstAction": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        }
+      }
+    },
+    "preservation": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Preservation"
+      },
+      "minItems": 0,
+      "uniqueItems": true
+    }
+  },
+  "$defs": {
+    "Nonempty": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "Slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "PhaseId": {
+      "type": "string",
+      "pattern": "^P[1-9][0-9]*[a-z]?$"
+    },
+    "UnitId": {
+      "type": "string",
+      "pattern": "^U[1-9][0-9]*[a-z]?$"
+    },
+    "AcceptanceId": {
+      "type": "string",
+      "pattern": "^(acc|ACC|ac|AC)-[A-Za-z0-9-]+$"
+    },
+    "RepoPath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?:\\.|(?![A-Za-z][A-Za-z0-9+.-]*:)(?!/)(?!.*[\\\\:\\u0000-\\u001f\\u007f?#])(?!.*(?:^|/)\\.{1,2}(?:/|$))(?!.*//)[^/]+(?:/[^/]+)*)$",
+      "description": "Normalized repository-relative path; dot denotes repository cwd. Resolve real paths and reject symlink/junction escapes at execution (U5/U6); lexical validation alone cannot inspect the filesystem."
+    },
+    "SHA256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "Timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?Z$"
+    },
+    "EvidenceRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "sha256"
+      ],
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/RepoPath"
+        },
+        "sha256": {
+          "$ref": "#/$defs/SHA256"
+        }
+      }
+    },
+    "Actor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "role"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "role": {
+          "enum": [
+            "maker",
+            "reviewer",
+            "human"
+          ]
+        }
+      }
+    },
+    "Issue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "summary",
+        "owner",
+        "impact",
+        "blockingPhaseIds",
+        "evidenceRefs"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Slug"
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "owner": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "impact": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "blockingPhaseIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PhaseId"
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "evidenceRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        }
+      }
+    },
+    "Decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "decision",
+        "rationale",
+        "provenance",
+        "downstreamPhaseIds"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Slug"
+        },
+        "decision": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "rationale": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "provenance": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "downstreamPhaseIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PhaseId"
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        }
+      }
+    },
+    "Change": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "reason",
+        "unitIds"
+      ],
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/RepoPath"
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "unitIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/UnitId"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      }
+    },
+    "Preservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "state",
+        "origin",
+        "action",
+        "reason",
+        "entrySha256",
+        "exitSha256"
+      ],
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/RepoPath"
+        },
+        "state": {
+          "enum": [
+            "staged",
+            "unstaged",
+            "untracked",
+            "deleted",
+            "renamed"
+          ]
+        },
+        "origin": {
+          "enum": [
+            "pre-existing",
+            "this-phase",
+            "unknown"
+          ]
+        },
+        "action": {
+          "enum": [
+            "preserve",
+            "intentional-edit"
+          ]
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "entrySha256": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SHA256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "exitSha256": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SHA256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "CheckResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "checkId",
+        "result",
+        "observedAt",
+        "sourceDigest",
+        "environmentDigest",
+        "exitCode",
+        "evidenceRefs",
+        "reason"
+      ],
+      "properties": {
+        "checkId": {
+          "$ref": "#/$defs/Slug"
+        },
+        "result": {
+          "enum": [
+            "passed",
+            "failed",
+            "not-run",
+            "skipped",
+            "blocked"
+          ]
+        },
+        "observedAt": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "sourceDigest": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SHA256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "environmentDigest": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SHA256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "exitCode": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "evidenceRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "result": {
+                "const": "not-run"
+              }
+            },
+            "required": [
+              "result"
+            ]
+          },
+          "then": {
+            "properties": {
+              "observedAt": {
+                "type": "null"
+              },
+              "sourceDigest": {
+                "type": "null"
+              },
+              "environmentDigest": {
+                "type": "null"
+              },
+              "exitCode": {
+                "type": "null"
+              },
+              "evidenceRefs": {
+                "type": "array",
+                "maxItems": 0
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "observedAt": {
+                "$ref": "#/$defs/Timestamp"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "result": {
+                "const": "passed"
+              }
+            },
+            "required": [
+              "result"
+            ]
+          },
+          "then": {
+            "properties": {
+              "sourceDigest": {
+                "$ref": "#/$defs/SHA256"
+              },
+              "environmentDigest": {
+                "$ref": "#/$defs/SHA256"
+              },
+              "exitCode": {
+                "enum": [
+                  0,
+                  null
+                ]
+              },
+              "evidenceRefs": {
+                "type": "array",
+                "minItems": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "result": {
+                "const": "failed"
+              }
+            },
+            "required": [
+              "result"
+            ]
+          },
+          "then": {
+            "properties": {
+              "sourceDigest": {
+                "$ref": "#/$defs/SHA256"
+              },
+              "environmentDigest": {
+                "$ref": "#/$defs/SHA256"
+              },
+              "exitCode": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "not": {
+                      "const": 0
+                    }
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "result": {
+                "enum": [
+                  "blocked",
+                  "skipped"
+                ]
+              }
+            },
+            "required": [
+              "result"
+            ]
+          },
+          "then": {
+            "properties": {
+              "exitCode": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      ],
+      "description": "Automated vs manual kind, matching check scopes/digests, real evidence bytes, unique check IDs and actual nonzero automated failures require manifest-aware U5/U6 checks. Null exit is valid only for a manual observation or an unlaunched/unrun check; it cannot manufacture an automated pass."
+    },
+    "SourceSnapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "head",
+        "branch",
+        "scopePaths",
+        "scopeDigest",
+        "environmentDigest",
+        "files",
+        "environment"
+      ],
+      "properties": {
+        "head": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "branch": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "scopePaths": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/RepoPath"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "scopeDigest": {
+          "$ref": "#/$defs/SHA256"
+        },
+        "environmentDigest": {
+          "$ref": "#/$defs/SHA256"
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/FileState"
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "environment": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/EnvironmentState"
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        }
+      }
+    },
+    "FileState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "tracked",
+        "worktreeSha256",
+        "indexBlob"
+      ],
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/RepoPath"
+        },
+        "tracked": {
+          "type": "boolean"
+        },
+        "worktreeSha256": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SHA256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "indexBlob": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "EnvironmentState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "valueSha256"
+      ],
+      "properties": {
+        "key": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "valueSha256": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SHA256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "description": "Immutable observations, including blocked/interrupted work; existence and terminal success confer no acceptance. U6 must expand bounded inventories, include scoped additions/deletion tombstones and index state, exclude secrets/dependencies/output, mask generated spans, and verify definition/source/environment/evidence byte digests. HEAD is provenance only. Preserve unrelated dirty paths with null hashes; do not read unrelated content."
+}

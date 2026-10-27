@@ -1,0 +1,133 @@
+{
+  "schema": "plan-handoff/v1",
+  "suiteId": "synthetic-planning",
+  "phaseId": "P1",
+  "attempt": 1,
+  "previousRef": null,
+  "definitionSha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  "recordedAt": "2026-10-23T00:00:00Z",
+  "actor": {
+    "id": "synthetic-maker",
+    "role": "maker"
+  },
+  "event": "close",
+  "implementation": "implemented",
+  "terminalState": "success",
+  "summary": "Synthetic completed implementation with captured automated and manual observations.",
+  "changes": [
+    {
+      "path": "docs/schemas/plan-unit-v1.schema.json",
+      "reason": "Synthetic example only; the actual v1 schema is unchanged.",
+      "unitIds": [
+        "U1"
+      ]
+    }
+  ],
+  "deviations": [],
+  "materialContext": [
+    {
+      "id": "fixture-only",
+      "decision": "Use synthetic hashes.",
+      "rationale": "Fixtures must not masquerade as actual execution.",
+      "provenance": "P1 fixture authoring.",
+      "downstreamPhaseIds": [
+        "P2"
+      ]
+    }
+  ],
+  "issues": [],
+  "entrySnapshot": {
+    "head": "synthetic-head",
+    "branch": "synthetic-branch",
+    "scopePaths": [
+      "docs/schemas"
+    ],
+    "scopeDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "environmentDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "files": [
+      {
+        "path": "docs/schemas/plan-unit-v1.schema.json",
+        "tracked": true,
+        "worktreeSha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "indexBlob": "synthetic-index-blob"
+      }
+    ],
+    "environment": [
+      {
+        "key": "node-version",
+        "valueSha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+      }
+    ]
+  },
+  "exitSnapshot": {
+    "head": "synthetic-head",
+    "branch": "synthetic-branch",
+    "scopePaths": [
+      "docs/schemas"
+    ],
+    "scopeDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "environmentDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "files": [
+      {
+        "path": "docs/schemas/plan-unit-v1.schema.json",
+        "tracked": true,
+        "worktreeSha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "indexBlob": "synthetic-index-blob"
+      }
+    ],
+    "environment": [
+      {
+        "key": "node-version",
+        "valueSha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+      }
+    ]
+  },
+  "checks": [
+    {
+      "checkId": "contracts",
+      "result": "passed",
+      "observedAt": "2026-10-23T00:00:00Z",
+      "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "environmentDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "exitCode": 0,
+      "evidenceRefs": [
+        {
+          "path": "test/fixtures/planning/evidence/automated.txt",
+          "sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+        }
+      ],
+      "reason": "Synthetic observation; not a real check or approval."
+    },
+    {
+      "checkId": "visual",
+      "result": "passed",
+      "observedAt": "2026-10-23T00:00:00Z",
+      "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "environmentDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "exitCode": null,
+      "evidenceRefs": [
+        {
+          "path": "test/fixtures/planning/evidence/manual-procedure.txt",
+          "sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+        }
+      ],
+      "reason": "Synthetic observation; not a real check or approval."
+    }
+  ],
+  "reviewRefs": [
+    {
+      "path": "test/fixtures/planning/evidence/review.txt",
+      "sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+    }
+  ],
+  "approvalRefs": [],
+  "reviewRequest": null,
+  "next": {
+    "phaseId": "P2",
+    "entryConditions": [
+      "Validate actual predecessor evidence before entry."
+    ],
+    "firstAction": "Inspect the phase-two contract."
+  },
+  "preservation": []
+}
