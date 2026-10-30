@@ -34,12 +34,32 @@ Procedure for running the 5-Step Verification Gate and spawning a disjoint Check
   - Full `git diff` of modified files.
   - Declared Bible chapters and ADRs touched.
 
-### Step 2: Deterministic Test & Linter Execution
-- Run compiler, linter, and test suites fresh:
-  ```bash
-  pnpm typecheck && pnpm lint && pnpm test
-  ```
-- If any check fails, halt immediately: state is `blocked`.
+### Step 2: Deterministic Test & Linter Execution (Application-First Contract)
+- Determine target test boundary by evaluating the change set:
+  1. **Identify Change Scope:** Inspect the files modified in the diff.
+  2. **Select Deterministic Verification Command:**
+     - **Case A — Application Changes:** If the diff touches application paths (e.g. `apps/**`, `workers/**`, `src/**`) and no files under `.shiftstone/**`:
+       Execute the application commands declared in root `package.json`:
+       ```bash
+       npm run typecheck && npm run lint && npm test
+       ```
+       *(Note: `npm test` targets the application test boundary `{{APP_PATH}}`. A broken route, loader, or auth guard in the app fails here deterministically).*
+     - **Case B — Engine Changes:** If the diff touches `.shiftstone/**`:
+       Execute the engine test suites:
+       ```bash
+       npm run typecheck:engine && npm run lint:engine && npm run test:engine
+       ```
+     - **Case C — Full Monorepo / Day 0 / Ambiguous:** If the diff touches both or no application directory exists yet:
+       Execute both application and engine suites.
+- If any deterministic command exits non-zero, halt immediately: state is `blocked`.
+
+#### Worked Example: Audit Finding F7 Scenario
+In audit finding F7, a developer introduces a syntax or type error into a dashboard route module (`apps/web/src/routes/dashboard.tsx`).
+1. Step 1 gathers the diff touching `apps/web/src/routes/dashboard.tsx`.
+2. Step 2 evaluates the diff scope: touches `apps/**`, zero changes in `.shiftstone/**` $\rightarrow$ Case A applies.
+3. Step 2 executes `npm test` (or `npm run typecheck`).
+4. Result: `apps/web` test runner fails with exit code 1 due to the broken dashboard route.
+5. Verification halts immediately with state `blocked`. The task transition to `[x]` is deterministically rejected, even though all 505 engine tests in `npm run test:engine` are green.
 
 ### Step 3: Boundary & Anti-Gaming Regression Check
 - Inspect diff for anti-gaming violations:
@@ -50,6 +70,9 @@ Procedure for running the 5-Step Verification Gate and spawning a disjoint Check
 ### Step 4: Disjoint Checker Subagent Evaluation
 - Spawn a Checker subagent using [resources/checker-prompt.md](./resources/checker-prompt.md).
 - Model selection resolves via `.shiftstone/context/model-routing.yaml` (task-class advisory tiers with maker-disjoint Checker family).
+- **Evaluation Lens Resolution (LOCK-B5):**
+  - **For Application-Scoped Diffs:** The Checker briefing focuses on application domain contracts (route loaders, form actions, database migrations, auth guards, active-pack stack invariants resolved from the active pack's checker lenses).
+  - **For Engine-Scoped Diffs (`.shiftstone/**`):** The Checker briefing focuses on OS-harness invariants, budget ceilings, and framework-level regression gates.
 - Checker evaluates the 5 Universal Dimensions (`task_success`, `tool_use_quality`, `trajectory_compliance`, `hallucination`, `response_quality`).
 - Compute normalized score and evaluate Gate A and Gate B.
 

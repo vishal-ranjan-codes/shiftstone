@@ -29,10 +29,10 @@ Universal entry point for every AI IDE (ICM Layer 0 identity + Layer 1 task rout
 <!-- SKILL-INDEX:BEGIN -->
 - backlog, ci-cd-cloudflare, cloudflare-cron, cloudflare-d1, cloudflare-kv, cloudflare-queues, cloudflare-r2, cloudflare-workers, design-tokens, find-skills, graceful-degradation, jobs, playwright-e2e
 - rate-limiting, react-router-actions-forms, react-router-data-loading, react-router-error-boundaries, react-router-middleware, react-router-routing, react-router-typegen, research-methodology
-- security-headers, shadcn-ui, ss-add-skill, ss-backlog-sync, ss-bookkeeping, ss-brainstorm, ss-brand, ss-brand-naming, ss-bug-report, ss-deploy, ss-diagnose, ss-docs, ss-execute-plan
-- ss-import-research, ss-init, ss-lesson, ss-loop-author, ss-new-cron-job, ss-new-feature, ss-new-migration, ss-nexus, ss-plan, ss-push, ss-refresh-research, ss-research, ss-review, ss-schema-sync
-- ss-simplify, ss-status, ss-sync-bible, ss-sync-engine, ss-upgrade-research, ss-upgrade-skill, ss-verify, stack, storage, supabase-api-keys, supabase-auth, supabase-migrations, supabase-postgres
-- supabase-realtime, supabase-rls, swarm, tailwind-v4, theme-management, ui, vitest-testing, web-design-guidelines, zod-validation
+- security-headers, shadcn-ui, ss-add-skill, ss-backlog, ss-backlog-sync, ss-bible, ss-bookkeeping, ss-brainstorm, ss-brand, ss-brand-naming, ss-bug-report, ss-deploy, ss-diagnose, ss-docs
+- ss-execute-plan, ss-import-research, ss-init, ss-lesson, ss-loop-author, ss-new-cron-job, ss-new-feature, ss-new-migration, ss-nexus, ss-plan, ss-push, ss-refresh-research, ss-research, ss-review
+- ss-schema-sync, ss-simplify, ss-status, ss-steering, ss-sync-bible, ss-sync-engine, ss-upgrade-research, ss-upgrade-skill, ss-verify, stack, storage, supabase-api-keys, supabase-auth
+- supabase-migrations, supabase-postgres, supabase-realtime, supabase-rls, swarm, tailwind-v4, theme-management, ui, vitest-testing, web-design-guidelines, zod-validation
 <!-- SKILL-INDEX:END -->
 
 ## Load Order & Canonical Locations

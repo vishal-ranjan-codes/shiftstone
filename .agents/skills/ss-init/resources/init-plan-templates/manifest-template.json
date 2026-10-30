@@ -1,0 +1,240 @@
+{
+  "schema": "plan-manifest/v1",
+  "suiteId": "workspace-initialization",
+  "definitionRevision": 1,
+  "phases": [
+    {
+      "phaseId": "P1",
+      "contract": "docs/plans/workspace-initialization/phase-1-product-prd-and-vision.md",
+      "unitIds": ["U1", "U2"],
+      "dependsOn": [],
+      "sourcePaths": [
+        "docs/bible/PRD",
+        "docs/bible/00-product-and-vision"
+      ],
+      "checks": [
+        {
+          "id": "p1-prd-and-vision-check",
+          "acceptanceIds": ["AC-U1-01", "AC-U2-01"],
+          "level": 1,
+          "kind": "automated",
+          "required": true,
+          "regressionFor": [],
+          "sourcePaths": [
+            "docs/bible/PRD",
+            "docs/bible/00-product-and-vision"
+          ],
+          "environmentKeys": ["node-version"],
+          "runner": {
+            "executable": "node",
+            "args": [
+              ".shiftstone/init/validate-bible-synthesis.js",
+              "docs/bible/PRD",
+              "docs/bible/00-product-and-vision"
+            ],
+            "cwd": "."
+          }
+        }
+      ],
+      "requiredReview": false,
+      "humanApprovalRequired": false,
+      "recovery": {
+        "retry": "Review PRD and vision synthesis depth floors.",
+        "rollback": "git checkout docs/bible/PRD docs/bible/00-product-and-vision"
+      }
+    },
+    {
+      "phaseId": "P2",
+      "contract": "docs/plans/workspace-initialization/phase-2-app-scaffolding-and-theming.md",
+      "unitIds": ["U3", "U4", "U5", "U6"],
+      "dependsOn": [
+        {
+          "phaseId": "P1",
+          "requires": "complete",
+          "reason": "PRD requirements and product vision must be locked before application domain scaffolding."
+        }
+      ],
+      "sourcePaths": [
+        "apps/web/app/globals.css",
+        "apps/web/supabase/migrations",
+        "apps/web/app/types/database.types.ts",
+        "apps/web/.env.example",
+        "apps/web/package.json"
+      ],
+      "checks": [
+        {
+          "id": "p2-app-scaffolding-check",
+          "acceptanceIds": ["AC-U3-01", "AC-U4-01", "AC-U5-01", "AC-U6-01"],
+          "level": 2,
+          "kind": "automated",
+          "required": true,
+          "regressionFor": ["P1"],
+          "sourcePaths": [
+            "apps/web/app/globals.css",
+            "apps/web/supabase/migrations",
+            "apps/web/app/types/database.types.ts",
+            "apps/web/.env.example",
+            "apps/web/package.json"
+          ],
+          "environmentKeys": ["node-version"],
+          "runner": {
+            "executable": "pnpm",
+            "args": [
+              "vitest",
+              "run",
+              "tests/init/app-scaffolder.test.ts"
+            ],
+            "cwd": ".shiftstone"
+          }
+        }
+      ],
+      "requiredReview": false,
+      "humanApprovalRequired": false,
+      "recovery": {
+        "retry": "Review application stylesheet tokens, SQL migrations, and environment variable synchronization.",
+        "rollback": "git checkout apps/web"
+      }
+    },
+    {
+      "phaseId": "P3",
+      "contract": "docs/plans/workspace-initialization/phase-3-technical-bible-and-adrs.md",
+      "unitIds": ["U7", "U8"],
+      "dependsOn": [
+        {
+          "phaseId": "P2",
+          "requires": "complete",
+          "reason": "Application domain models and migrations establish the technical architecture contract."
+        }
+      ],
+      "sourcePaths": [
+        "docs/bible/01-architecture",
+        "docs/bible/02-database-and-models",
+        "docs/bible/03-api-and-routes",
+        "docs/decisions"
+      ],
+      "checks": [
+        {
+          "id": "p3-technical-bible-check",
+          "acceptanceIds": ["AC-U7-01", "AC-U8-01"],
+          "level": 2,
+          "kind": "automated",
+          "required": true,
+          "regressionFor": ["P2"],
+          "sourcePaths": [
+            "docs/bible/01-architecture",
+            "docs/bible/02-database-and-models",
+            "docs/bible/03-api-and-routes",
+            "docs/decisions"
+          ],
+          "environmentKeys": ["node-version"],
+          "runner": {
+            "executable": "node",
+            "args": [
+              ".shiftstone/init/validate-bible-synthesis.js",
+              "docs/bible"
+            ],
+            "cwd": "."
+          }
+        }
+      ],
+      "requiredReview": false,
+      "humanApprovalRequired": false,
+      "recovery": {
+        "retry": "Review modular chapter subfolders and architectural decisions ledger.",
+        "rollback": "git checkout docs/bible docs/decisions"
+      }
+    },
+    {
+      "phaseId": "P4",
+      "contract": "docs/plans/workspace-initialization/phase-4-actionable-task-backlog.md",
+      "unitIds": ["U9", "U10"],
+      "dependsOn": [
+        {
+          "phaseId": "P3",
+          "requires": "complete",
+          "reason": "Technical chapters and decisions provide concrete implementation requirements for task cards."
+        }
+      ],
+      "sourcePaths": [
+        "docs/backlog/README.md",
+        "docs/backlog/MOC.md",
+        "docs/backlog/Phase 1 - Foundation & Auth Setup"
+      ],
+      "checks": [
+        {
+          "id": "p4-actionable-backlog-check",
+          "acceptanceIds": ["AC-U9-01", "AC-U10-01"],
+          "level": 2,
+          "kind": "automated",
+          "required": true,
+          "regressionFor": ["P3"],
+          "sourcePaths": [
+            "docs/backlog/README.md",
+            "docs/backlog/MOC.md"
+          ],
+          "environmentKeys": ["node-version"],
+          "runner": {
+            "executable": "pnpm",
+            "args": [
+              "vitest",
+              "run",
+              "tests/skills/ss-backlog.test.ts"
+            ],
+            "cwd": ".shiftstone"
+          }
+        }
+      ],
+      "requiredReview": false,
+      "humanApprovalRequired": false,
+      "recovery": {
+        "retry": "Ensure task cards have user stories, PRD links, and phase capacity does not exceed 12 tasks.",
+        "rollback": "git checkout docs/backlog"
+      }
+    },
+    {
+      "phaseId": "P5",
+      "contract": "docs/plans/workspace-initialization/phase-5-ai-steering-and-harness.md",
+      "unitIds": ["U11", "U12"],
+      "dependsOn": [
+        {
+          "phaseId": "P4",
+          "requires": "complete",
+          "reason": "Backlog milestones and architecture must be finalized before compiling steering orientation."
+        }
+      ],
+      "sourcePaths": [
+        "AGENTS.md",
+        ".shiftstone/static-rules",
+        ".shiftstone/path-scoped-rules"
+      ],
+      "checks": [
+        {
+          "id": "p5-steering-and-harness-check",
+          "acceptanceIds": ["AC-U11-01", "AC-U12-01"],
+          "level": 2,
+          "kind": "automated",
+          "required": true,
+          "regressionFor": ["P4"],
+          "sourcePaths": [
+            "AGENTS.md",
+            ".shiftstone/static-rules"
+          ],
+          "environmentKeys": ["node-version"],
+          "runner": {
+            "executable": "node",
+            "args": [
+              ".shiftstone/scripts/validate-context-budgets.js"
+            ],
+            "cwd": "."
+          }
+        }
+      ],
+      "requiredReview": false,
+      "humanApprovalRequired": false,
+      "recovery": {
+        "retry": "Verify AGENTS.md <= 60 lines and cumulative always-on rules <= 12,288 bytes.",
+        "rollback": "git checkout AGENTS.md .shiftstone/static-rules"
+      }
+    }
+  ]
+}

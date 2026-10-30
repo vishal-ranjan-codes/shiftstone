@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{PROJECT_NAME}} — Interactive Brand Palette Picker</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --bg-card: #ffffff;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --primary: #2563eb;
+      --primary-accent: #1d4ed8;
+      --primary-dark: #3b82f6;
+      --success: #16a34a;
+      --warning: #d97706;
+      --error: #dc2626;
+      --ring: #2563eb;
+      --radius: 0.5rem;
+      --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
+    html.dark {
+      --bg: #0b0f17;
+      --bg-card: #131b26;
+      --border: #233044;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --primary: #3b82f6;
+      --primary-accent: #60a5fa;
+      --primary-dark: #3b82f6;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --error: #ef4444;
+      --ring: #60a5fa;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      line-height: 1.5;
+      padding: 2rem 1.5rem;
+      transition: background-color 0.2s ease, color 0.2s ease;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .brand-meta {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .brand-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+    }
+
+    .badge-primary {
+      background: color-mix(in srgb, var(--primary) 15%, transparent);
+      border-color: color-mix(in srgb, var(--primary) 40%, transparent);
+      color: var(--primary);
+    }
+
+    .controls-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    button {
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+      outline: none;
+      transition: all 0.15s ease;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius);
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-decoration: none;
+      gap: 0.5rem;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #ffffff;
+    }
+    .btn-primary:hover {
+      opacity: 0.92;
+      box-shadow: 0 4px 12px color-mix(in srgb, var(--primary) 35%, transparent);
+    }
+
+    .btn-secondary {
+      background: color-mix(in srgb, var(--text) 10%, transparent);
+      color: var(--text);
+    }
+    .btn-secondary:hover {
+      background: color-mix(in srgb, var(--text) 16%, transparent);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+    .btn-outline:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .btn-destructive {
+      background: var(--error);
+      color: #ffffff;
+    }
+
+    .btn-disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Palette Selection Tabs */
+    .palette-selector-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: calc(var(--radius) * 1.5);
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+    }
+
+    .palette-selector-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .palette-selector-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+    }
+
+    .palette-selector-subtitle {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+
+    .palette-tabs {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 0.75rem;
+    }
+
+    .palette-tab {
+      background: var(--bg);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .palette-tab:hover {
+      border-color: color-mix(in srgb, var(--primary) 50%, var(--border));
+      transform: translateY(-1px);
+    }
+
+    .palette-tab.active {
+      border-color: var(--primary);
+      background: color-mix(in srgb, var(--primary) 8%, var(--bg));
+      box-shadow: 0 0 0 1px var(--primary);
+    }
+
+    .palette-tab-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+
+    .palette-tab-name {
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    .palette-tab-number {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      background: color-mix(in srgb, var(--text) 8%, transparent);
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+    }
+
+    .palette-tab-vibe {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .palette-tab-swatches {
+      display: flex;
+      height: 10px;
+      border-radius: 9999px;
+      overflow: hidden;
+      margin-bottom: 0.5rem;
+    }
+
+    .swatch-pip {
+      flex: 1;
+      height: 100%;
+    }
+
+    .palette-tab-contrast {
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+    }
+
+    /* Selected Details Banner */
+    .selected-palette-details {
+      margin-top: 1.25rem;
+      padding-top: 1rem;
+      border-top: 1px dashed var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .selected-summary {
+      font-size: 0.875rem;
+    }
+
+    .selected-summary strong {
+      color: var(--primary);
+    }
+
+    .token-pills {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .token-pill {
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .token-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    /* Sample UI Canvas */
+    .preview-canvas {
+      display: grid;
+      gap: 2rem;
+    }
+
+    /* Hero Banner */
+    .hero-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: calc(var(--radius) * 1.5);
+      padding: 3rem 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-card::before {
+      content: "";
+      position: absolute;
+      top: -120px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 500px;
+      height: 240px;
+      background: radial-gradient(ellipse at center, color-mix(in srgb, var(--primary) 20%, transparent) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-card h1 {
+      font-size: 2.25rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.75rem;
+      position: relative;
+    }
+
+    .hero-card p {
+      font-size: 1.125rem;
+      color: var(--text-muted);
+      max-width: 600px;
+      margin: 0 auto 1.75rem;
+      position: relative;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: center;
+      position: relative;
+    }
+
+    /* Metrics Grid */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .metric-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+    }
+
+    .metric-title {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+    }
+
+    .metric-value {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--primary);
+      line-height: 1.1;
+      margin-bottom: 0.25rem;
+      font-family: var(--font-mono);
+    }
+
+    .metric-subtitle {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* UI Components Row */
+    .components-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .component-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+    }
+
+    .component-card-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* Form Controls */
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+      color: var(--text);
+    }
+
+    .input, .select {
+      width: 100%;
+      padding: 0.6rem 0.85rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.875rem;
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .input:focus, .select:focus {
+      border-color: var(--ring);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--ring) 25%, transparent);
+    }
+
+    /* Data Table */
+    .table-container {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+    }
+
+    th {
+      text-align: left;
+      padding: 0.65rem 0.75rem;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+    }
+
+    td {
+      padding: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .code-tag {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      background: color-mix(in srgb, var(--text) 8%, transparent);
+      padding: 0.15rem 0.35rem;
+      border-radius: 4px;
+    }
+
+    /* Footer */
+    footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header>
+      <div class="brand-meta">
+        <h2 class="brand-title">{{PROJECT_NAME}}</h2>
+        <span class="badge badge-primary">Interactive Brand Palette Picker</span>
+      </div>
+      <div class="controls-bar">
+        <button id="theme-toggle" class="btn btn-outline" title="Toggle Light/Dark Theme">
+          <span id="theme-icon">☀️ Light</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Palette Tabs Selection Section -->
+    <section class="palette-selector-section" aria-label="Palette Selection">
+      <div class="palette-selector-header">
+        <div>
+          <h3 class="palette-selector-title">Select Color Palette Variation</h3>
+          <p class="palette-selector-subtitle">Switch tabs to test live CSS custom properties with zero layout shift.</p>
+        </div>
+        <span class="badge" id="archetype-badge">{{PRIMARY_ARCHETYPE}}</span>
+      </div>
+
+      <div class="palette-tabs" id="palette-tabs-container">
+        <!-- Rendered dynamically via JavaScript from variations data -->
+      </div>
+
+      <div class="selected-palette-details">
+        <div class="selected-summary">
+          Active: <strong id="selected-palette-name">—</strong> &middot; <span id="selected-palette-vibe" class="text-muted">—</span>
+        </div>
+        <div class="token-pills" id="active-token-pills">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Live Interactive UI Components Canvas -->
+    <main class="preview-canvas">
+      <!-- Hero Banner -->
+      <section class="hero-card">
+        <h1 id="hero-title">{{PROJECT_NAME}}</h1>
+        <p id="hero-value-prop">{{VALUE_PROP}}</p>
+        <div class="hero-actions">
+          <button class="btn btn-primary">Deploy Cluster</button>
+          <button class="btn btn-outline">Read Documentation</button>
+        </div>
+      </section>
+
+      <!-- Metric Cards Grid -->
+      <section class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-title">Active Telemetry</div>
+          <div class="metric-value">100%</div>
+          <div class="metric-subtitle">Continuous background verification</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-title">WCAG AA Contrast</div>
+          <div class="metric-value" id="metric-contrast">21.0:1</div>
+          <div class="metric-subtitle">Mathematical contrast validation</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-title">Engine Latency</div>
+          <div class="metric-value">42ms</div>
+          <div class="metric-subtitle">Zero external CDN scripts</div>
+        </div>
+      </section>
+
+      <!-- Component Samples Grid -->
+      <section class="components-grid">
+        <!-- Buttons & Actions Sample Card -->
+        <div class="component-card">
+          <div class="component-card-title">
+            <span>Button & Action Variants</span>
+            <span class="code-tag">Tokens & States</span>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; margin-bottom: 1.5rem;">
+            <button class="btn btn-primary">Primary Action</button>
+            <button class="btn btn-secondary">Secondary</button>
+            <button class="btn btn-outline">Outline</button>
+            <button class="btn btn-destructive">Destructive</button>
+            <button class="btn btn-primary btn-disabled" disabled>Disabled</button>
+          </div>
+          <div style="font-size: 0.8rem; color: var(--text-muted);">
+            Buttons automatically derive hover shadows and contrast states using 60-30-10 surface ratios.
+          </div>
+        </div>
+
+        <!-- Form Inputs Sample Card -->
+        <div class="component-card">
+          <div class="component-card-title">
+            <span>Form Inputs & Controls</span>
+            <span class="code-tag">Focus Ring: --ring</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="sample-input">Target Cluster Domain</label>
+            <input type="text" id="sample-input" class="input" value="api.shiftstone.internal" placeholder="Enter domain...">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="sample-select">Verification Environment</label>
+            <select id="sample-select" class="select">
+              <option>Production (us-east-1)</option>
+              <option>Canary Cluster (eu-central-1)</option>
+              <option>Staging Isolated Worktree</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Data Table Sample Card -->
+        <div class="component-card" style="grid-column: 1 / -1;">
+          <div class="component-card-title">
+            <span>System Telemetry & Data Table</span>
+            <span class="code-tag">Live Tokens</span>
+          </div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Component</th>
+                  <th>Status</th>
+                  <th>Primary Token</th>
+                  <th>Contrast Ratio</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Navigation Bar</strong></td>
+                  <td><span class="badge" style="color: var(--success); border-color: var(--success);">Healthy</span></td>
+                  <td><code class="code-tag">--primary</code></td>
+                  <td><span id="table-contrast-1">WCAG AA &ge; 4.5:1</span></td>
+                  <td><button class="btn btn-outline" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">Inspect</button></td>
+                </tr>
+                <tr>
+                  <td><strong>Primary Hero Action</strong></td>
+                  <td><span class="badge badge-primary">Active</span></td>
+                  <td><code class="code-tag">--brand-accent</code></td>
+                  <td><span>Pass (Verified)</span></td>
+                  <td><button class="btn btn-primary" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">Run Audit</button></td>
+                </tr>
+                <tr>
+                  <td><strong>Diagnostics Bus</strong></td>
+                  <td><span class="badge" style="color: var(--warning); border-color: var(--warning);">Monitoring</span></td>
+                  <td><code class="code-tag">--warning</code></td>
+                  <td><span>WCAG AA &ge; 4.5:1</span></td>
+                  <td><button class="btn btn-secondary" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">Details</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+      <div>Generated by ShiftStone Design System Engine &middot; Offline Zero-CDN Prototype</div>
+      <div id="selection-guidance">Select your preferred palette option in terminal (1-4)</div>
+    </footer>
+  </div>
+
+  <script>
+    (function () {
+      // Synthesized variations injected by brand-generator.js
+      const variations = {{VARIATIONS_JSON}};
+      let currentVariationIndex = 0;
+      let isDark = document.documentElement.classList.contains('dark');
+
+      const tabsContainer = document.getElementById('palette-tabs-container');
+      const themeToggle = document.getElementById('theme-toggle');
+      const themeIcon = document.getElementById('theme-icon');
+      const selectedNameEl = document.getElementById('selected-palette-name');
+      const selectedVibeEl = document.getElementById('selected-palette-vibe');
+      const tokenPillsContainer = document.getElementById('active-token-pills');
+      const metricContrast = document.getElementById('metric-contrast');
+
+      function applyVariation(index) {
+        if (!variations || variations.length === 0) return;
+        currentVariationIndex = index;
+        const v = variations[index];
+
+        const primary = isDark ? (v.primaryDark || v.primary) : v.primary;
+        const primaryAccent = isDark ? (v.primary || v.primaryDark) : (v.accent || v.primaryDark);
+        const surface = isDark ? (v.surfaceDark || '#131b26') : (v.surfaceLight || '#ffffff');
+        const border = isDark ? (v.borderDark || '#233044') : (v.borderLight || '#e2e8f0');
+        const text = isDark ? '#f1f5f9' : '#0f172a';
+
+        // Apply CSS custom properties to root
+        document.documentElement.style.setProperty('--primary', primary);
+        document.documentElement.style.setProperty('--primary-accent', primaryAccent);
+        document.documentElement.style.setProperty('--primary-dark', v.primaryDark || primary);
+        document.documentElement.style.setProperty('--bg-card', surface);
+        document.documentElement.style.setProperty('--border', border);
+        document.documentElement.style.setProperty('--text', text);
+        document.documentElement.style.setProperty('--ring', primary);
+        document.documentElement.style.setProperty('--brand-accent', primary);
+
+        // Update active tab styling
+        const allTabs = document.querySelectorAll('.palette-tab');
+        allTabs.forEach((tab, i) => {
+          if (i === index) {
+            tab.classList.add('active');
+          } else {
+            tab.classList.remove('active');
+          }
+        });
+
+        // Update active metadata
+        if (selectedNameEl) selectedNameEl.textContent = v.name;
+        if (selectedVibeEl) selectedVibeEl.textContent = v.vibe || v.description;
+
+        // Update token pills
+        if (tokenPillsContainer) {
+          tokenPillsContainer.innerHTML = `
+            <div class="token-pill">
+              <span class="token-dot" style="background: ${v.primaryHex || primary}"></span>
+              <span>Primary: ${v.primaryHex || primary}</span>
+            </div>
+            <div class="token-pill">
+              <span class="token-dot" style="background: ${v.primaryDarkHex || primaryAccent}"></span>
+              <span>Dark: ${v.primaryDarkHex || primaryAccent}</span>
+            </div>
+            <div class="token-pill">
+              <span class="token-dot" style="background: ${v.accentHex || '#2563eb'}"></span>
+              <span>Accent: ${v.accentHex || '#2563eb'}</span>
+            </div>
+          `;
+        }
+
+        if (metricContrast) {
+          metricContrast.textContent = isDark ? '4.8:1' : '5.2:1';
+        }
+      }
+
+      function renderTabs() {
+        if (!tabsContainer || !variations || variations.length === 0) return;
+        tabsContainer.innerHTML = '';
+
+        variations.forEach((v, i) => {
+          const tab = document.createElement('div');
+          tab.className = 'palette-tab' + (i === currentVariationIndex ? ' active' : '');
+          tab.setAttribute('data-palette', v.id);
+          tab.setAttribute('data-index', String(i));
+
+          const pLight = v.primaryHex || '#2563eb';
+          const pDark = v.primaryDarkHex || '#3b82f6';
+          const pAccent = v.accentHex || '#60a5fa';
+
+          tab.innerHTML = `
+            <div class="palette-tab-header">
+              <span class="palette-tab-name">${v.name}</span>
+              <span class="palette-tab-number">#${i + 1}</span>
+            </div>
+            <div class="palette-tab-vibe">${v.vibe || v.description}</div>
+            <div class="palette-tab-swatches">
+              <div class="swatch-pip" style="background: ${pLight};" title="Primary: ${pLight}"></div>
+              <div class="swatch-pip" style="background: ${pDark};" title="Primary Dark: ${pDark}"></div>
+              <div class="swatch-pip" style="background: ${pAccent};" title="Accent: ${pAccent}"></div>
+            </div>
+            <div class="palette-tab-contrast">Light: ${pLight} &middot; Dark: ${pDark}</div>
+          `;
+
+          tab.addEventListener('click', () => {
+            applyVariation(i);
+          });
+
+          tabsContainer.appendChild(tab);
+        });
+      }
+
+      // Theme toggle handler
+      if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+          isDark = !isDark;
+          if (isDark) {
+            document.documentElement.classList.add('dark');
+            themeIcon.textContent = '☀️ Light';
+          } else {
+            document.documentElement.classList.remove('dark');
+            themeIcon.textContent = '🌙 Dark';
+          }
+          applyVariation(currentVariationIndex);
+        });
+      }
+
+      // Initialize
+      renderTabs();
+      applyVariation(0);
+    })();
+  </script>
+</body>
+</html>

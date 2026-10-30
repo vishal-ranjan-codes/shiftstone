@@ -92,3 +92,21 @@ Architectural blueprints and standard structures for synthesizing high-cohesion,
 - **`index.md`**: Map of Content.
 - **`eval-benchmarks.md`**: Quantitative evaluation rubrics, accuracy scoring, regression test suites.
 - **`prompt-orchestration.md`**: System prompt topologies, token budget enforcement, multi-step tool calls.
+
+---
+
+## Foundational Product Chapters (`00` & `PRD`)
+
+### Chapter 00: `00-product-and-vision/`
+- **`index.md`**: Map of Content, links to sub-topics, high-level mission and product thesis statement.
+- **`vision-and-mission.md`**: Founding thesis, core user trigger moment, 3-year vision, and market trajectory.
+- **`target-audience.md`**: 2–4 detailed customer personas, user segments, workflows, and pain-point mappings.
+- **`product-philosophy.md`**: Non-negotiable operating covenants (Anti-Predatory Covenant, Local Freedom Invariant, simplicity limits).
+- **`business-model.md`**: Pricing tiers, recurring subscription vs licensing, commission rates, and checkout integration.
+- **`market-landscape.md`**: Competitor friction points, alternative tooling comparisons, and strategic differentiation moats.
+
+### Chapter PRD: `PRD/`
+- **`index.md`**: Map of Content and requirements lifecycle governance.
+- **`ecosystem-prd.md`**: Comprehensive full-system product specification: problem statement, 4-pillar system architecture, core user journeys, non-functional latency/availability targets, and anti-goals / out-of-scope boundaries.
+- **`phase-1-foundation-prd.md`**: Phase 1 functional MVP scope, initial user onboarding journeys, acceptance criteria (`AC-F1-*`), and upstream technical contracts.
+

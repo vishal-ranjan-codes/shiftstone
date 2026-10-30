@@ -2,7 +2,7 @@
 apiVersion: context/v1
 kind: SkillsManifest
 metadata:
-  generated: 2026-10-30T14:22:56.279Z
+  generated: 2026-10-30T17:12:05.932Z
   coreVersion: 2.1.0
   activePacks:
     - rr8-supabase-cf
@@ -458,11 +458,11 @@ spec:
     - name: ss-execute-plan
       pack: core
       tier: manual-load
-      tokenCost: 2912
+      tokenCost: 3352
       depends_on: []
       description: Execute approved implementation plans unit-by-unit with bounded
-        context (<= 4,500 tokens), Red-First TDD, and Two-Stage Review (Spec
-        Compliance + Code Quality).
+        context (<= 4,500 tokens), Red-First TDD, Two-Stage Review, verbose gate
+        diagnostics, and Governor fast-path handoffs.
       tags:
         - shiftstone
         - core
