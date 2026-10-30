@@ -1,0 +1,75 @@
+{
+  "schema": "plan-manifest/v1",
+  "suiteId": "feature-name",
+  "definitionRevision": 1,
+  "phases": [
+    {
+      "phaseId": "P1",
+      "contract": "docs/plans/feature-name/01-phase-1-foundation.md",
+      "unitIds": ["U1", "U2"],
+      "dependsOn": [],
+      "sourcePaths": [
+        ".shiftstone/scripts/feature-a"
+      ],
+      "checks": [
+        {
+          "id": "check-foundation-tests",
+          "acceptanceIds": ["acc-foundation-build"],
+          "level": 1,
+          "kind": "automated",
+          "required": true,
+          "regressionFor": [],
+          "sourcePaths": [
+            ".shiftstone/scripts/feature-a"
+          ],
+          "environmentKeys": ["node-version"],
+          "runner": {
+            "executable": "node",
+            "args": ["--version"],
+            "cwd": "."
+          }
+        }
+      ],
+      "requiredReview": true,
+      "humanApprovalRequired": false,
+      "recovery": {
+        "retry": "Revert only scoped changes for this phase and re-execute verification.",
+        "rollback": "Revert to entry baseline before this phase began."
+      }
+    },
+    {
+      "phaseId": "P2",
+      "contract": "docs/plans/feature-name/02-phase-2-worker.md",
+      "unitIds": ["U3", "U4"],
+      "dependsOn": [],
+      "sourcePaths": [
+        ".shiftstone/scripts/feature-b"
+      ],
+      "checks": [
+        {
+          "id": "check-worker-tests",
+          "acceptanceIds": ["acc-worker-build"],
+          "level": 1,
+          "kind": "automated",
+          "required": true,
+          "regressionFor": [],
+          "sourcePaths": [
+            ".shiftstone/scripts/feature-b"
+          ],
+          "environmentKeys": ["node-version"],
+          "runner": {
+            "executable": "node",
+            "args": ["--version"],
+            "cwd": "."
+          }
+        }
+      ],
+      "requiredReview": true,
+      "humanApprovalRequired": false,
+      "recovery": {
+        "retry": "Revert only scoped changes for this phase and re-execute verification.",
+        "rollback": "Revert to entry baseline before this phase began."
+      }
+    }
+  ]
+}

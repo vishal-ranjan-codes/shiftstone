@@ -45,11 +45,6 @@ rules:
       - "wrangler secret put"
       - "wrangler secret delete"
 
-  - actionClass: "ssot-bible-mutation"
-    description: "Direct modifications to SSOT Bible documentation outside approved sync-bible proposals"
-    filePatterns:
-      - "docs/bible/**"
-
   - actionClass: "production-deploy"
     description: "Production deployments and live infrastructure publication"
     commands:

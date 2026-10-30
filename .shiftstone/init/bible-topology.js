@@ -52,8 +52,77 @@ export const CORE_SAAS_CHAPTERS = [
   },
 ];
 
+/** Universal foundational product chapters (v3.0) */
+export const PRODUCT_CHAPTERS = [
+  {
+    name: 'product-and-vision',
+    slug: '00-product-and-vision',
+    number: '00',
+    title: 'Product Vision & Strategy',
+    files: [
+      'index.md',
+      'vision-and-mission.md',
+      'target-audience.md',
+      'product-philosophy.md',
+      'business-model.md',
+      'market-landscape.md',
+    ],
+  },
+  {
+    name: 'PRD',
+    slug: 'PRD',
+    number: 'PRD',
+    title: 'Product Requirements Documents (PRD)',
+    files: [
+      'index.md',
+      'ecosystem-prd.md',
+      'phase-1-foundation-prd.md',
+    ],
+  },
+];
+
 /** Specialized chapter blueprints */
 export const SPECIALIZED_CHAPTERS = {
+  'commerce-and-catalog': {
+    name: 'commerce-and-catalog',
+    title: 'Product Catalog, Pricing & Inventory',
+    files: ['index.md', 'catalog-schemas.md', 'pricing-engine.md', 'inventory-tracking.md'],
+  },
+  'orders-and-fulfillment': {
+    name: 'orders-and-fulfillment',
+    title: 'Orders, Checkout & Fulfillment',
+    files: ['index.md', 'order-state-machine.md', 'checkout-flow.md', 'fulfillment-webhooks.md'],
+  },
+  'team-workspaces': {
+    name: 'team-workspaces',
+    title: 'Team Workspaces & Member Management',
+    files: ['index.md', 'workspace-hierarchy.md', 'invitations-and-onboarding.md'],
+  },
+  'audit-and-compliance': {
+    name: 'audit-and-compliance',
+    title: 'Audit Logging & Regulatory Compliance',
+    files: ['index.md', 'audit-logging.md', 'compliance-controls.md'],
+  },
+  'sdk-and-client-libraries': {
+    name: 'sdk-and-client-libraries',
+    title: 'Client SDKs & Integration Libraries',
+    files: ['index.md', 'sdk-architecture.md', 'client-codegen.md'],
+  },
+  'api-governance': {
+    name: 'api-governance',
+    title: 'API Versioning & Rate Governance',
+    files: ['index.md', 'versioning-policy.md', 'rate-limit-quotas.md'],
+  },
+  'fleet-orchestration': {
+    name: 'fleet-orchestration',
+    title: 'Fleet Orchestration & Node Management',
+    files: ['index.md', 'fleet-registry.md', 'heartbeat-monitoring.md'],
+  },
+  'site-telemetry': {
+    name: 'site-telemetry',
+    title: 'Site Telemetry & Health Streaming',
+    files: ['index.md', 'telemetry-pipeline.md', 'health-checks.md'],
+  },
   'plugin-architecture': {
     name: 'plugin-architecture',
     title: 'Plugin Architecture & Extensions',
@@ -132,6 +201,37 @@ export function evaluateTaxonomy(projectContext = {}) {
     (Array.isArray(projectContext.features) &&
       projectContext.features.some((f) => ['ai', 'agent', 'rag', 'vector'].includes(f.toLowerCase())));
 
+  const isEcommerceOrMarketplace =
+    typeStr.includes('marketplace') ||
+    typeStr.includes('ecommerce') ||
+    typeStr.includes('e-commerce') ||
+    typeStr.includes('store') ||
+    typeStr.includes('shop') ||
+    (Array.isArray(projectContext.features) &&
+      projectContext.features.some((f) => ['marketplace', 'ecommerce', 'store', 'shop'].includes(f.toLowerCase())));
+
+  const isTeamSaas =
+    typeStr.includes('team') ||
+    typeStr.includes('workspace') ||
+    typeStr.includes('collaboration') ||
+    typeStr.includes('b2b') ||
+    (Array.isArray(projectContext.features) &&
+      projectContext.features.some((f) => ['team', 'workspaces', 'collaboration'].includes(f.toLowerCase())));
+
+  const isDevPlatform =
+    typeStr.includes('platform') ||
+    typeStr.includes('sdk') ||
+    typeStr.includes('developer_platform') ||
+    (Array.isArray(projectContext.features) &&
+      projectContext.features.some((f) => ['sdk', 'platform', 'api_gateway'].includes(f.toLowerCase())));
+
+  const isFleet =
+    typeStr.includes('fleet') ||
+    typeStr.includes('iot') ||
+    typeStr.includes('multi-site') ||
+    (Array.isArray(projectContext.features) &&
+      projectContext.features.some((f) => ['fleet', 'iot', 'telemetry'].includes(f.toLowerCase())));
+
   let rawList = [];
   const changes = {
     added: [],
@@ -145,11 +245,6 @@ export function evaluateTaxonomy(projectContext = {}) {
     resolvedProductType = 'cli_devtool';
     rationale =
       'CLI / Developer Tool taxonomy: pruned frontend chapter, added plugin architecture, and transformed API contracts to CLI commands & flags.';
-    // Retain 01-architecture, 02-setup-and-workflow, 03-database
-    // Add 04-plugin-architecture
-    // Retain 04-auth-and-rbac (or auth), 05-core-systems, 06-integrations
-    // Drop 07-frontend
-    // Transform 08-api-contracts into 08-cli-commands-and-flags
     changes.removed.push('07-frontend');
     changes.transformed.push({ from: '08-api-contracts', to: 'cli-commands-and-flags' });
     changes.added.push('plugin-architecture');
@@ -193,12 +288,83 @@ export function evaluateTaxonomy(projectContext = {}) {
       CORE_SAAS_CHAPTERS[6], // frontend
       CORE_SAAS_CHAPTERS[7], // api-contracts
     ];
+  } else if (isEcommerceOrMarketplace) {
+    resolvedProductType = 'ecommerce_marketplace';
+    rationale =
+      'E-Commerce & Marketplace taxonomy: injected commerce-and-catalog and orders-and-fulfillment.';
+    changes.added.push('commerce-and-catalog', 'orders-and-fulfillment');
+
+    rawList = [
+      CORE_SAAS_CHAPTERS[0],
+      CORE_SAAS_CHAPTERS[1],
+      CORE_SAAS_CHAPTERS[2],
+      CORE_SAAS_CHAPTERS[3],
+      CORE_SAAS_CHAPTERS[4],
+      SPECIALIZED_CHAPTERS['commerce-and-catalog'],
+      SPECIALIZED_CHAPTERS['orders-and-fulfillment'],
+      CORE_SAAS_CHAPTERS[5],
+      CORE_SAAS_CHAPTERS[6],
+      CORE_SAAS_CHAPTERS[7],
+    ];
+  } else if (isTeamSaas) {
+    resolvedProductType = 'team_saas';
+    rationale =
+      'Collaborative Team SaaS taxonomy: injected team-workspaces domain chapter.';
+    changes.added.push('team-workspaces');
+
+    rawList = [
+      CORE_SAAS_CHAPTERS[0],
+      CORE_SAAS_CHAPTERS[1],
+      CORE_SAAS_CHAPTERS[2],
+      CORE_SAAS_CHAPTERS[3],
+      CORE_SAAS_CHAPTERS[4],
+      SPECIALIZED_CHAPTERS['team-workspaces'],
+      CORE_SAAS_CHAPTERS[5],
+      CORE_SAAS_CHAPTERS[6],
+      CORE_SAAS_CHAPTERS[7],
+    ];
+  } else if (isDevPlatform) {
+    resolvedProductType = 'developer_platform';
+    rationale =
+      'Developer Platform / SDK taxonomy: injected sdk-and-client-libraries and api-governance.';
+    changes.added.push('sdk-and-client-libraries', 'api-governance');
+
+    rawList = [
+      CORE_SAAS_CHAPTERS[0],
+      CORE_SAAS_CHAPTERS[1],
+      CORE_SAAS_CHAPTERS[2],
+      CORE_SAAS_CHAPTERS[3],
+      CORE_SAAS_CHAPTERS[4],
+      SPECIALIZED_CHAPTERS['sdk-and-client-libraries'],
+      SPECIALIZED_CHAPTERS['api-governance'],
+      CORE_SAAS_CHAPTERS[5],
+      CORE_SAAS_CHAPTERS[6],
+      CORE_SAAS_CHAPTERS[7],
+    ];
+  } else if (isFleet) {
+    resolvedProductType = 'fleet_orchestration';
+    rationale =
+      'Fleet & Multi-Site taxonomy: injected fleet-orchestration and site-telemetry.';
+    changes.added.push('fleet-orchestration', 'site-telemetry');
+
+    rawList = [
+      CORE_SAAS_CHAPTERS[0],
+      CORE_SAAS_CHAPTERS[1],
+      CORE_SAAS_CHAPTERS[2],
+      CORE_SAAS_CHAPTERS[3],
+      CORE_SAAS_CHAPTERS[4],
+      SPECIALIZED_CHAPTERS['fleet-orchestration'],
+      SPECIALIZED_CHAPTERS['site-telemetry'],
+      CORE_SAAS_CHAPTERS[5],
+      CORE_SAAS_CHAPTERS[6],
+      CORE_SAAS_CHAPTERS[7],
+    ];
   } else {
     rawList = [...CORE_SAAS_CHAPTERS];
   }
 
-  // Renumber sequentially starting at 01
-  const chapters = rawList.map((chap, idx) => {
+  // Renumber technical chapters sequentially starting at 01
+  const technicalChapters = rawList.map((chap, idx) => {
     const num = formatChapterNum(idx + 1);
     const slug = `${num}-${chap.name}`;
     return {
@@ -209,6 +375,9 @@ export function evaluateTaxonomy(projectContext = {}) {
       files: [...chap.files],
     };
   });
+
+  // Prepend universal product chapters across all project archetypes
+  const chapters = [...PRODUCT_CHAPTERS, ...technicalChapters];
 
   return {
     productType: resolvedProductType,
@@ -302,9 +471,15 @@ export async function updateBibleToc(root) {
   if (existsSync(readmePath)) {
     // Collect active chapters from disk
     const dirs = readdirSync(bibleDir, { withFileTypes: true })
-      .filter((e) => e.isDirectory() && /^\d\d-/.test(e.name))
+      .filter((e) => e.isDirectory() && (/^\d\d-/.test(e.name) || e.name === 'PRD'))
       .map((e) => e.name)
-      .sort();
+      .sort((a, b) => {
+        if (a === '00-product-and-vision') return -1;
+        if (b === '00-product-and-vision') return 1;
+        if (a === 'PRD') return -1;
+        if (b === 'PRD') return 1;
+        return a.localeCompare(b);
+      });
 
     const rows = [
       { section: 'Start Here', description: 'This index and system orientation', file: 'README.md' },
@@ -358,9 +533,15 @@ export async function updateBibleToc(root) {
   // Update docs/bible/index.md
   const indexMdPath = path.join(bibleDir, 'index.md');
   const dirs = readdirSync(bibleDir, { withFileTypes: true })
-    .filter((e) => e.isDirectory() && /^\d\d-/.test(e.name))
+    .filter((e) => e.isDirectory() && (/^\d\d-/.test(e.name) || e.name === 'PRD'))
     .map((e) => e.name)
-    .sort();
+    .sort((a, b) => {
+      if (a === '00-product-and-vision') return -1;
+      if (b === '00-product-and-vision') return 1;
+      if (a === 'PRD') return -1;
+      if (b === 'PRD') return 1;
+      return a.localeCompare(b);
+    });
 
   const indexContent = `---
 type: index

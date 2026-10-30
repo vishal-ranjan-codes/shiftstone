@@ -183,4 +183,26 @@ describe('Unit U7 — Deterministic State Projector (plan-state.js) (REQ-07)', (
     expect(dependencyReady(openAxes, { phaseId: 'P1', requires: 'complete', reason: 'Consumes P1' })).toBe(false);
     expect(dependencyReady(completeAxes, { phaseId: 'P1', requires: 'complete', reason: 'Consumes P1' }, { blockingIssue: true })).toBe(false);
   });
+
+  it('AC-U7-05: projectionAxes correctly marks open acceptance and captures failed/unapproved states', () => {
+    const axes = projectionAxes({
+      implementation: 'in-progress',
+      checks: [{ id: 'chk-1', required: true, result: 'failed', fresh: true }],
+      definitionFresh: true,
+      requiredReview: true,
+      reviewVerdict: 'REJECTED',
+      reviewRequested: true,
+      reviewFresh: true,
+      disjoint: true,
+      distinctActor: true,
+      humanApprovalRequired: true,
+      humanApprovalValid: false,
+      blockingIssue: true,
+    });
+
+    expect(axes.acceptance).toBe('open');
+    expect(axes.verification).toBe('failed');
+    expect(axes.review).toBe('rejected');
+    expect(axes.implementation).toBe('in-progress');
+  });
 });

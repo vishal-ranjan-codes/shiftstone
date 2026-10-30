@@ -61,10 +61,11 @@ export function calculateRemainingEta(state, pipeline) {
   const steps = Array.isArray(pipeline) ? pipeline : (pipeline?.steps || loadDefaultPipeline());
   const completed = new Set(state?.completed_steps || []);
   const skipped = new Set(state?.skipped_steps || []);
+  const resolved = new Set(state?.resolved_gates || []);
 
   let remainingSec = 0;
   for (const step of steps) {
-    if (!completed.has(step.id) && !skipped.has(step.id)) {
+    if (!completed.has(step.id) && !skipped.has(step.id) && !resolved.has(step.id)) {
       remainingSec += Number(step.baseline_sec) || 0;
     }
   }
@@ -87,7 +88,8 @@ export function renderProgressCard(state, options = {}) {
   const totalSteps = steps.length;
   const completed = new Set(state?.completed_steps || []);
   const skipped = new Set(state?.skipped_steps || []);
-  const completedCount = completed.size;
+  const resolved = new Set(state?.resolved_gates || []);
+  const completedCount = completed.size + resolved.size;
   const percent = totalSteps > 0 ? Math.round((completedCount / totalSteps) * 100) : 0;
 
   let elapsedSec = 0;
@@ -112,6 +114,8 @@ export function renderProgressCard(state, options = {}) {
   for (const step of steps) {
     if (completed.has(step.id)) {
       lines.push(`- [x] **${step.title}**`);
+    } else if (resolved.has(step.id)) {
+      lines.push(`- [x] **${step.title}** (resolved from PRD)`);
     } else if (skipped.has(step.id)) {
       lines.push(`- [-] ~~${step.title}~~ (skipped)`);
     } else if (state?.current_step === step.id) {

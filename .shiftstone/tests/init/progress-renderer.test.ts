@@ -133,7 +133,7 @@ describe('Unit U3 — Real-Time Visual Progress Card Renderer & Duration Estimat
 
       const card = renderProgressCard(state);
       expect(card).toContain('### 🚀 Workspace Initializer Progress [0/9 Steps Completed • 0%]');
-      expect(card).toContain('[>] **Problem Space & Value Proposition**');
+      expect(card).toContain("[>] **What You're Building & Why It Matters**");
     });
   });
 });

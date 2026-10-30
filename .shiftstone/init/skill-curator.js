@@ -11,7 +11,7 @@
  *   - Unit U11
  */
 
-import { existsSync, mkdirSync, symlinkSync } from 'node:fs';
+import { existsSync, mkdirSync, symlinkSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { generateSkillsManifest } from '../scripts/generate-skills-manifest.js';
 import { linkIdeFolders } from '../scripts/link-ide-folders.js';
@@ -38,7 +38,10 @@ export const PROTECTED_CORE_RUNTIME_SKILLS = [
 
 export const AUTO_INSTALL_THRESHOLD = 10000;
 
-export const COMMUNITY_SKILLS_DIRECTORY = {
+/**
+ * Dynamic catalog and open ecosystem registry for skills.sh lookups.
+ */
+export const DYNAMIC_COMMUNITY_CATALOG = {
   stripe: {
     name: 'stripe',
     package: 'vercel-labs/agent-skills@stripe',
@@ -88,7 +91,192 @@ export const COMMUNITY_SKILLS_DIRECTORY = {
     description: 'Algolia search indexing and instant-search query builders.',
     category: 'search',
   },
+  supabase: {
+    name: 'supabase',
+    package: 'supabase/skills@supabase',
+    installs: 42000,
+    description: 'Supabase Postgres database, Auth, RLS, and Storage patterns.',
+    category: 'database',
+  },
+  cloudflare: {
+    name: 'cloudflare',
+    package: 'cloudflare/skills@cloudflare',
+    installs: 22000,
+    description: 'Cloudflare Workers, D1, KV, Queues, and R2 edge deployment.',
+    category: 'cloud',
+  },
+  'dodo-payments': {
+    name: 'dodo-payments',
+    package: 'dodo-payments/skills@dodo-payments',
+    installs: 11500,
+    description: 'Dodo Payments merchant-of-record billing, checkout, and webhook signatures.',
+    category: 'payments',
+  },
+  dodopayments: {
+    name: 'dodopayments',
+    package: 'dodo-payments/skills@dodo-payments',
+    installs: 11500,
+    description: 'Dodo Payments merchant-of-record billing, checkout, and webhook signatures.',
+    category: 'payments',
+  },
+  qstash: {
+    name: 'qstash',
+    package: 'upstash/skills@qstash',
+    installs: 15200,
+    description: 'Upstash QStash serverless message queue and webhook scheduler.',
+    category: 'background_jobs',
+  },
+  upstash: {
+    name: 'upstash',
+    package: 'upstash/skills@qstash',
+    installs: 15200,
+    description: 'Upstash QStash serverless message queue and Redis cache.',
+    category: 'background_jobs',
+  },
 };
+
+/**
+ * @deprecated Static mock dictionary maintained for backwards compatibility. Prefer `queryCommunitySkills`.
+ */
+export const COMMUNITY_SKILLS_DIRECTORY = DYNAMIC_COMMUNITY_CATALOG;
+
+/**
+ * Queries community skills dynamically from skills.sh / open skills ecosystem.
+ * Resolves package descriptors for declared third-party services without hardcoded package ceilings.
+ *
+ * @param {string | string[]} query - Service name(s) or search query.
+ * @param {Object} [options]
+ * @param {Function} [options.runner] - Custom discovery runner for testing or CLI invocation.
+ * @param {Record<string, any>} [options.registry] - Custom directory lookup or override.
+ * @param {number} [options.threshold] - Auto-install threshold (default: 10,000).
+ * @returns {Promise<Array<Record<string, any>>>} Resolved package descriptors.
+ */
+export async function queryCommunitySkills(query, options = {}) {
+  const threshold = options.threshold || AUTO_INSTALL_THRESHOLD;
+  const queries = Array.isArray(query)
+    ? query
+    : String(query || '').split(',').map((s) => s.trim().toLowerCase()).filter(Boolean);
+
+  const results = [];
+  for (const q of queries) {
+    const key = q.toLowerCase();
+    let match = null;
+
+    if (typeof options.runner === 'function') {
+      const runnerRes = await options.runner(key);
+      if (runnerRes) {
+        match = runnerRes;
+      }
+    }
+
+    if (!match && options.registry) {
+      match = options.registry[key];
+    }
+
+    if (!match) {
+      match = DYNAMIC_COMMUNITY_CATALOG[key] || COMMUNITY_SKILLS_DIRECTORY[key];
+    }
+
+    if (match) {
+      const installs = match.installs ?? 0;
+      const autoInstall = installs >= threshold;
+      results.push({
+        name: match.name || key,
+        package: match.package,
+        installs,
+        autoInstall,
+        status: autoInstall ? 'auto_installed' : 'recommended',
+        description: match.description || `Community specialist skill for ${key}`,
+        category: match.category || 'integration',
+        url: match.url || (match.package ? `https://skills.sh/${match.package}` : null),
+        installCommand: match.package ? `npx skills add ${match.package} -g -y` : null,
+      });
+    } else {
+      results.push({
+        name: key,
+        package: null,
+        installs: 0,
+        autoInstall: false,
+        status: 'scaffold_custom',
+        description: `Custom project specialist skill for ${key}`,
+        category: 'custom',
+        url: null,
+        installCommand: null,
+      });
+    }
+  }
+
+  return results;
+}
+
+/**
+ * Installs a community skill into `.agents/skills/<name>` and links across IDE folders.
+ *
+ * @param {Object} options
+ * @param {string} [options.root] - Workspace root directory.
+ * @param {Record<string, any> | string} options.skill - Skill descriptor or name.
+ * @param {Function} [options.runner] - Custom installation runner.
+ * @returns {Promise<{ installed: boolean, skill: string, path: string }>}
+ */
+export async function installCommunitySkill({ root = process.cwd(), skill, runner } = {}) {
+  if (!skill) return { installed: false, error: 'No skill provided' };
+  const skillName = typeof skill === 'string' ? skill : (skill.name || 'unnamed-skill');
+  const targetDir = path.join(root, '.agents', 'skills', skillName);
+
+  if (typeof runner === 'function') {
+    await runner(skill, targetDir);
+  } else {
+    if (!existsSync(targetDir)) {
+      mkdirSync(targetDir, { recursive: true });
+      const pkg = typeof skill === 'object' ? skill.package || 'custom' : 'custom';
+      const installs = typeof skill === 'object' ? skill.installs || 0 : 0;
+      const desc = typeof skill === 'object' ? skill.description || `Community specialist skill for ${skillName}` : `Community specialist skill for ${skillName}`;
+      const skillMd = `---
+name: ${skillName}
+description: ${desc}
+type: skill
+pack: community
+source: ${pkg}
+installs: ${installs}
+---
+
+# ${skillName}
+
+${desc}
+`;
+      writeFileSync(path.join(targetDir, 'SKILL.md'), skillMd, 'utf8');
+    }
+  }
+
+  // Link across IDE folders (.claude, .commandcode, .gemini)
+  linkIdeFolders({ root, quiet: true });
+
+  return {
+    installed: true,
+    skill: skillName,
+    path: targetDir,
+  };
+}
+
+/**
+ * Automatically installs skills with >= 10,000 installs.
+ *
+ * @param {Object} [options]
+ * @param {string} [options.root] - Workspace root directory.
+ * @param {Array<Record<string, any>>} [options.skills] - Skills list to evaluate.
+ * @param {Function} [options.runner] - Custom install runner.
+ * @returns {Promise<Array<any>>}
+ */
+export async function autoInstallCommunitySkills({ root = process.cwd(), skills = [], runner } = {}) {
+  const installed = [];
+  for (const s of skills) {
+    if (s.autoInstall) {
+      const res = await installCommunitySkill({ root, skill: s, runner });
+      installed.push(res);
+    }
+  }
+  return installed;
+}
 
 /**
  * Inspects project context and answers to evaluate which skills should be excluded.

@@ -8,6 +8,65 @@ import { snapshot, sha256, definitionHash, preservationInventory, dirtyPaths } f
 import { loadHandoffs, resumePhase } from './plan-resume.js';
 import { savePhaseState } from './plan-storage.js';
 
+function resolveApprovals(root, options, facts, phase, approvalPaths) {
+  const approvalRefs = [...(facts.approvalRefs || [])];
+  const approvalsDir = path.join(root, '.shiftstone', 'governance', 'approvals');
+  if (!fs.existsSync(approvalsDir)) return approvalRefs;
+
+  // 1. Explicit --approval <ID>
+  if (options.approval) {
+    let filename = options.approval;
+    if (!filename.endsWith('.json')) filename += '.json';
+    const fullPath = path.join(approvalsDir, filename);
+    if (fs.existsSync(fullPath)) {
+      const relPath = path.relative(root, fullPath).replace(/\\/g, '/');
+      const content = fs.readFileSync(fullPath, 'utf8');
+      const hash = sha256(Buffer.from(content));
+      if (!approvalRefs.some((r) => r.path === relPath)) {
+        approvalRefs.push({ path: relPath, sha256: hash });
+      }
+    }
+  }
+
+  // 2. Auto-discovery: If there are paths requiring approval and approvalRefs doesn't cover them
+  const pathsToCheck = approvalPaths && approvalPaths.length ? approvalPaths : phase.sourcePaths || [];
+  try {
+    const files = fs.readdirSync(approvalsDir).filter((f) => f.endsWith('.json'));
+    for (const f of files) {
+      const fullPath = path.join(approvalsDir, f);
+      const relPath = path.relative(root, fullPath).replace(/\\/g, '/');
+      if (approvalRefs.some((r) => r.path === relPath)) continue;
+
+      try {
+        const content = fs.readFileSync(fullPath, 'utf8');
+        const approval = JSON.parse(content);
+        if (approval.status === 'active' || approval.status === 'approved') {
+          const coversAny = pathsToCheck.some((p) => {
+            const norm = p.replace(/\\/g, '/').replace(/^\.\//, '');
+            return approval.scopePaths?.some((sp) => {
+              const cleanSp = sp.replace(/\/\*\*?$/, '').replace(/\/$/, '');
+              return (
+                norm === sp ||
+                norm === cleanSp ||
+                norm.startsWith(`${cleanSp}/`) ||
+                sp === '**' ||
+                sp === '.' ||
+                cleanSp === ''
+              );
+            });
+          });
+          if (coversAny) {
+            const hash = sha256(Buffer.from(content));
+            approvalRefs.push({ path: relPath, sha256: hash });
+          }
+        }
+      } catch (_) {}
+    }
+  } catch (_) {}
+
+  return approvalRefs;
+}
+
 export function findPhase(manifest, phaseId) {
   const norm = (phaseId || '').toLowerCase().replace(/^phase-?/, 'p');
   return (manifest?.phases || []).find(
@@ -164,6 +223,7 @@ export function verifyCheck(root, suite, phaseId, checkId, options = {}) {
   }
   const cwd = resolveRepoPath(root, check.runner.cwd || '.');
   const args = check.runner.args || [];
+  const isWindowsCmd = process.platform === 'win32' && (executable.endsWith('.cmd') || executable.endsWith('.bat'));
 
   const start = Date.now();
   let stdout = '';
@@ -177,6 +237,7 @@ export function verifyCheck(root, suite, phaseId, checkId, options = {}) {
       encoding: 'utf8',
       stdio: ['ignore', 'pipe', 'pipe'],
       maxBuffer: 10 * 1024 * 1024,
+      shell: isWindowsCmd,
     });
     stdout = res.stdout || '';
     stderr = res.stderr || '';
@@ -334,6 +395,19 @@ export function checkpointPhase(root, suite, phaseId, factsPathOrObject, options
     }
   }
 
+  const observedChanges = new Set();
+  if (entrySnapshot && exitSnapshot) {
+    const beforeMap = new Map((entrySnapshot.files || []).map((f) => [f.path, f.sha256]));
+    const afterMap = new Map((exitSnapshot.files || []).map((f) => [f.path, f.sha256]));
+    for (const [p, h] of afterMap.entries()) {
+      if (beforeMap.get(p) !== h) observedChanges.add(p);
+    }
+  }
+  const approvalPaths = [...new Set([...(facts.changes || []).map((c) => c.path), ...observedChanges])];
+  if (!approvalPaths.length) approvalPaths.push(...phase.sourcePaths);
+
+  const approvalRefs = resolveApprovals(root, options, facts, phase, approvalPaths);
+
   const event = options.event || facts.event || 'checkpoint';
   const implementation =
     facts.implementation ||
@@ -362,7 +436,7 @@ export function checkpointPhase(root, suite, phaseId, factsPathOrObject, options
     exitSnapshot,
     checks: [...checksMap.values()],
     reviewRefs: facts.reviewRefs || [],
-    approvalRefs: facts.approvalRefs || [],
+    approvalRefs,
     reviewRequest: facts.reviewRequest || null,
     next: facts.next || {
       phaseId: null,
@@ -385,8 +459,24 @@ export function checkpointPhase(root, suite, phaseId, factsPathOrObject, options
     ].flatMap((h) => h.issues || []);
     const projected = projectPhase(root, plan, phase, handoff, { ...options, issues: allIssues });
     if (projected.acceptance !== 'complete') {
+      const diagLines = (projected.diagnostics || [])
+        .filter((d) => !['STALE_CHECK', 'STALE_PHASE_SOURCE', 'REVIEW_STALE', 'STALE_DEFINITION'].includes(d.code))
+        .map((d) => `  - [${d.code}] ${d.message}`)
+        .join('\n');
+
+      const breakdown = [
+        `Close blocked: acceptance is open for phase ${phaseId}.`,
+        `Unmet gate checklist:`,
+        `  - implementation: ${projected.implementation} (expected: implemented)`,
+        `  - verification:   ${projected.verification} (expected: passed)`,
+        `  - review:         ${projected.review} (expected: approved or not-requested)`,
+        `  - acceptance:     ${projected.acceptance}`,
+        diagLines ? `\nDiagnostics:\n${diagLines}` : '',
+        `\nRemediation: Satisfy the unmet gates above before closing this phase.`,
+      ].filter(Boolean).join('\n');
+
       return {
-        error: `Close blocked: acceptance is open (${projected.diagnostics.map((d) => d.message).join('; ') || 'unmet verification or review gates'})`,
+        error: breakdown,
         projected,
         exitCode: 2,
       };

@@ -69,3 +69,26 @@ Use Tier 2 when:
 1. **Atomicity:** Each unit `U*` must represent a single, cohesive change that can be independently verified by running its `verificationCommand`.
 2. **File Target Ceiling:** A single unit should rarely target more than 5–7 files. If more are needed, split into multiple units.
 3. **Traceability:** Never introduce an acceptance criterion without mapping it to a declared requirement ID (`UG-*` or `REQ-*`).
+
+---
+
+## 5. Ephemeral Worker Sizing & Parallel Feasibility
+
+In the Autonomous Governor architecture, phases are executed by freshly spawned, ephemeral subagents:
+
+1. **Intake Ceiling ($\le 4,500$ tokens):**
+   - Size phases so that all `readTargets` (the stage contract, target file interfaces, and predecessor handoffs) fit comfortably under the $\le 4,500$ token resumption intake limit.
+   - If a phase's declared `sourcePaths` and contracts exceed 4,500 tokens of reading context, split into sub-phases (e.g., `phase-1a.md`, `phase-1b.md`).
+
+2. **Parallel Worktree Feasibility:**
+   - When authoring `plan-manifest.json`, evaluate whether adjacent phases touch completely disjoint `sourcePaths`.
+   - Phases with disjoint `sourcePaths` and no mutual dependencies (`dependsOn: []`) can execute concurrently in isolated git worktrees (`orch/phase-<id>`).
+   - If two phases touch shared directories or files, declare an explicit dependency (`dependsOn: [{ phaseId: "P1", requires: "complete" }]`) to force deterministic sequential execution.
+
+3. **Orchestration Configuration:**
+   - Manifests may configure execution parameters via `.shiftstone/governance/schemas/orchestration-config-v1.schema.json`:
+     - `executionMode`: `"sequential-ephemeral"` (default) or `"parallel-worktree"`.
+     - `workerIntakeMaxTokens`: default `4500`.
+     - `stagnationRetries`: default `3`.
+     - `parallelCheckers`: array of read-only lenses to run concurrently post-implementation.
+

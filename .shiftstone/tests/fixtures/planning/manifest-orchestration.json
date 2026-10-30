@@ -1,0 +1,12 @@
+{
+  "schema": "orchestration-config/v1",
+  "executionMode": "parallel-worktree",
+  "workerIntakeMaxTokens": 4500,
+  "stagnationRetries": 3,
+  "parallelCheckers": [
+    "spec-compliance",
+    "code-quality",
+    "security-audit"
+  ],
+  "worktreePrefix": ".shiftstone/.worktrees/"
+}

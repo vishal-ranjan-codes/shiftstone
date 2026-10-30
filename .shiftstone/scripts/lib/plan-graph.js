@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { validateSchema, resolveRepoPath, walk } from './plan-schema.js';
+import { validateSchema, resolveRepoPath, walk, normalizeSuite } from './plan-schema.js';
 
 export const sameSet = (a, b) => {
   const sa = new Set(a);
@@ -250,8 +250,9 @@ export function validatePlan(root, suite) {
   const diagnostics = [];
   const error = (code, file, message) => diagnostics.push({ code, path: file, message });
   const load = (file) => JSON.parse(fs.readFileSync(resolveRepoPath(root, file, { mustExist: true }), 'utf8'));
+  const effectiveSuite = normalizeSuite(root, suite);
   const result = {
-    suite,
+    suite: effectiveSuite,
     status: 'invalid',
     phaseCount: 0,
     activeUnits: 0,
@@ -261,8 +262,8 @@ export function validatePlan(root, suite) {
   };
 
   try {
-    resolveRepoPath(root, suite, { mustExist: true });
-    const manifestPath = `${suite}/plan-manifest.json`;
+    resolveRepoPath(root, effectiveSuite, { mustExist: true });
+    const manifestPath = `${effectiveSuite}/plan-manifest.json`;
     if (!fs.existsSync(resolveRepoPath(root, manifestPath))) {
       result.status = 'legacy/unverified';
       return result;
@@ -274,7 +275,7 @@ export function validatePlan(root, suite) {
     }
     if (diagnostics.length) return result;
 
-    const unitDir = `${suite}/plan-units`;
+    const unitDir = `${effectiveSuite}/plan-units`;
     const hasUnitDir = fs.existsSync(resolveRepoPath(root, unitDir, { mustExist: false }));
     const unitFiles = hasUnitDir
       ? walk(root, unitDir, (file) => file.endsWith('.json'))

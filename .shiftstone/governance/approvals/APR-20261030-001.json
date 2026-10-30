@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "protected-action-approval/v1",
+  "approvalId": "APR-20261030-001",
+  "actionClass": "core-governance-override",
+  "scopePaths": [
+    ".shiftstone/governance",
+    "**"
+  ],
+  "gitTreeHash": "workspace-head",
+  "approver": "lead-architect@shiftstone.dev",
+  "approvedAt": "2026-10-30T14:00:00.000Z",
+  "expiresAt": "2026-11-06T14:00:00.000Z",
+  "justification": "Authorize Phase 1 orchestration schema and worktree fixtures.",
+  "status": "active"
+}

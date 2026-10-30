@@ -131,6 +131,35 @@ export function resolveRepoPath(root, value, { mustExist = false } = {}) {
   return full;
 }
 
+/**
+ * Normalizes a suite identifier or path. If the suite does not exist directly
+ * at the repository root but exists under `docs/plans/<suite>`, automatically resolves it.
+ * @param {string} root
+ * @param {string} suite
+ * @returns {string} The normalized repo-relative suite path.
+ */
+export function normalizeSuite(root, suite) {
+  if (!suite) return suite;
+  const cleaned = String(suite).replace(/[/\\]+$/, '').replace(/\\/g, '/');
+  try {
+    const realRoot = fs.realpathSync(root);
+    if (fs.existsSync(path.resolve(realRoot, cleaned, 'plan-manifest.json'))) {
+      return cleaned;
+    }
+    const withDocsPlans = `docs/plans/${cleaned}`;
+    if (
+      fs.existsSync(path.resolve(realRoot, withDocsPlans, 'plan-manifest.json')) ||
+      fs.existsSync(path.resolve(realRoot, withDocsPlans))
+    ) {
+      return withDocsPlans;
+    }
+    if (fs.existsSync(path.resolve(realRoot, cleaned))) {
+      return cleaned;
+    }
+  } catch (_) {}
+  return cleaned;
+}
+
 const excludedDirectories = new Set(['_archive', '.git', 'node_modules', 'vendor']);
 
 /**

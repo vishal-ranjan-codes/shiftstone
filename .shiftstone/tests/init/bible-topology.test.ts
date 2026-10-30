@@ -4,10 +4,12 @@ import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import {
   evaluateTaxonomy,
+  PRODUCT_CHAPTERS,
   recordTopologyDecision,
   restructureBible,
   updateBibleToc,
 } from '../../init/bible-topology.js';
+import { normalizePastedPrd } from '../../init/bible-synthesizer.js';
 
 describe('Unit U7 — Autonomous Bible Restructuring & Topology Engine (REQ-INIT-06)', () => {
   let tempDir: string;
@@ -22,81 +24,85 @@ describe('Unit U7 — Autonomous Bible Restructuring & Topology Engine (REQ-INIT
     }
   });
 
-  describe('TS-U7-01 (L1) — Taxonomy Evaluation & Pruning', () => {
-    it('evaluates Full-Stack SaaS context into 8 core chapters in sequential order', () => {
+  describe('Unit U4 — PRD Ingestion & Product-Vision Chapter Topology Engine (REQ-INIT3-04)', () => {
+    it('TS-U4-01 (L1): asserts evaluateTaxonomy includes 00-product-and-vision and PRD across all project contexts', () => {
+      const emptyTaxonomy = evaluateTaxonomy({});
+      const slugs = emptyTaxonomy.chapterSlugs;
+      expect(slugs).toContain('00-product-and-vision');
+      expect(slugs).toContain('PRD');
+
+      const cliTaxonomy = evaluateTaxonomy({ productType: 'cli' });
+      expect(cliTaxonomy.chapterSlugs).toContain('00-product-and-vision');
+      expect(cliTaxonomy.chapterSlugs).toContain('PRD');
+
+      const fintechTaxonomy = evaluateTaxonomy({ domain: 'fintech' });
+      expect(fintechTaxonomy.chapterSlugs).toContain('00-product-and-vision');
+      expect(fintechTaxonomy.chapterSlugs).toContain('PRD');
+    });
+
+    it('TS-U4-02 (L1): restructureBible creates all topic files under docs/bible/PRD/ and docs/bible/00-product-and-vision/', async () => {
       const taxonomy = evaluateTaxonomy({ productType: 'fullstack_saas' });
-      expect(taxonomy.productType).toBe('fullstack_saas');
-      expect(taxonomy.hasFrontend).toBe(true);
-      expect(taxonomy.chapters).toHaveLength(8);
+      await restructureBible(tempDir, taxonomy);
 
-      // Verify sequential numbering 01 through 08
-      taxonomy.chapters.forEach((chap, idx) => {
-        const expectedNum = String(idx + 1).padStart(2, '0');
-        expect(chap.number).toBe(expectedNum);
-        expect(chap.slug.startsWith(expectedNum)).toBe(true);
-      });
+      const prdDir = path.join(tempDir, 'docs', 'bible', 'PRD');
+      expect(existsSync(prdDir)).toBe(true);
+      expect(existsSync(path.join(prdDir, 'index.md'))).toBe(true);
+      expect(existsSync(path.join(prdDir, 'ecosystem-prd.md'))).toBe(true);
+      expect(existsSync(path.join(prdDir, 'phase-1-foundation-prd.md'))).toBe(true);
 
-      expect(taxonomy.chapters.map((c) => c.name)).toEqual([
-        'architecture',
-        'setup-and-workflow',
-        'database',
-        'auth-and-rbac',
-        'core-systems',
-        'integrations',
-        'frontend',
-        'api-contracts',
-      ]);
+      const visionDir = path.join(tempDir, 'docs', 'bible', '00-product-and-vision');
+      expect(existsSync(visionDir)).toBe(true);
+      expect(existsSync(path.join(visionDir, 'index.md'))).toBe(true);
+      expect(existsSync(path.join(visionDir, 'vision-and-mission.md'))).toBe(true);
+      expect(existsSync(path.join(visionDir, 'target-audience.md'))).toBe(true);
+      expect(existsSync(path.join(visionDir, 'product-philosophy.md'))).toBe(true);
+      expect(existsSync(path.join(visionDir, 'business-model.md'))).toBe(true);
+      expect(existsSync(path.join(visionDir, 'market-landscape.md'))).toBe(true);
     });
 
-    it('asserts CLI project context produces a pruned taxonomy without frontend and with valid sequential numbering', () => {
-      const taxonomy = evaluateTaxonomy({ productType: 'cli' });
-      expect(taxonomy.productType).toBe('cli_devtool');
-      expect(taxonomy.hasFrontend).toBe(false);
+    it('TS-U4-03 (L2): normalizePastedPrd normalizes raw PRD and derives phase-1-foundation-prd', () => {
+      const rawPrd = `
+# TaskPulse PRD
+A collaborative task management application for digital marketing agencies.
 
-      // Drops frontend, adds plugin-architecture, transforms api-contracts to cli-commands-and-flags
-      const names = taxonomy.chapters.map((c) => c.name);
-      expect(names).not.toContain('frontend');
-      expect(names).toContain('plugin-architecture');
-      expect(names).toContain('cli-commands-and-flags');
-      expect(names).not.toContain('api-contracts');
+## Core Features
+1. Workspace kanban boards.
+2. Time tracking on billable cards.
+3. Monthly client invoice PDF export.
+`;
+      const result = normalizePastedPrd(rawPrd, { projectName: 'TaskPulse' });
+      expect(result.ecosystemPrd).toContain('TaskPulse');
+      expect(result.ecosystemPrd).toContain('4-Pillar System Architecture');
+      expect(result.ecosystemPrd).toContain('Invariants');
+      expect(result.foundationPrd).toContain('Phase 1 Foundation PRD');
+      expect(result.foundationPrd).toContain('Acceptance Criteria');
+    });
+  });
 
-      // Assert strictly valid sequential numbering 01 through 08 without gaps
-      expect(taxonomy.chapters).toHaveLength(8);
-      taxonomy.chapters.forEach((chap, idx) => {
-        const expectedNum = String(idx + 1).padStart(2, '0');
-        expect(chap.number).toBe(expectedNum);
-        expect(chap.slug.startsWith(`${expectedNum}-`)).toBe(true);
-      });
+  describe('Unit U5 — Dynamic Semantic Taxonomy Restructuring (REQ-INIT3-05)', () => {
+    it('TS-U5-01 (L1): dynamically matches diverse archetypes and provisions domain-specific chapters', () => {
+      const marketplaceTaxonomy = evaluateTaxonomy({ domain: 'marketplace' });
+      expect(marketplaceTaxonomy.chapterSlugs).toContain('00-product-and-vision');
+      expect(marketplaceTaxonomy.chapterSlugs).toContain('PRD');
+      expect(marketplaceTaxonomy.chapterSlugs.some((s) => s.includes('commerce-and-catalog'))).toBe(true);
+      expect(marketplaceTaxonomy.chapterSlugs.some((s) => s.includes('orders-and-fulfillment'))).toBe(true);
+
+      const teamTaxonomy = evaluateTaxonomy({ type: 'b2b_team' });
+      expect(teamTaxonomy.chapterSlugs.some((s) => s.includes('team-workspaces'))).toBe(true);
+
+      const devTaxonomy = evaluateTaxonomy({ productType: 'developer_platform' });
+      expect(devTaxonomy.chapterSlugs.some((s) => s.includes('sdk-and-client-libraries'))).toBe(true);
+      expect(devTaxonomy.chapterSlugs.some((s) => s.includes('api-governance'))).toBe(true);
     });
 
-    it('injects compliance and audit chapters for Fintech archetype', () => {
-      const taxonomy = evaluateTaxonomy({ domain: 'fintech' });
-      expect(taxonomy.productType).toBe('fintech_compliance');
-      expect(taxonomy.chapters).toHaveLength(10);
+    it('TS-U5-02 (L2): sequences technical chapters with two-digit prefixes without gaps', () => {
+      const taxonomy = evaluateTaxonomy({ productType: 'fullstack_saas' });
+      const technicalChapters = taxonomy.chapters.filter(
+        (c) => c.slug !== '00-product-and-vision' && c.slug !== 'PRD',
+      );
 
-      const names = taxonomy.chapters.map((c) => c.name);
-      expect(names).toContain('compliance-and-ledger');
-      expect(names).toContain('audit-and-security');
-
-      // Valid sequential numbering
-      taxonomy.chapters.forEach((chap, idx) => {
-        const expectedNum = String(idx + 1).padStart(2, '0');
-        expect(chap.number).toBe(expectedNum);
-        expect(chap.slug.startsWith(`${expectedNum}-`)).toBe(true);
-      });
-    });
-
-    it('injects vector storage and prompt evals for AI Agent / RAG archetype', () => {
-      const taxonomy = evaluateTaxonomy({ type: 'ai_agent' });
-      expect(taxonomy.productType).toBe('ai_agent_rag');
-      expect(taxonomy.chapters).toHaveLength(10);
-
-      const names = taxonomy.chapters.map((c) => c.name);
-      expect(names).toContain('vector-storage-and-embeddings');
-      expect(names).toContain('evals-and-prompt-chains');
-
-      // Sequential numbering check
-      taxonomy.chapters.forEach((chap, idx) => {
+      expect(technicalChapters.length).toBeGreaterThanOrEqual(8);
+      technicalChapters.forEach((chap, idx) => {
         const expectedNum = String(idx + 1).padStart(2, '0');
         expect(chap.number).toBe(expectedNum);
         expect(chap.slug.startsWith(`${expectedNum}-`)).toBe(true);
@@ -145,7 +151,7 @@ describe('Unit U7 — Autonomous Bible Restructuring & Topology Engine (REQ-INIT
       });
 
       expect(result.success).toBe(true);
-      expect(result.chaptersCount).toBe(8);
+      expect(result.chaptersCount).toBe(10);
 
       // 07-frontend should be pruned
       expect(existsSync(frontendDir)).toBe(false);

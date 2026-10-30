@@ -378,3 +378,85 @@ export class SpecRefusedError extends LoopHarnessError {
     this.refusals = refusals;
   }
 }
+
+// -----------------------------------------------------------------------------
+// Autonomous Governor, Ephemeral Spawner & Orchestration Types
+// -----------------------------------------------------------------------------
+
+export interface PlanGovernorPhase {
+  phaseId: string;
+  contract?: string;
+  dependsOn?: Array<{ phaseId: string; requires?: string; reason?: string }> | string[];
+  sourcePaths?: string[];
+  checks?: any[];
+}
+
+export interface PlanGovernorManifest {
+  schema: string;
+  suiteId: string;
+  definitionRevision?: number;
+  phases: PlanGovernorPhase[];
+  orchestration?: any;
+}
+
+export type GovernorStatus = 'idle' | 'running' | 'completed' | 'blocked' | 'stalled';
+
+export interface GovernorPhaseResult {
+  phaseId: string;
+  status: 'success' | 'blocked' | 'stalled';
+  exitCode?: number | null;
+  error?: string;
+  attempts?: number;
+}
+
+export interface GovernorRunSummary {
+  status: GovernorStatus;
+  terminalState: TerminalState;
+  executedOrder: string[];
+  phaseResults: Record<string, GovernorPhaseResult>;
+}
+
+export interface ContextSynthesizerOptions {
+  suite: string;
+  phaseId: string;
+  mode?: 'implement' | 'remediate';
+  readTargets?: string[];
+  acceptanceCriteria?: string[];
+  testScenarios?: string[];
+  maxTokens?: number;
+  customPromptTemplate?: string;
+}
+
+export interface SynthesizedContext {
+  prompt: string;
+  tokenEstimate: number;
+  readTargets: string[];
+  acceptanceCriteria: string[];
+  testScenarios: string[];
+}
+
+export interface SubagentInvocationSpec {
+  TypeName: string;
+  Role: string;
+  Prompt: string;
+  Workspace: string;
+  Model?: string;
+}
+
+export interface BrakeAttemptOptions {
+  exitCode: number;
+  diffHash?: string;
+}
+
+export interface BrakeAttemptResult {
+  shouldRetry: boolean;
+  nextMode?: 'implement' | 'remediate';
+  trippedReason?: 'STAGNATION_DETECTED' | 'CIRCUIT_BREAKER_TRIPPED';
+  error?: string;
+  diagnostics?: {
+    phaseId: string;
+    attempts: number;
+    lastDiffHash?: string;
+    history: Array<{ attempt: number; exitCode: number; diffHash?: string; timestamp: string }>;
+  };
+}

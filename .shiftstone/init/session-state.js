@@ -51,6 +51,44 @@ export function saveCheckpoint(root, stateUpdate = {}) {
     ...(stateUpdate.context_data || {}),
   };
 
+  // Multi-turn dialogue history accumulation
+  const existingDialogue = Array.isArray(existing.dialogue_history) ? existing.dialogue_history : [];
+  let nextDialogue;
+  if (Array.isArray(stateUpdate.dialogue_history)) {
+    if (
+      stateUpdate.dialogue_history.length >= existingDialogue.length &&
+      existingDialogue.every((d, i) => d.content === stateUpdate.dialogue_history[i]?.content)
+    ) {
+      nextDialogue = stateUpdate.dialogue_history;
+    } else {
+      const newItems = stateUpdate.dialogue_history.filter(
+        (item) => !existingDialogue.some((ex) => ex.content === item.content && ex.role === item.role),
+      );
+      nextDialogue = [...existingDialogue, ...newItems];
+    }
+  } else if (existing.dialogue_history) {
+    nextDialogue = existing.dialogue_history;
+  }
+
+  // Trait matrix merge
+  let nextTraitMatrix;
+  if (stateUpdate.trait_matrix || existing.trait_matrix) {
+    nextTraitMatrix = {
+      ...(existing.trait_matrix || {}),
+      ...(stateUpdate.trait_matrix || {}),
+    };
+  }
+
+  // Resolved gates merge
+  let nextResolvedGates;
+  if (stateUpdate.resolved_gates || existing.resolved_gates) {
+    const set = new Set([
+      ...(existing.resolved_gates || []),
+      ...(stateUpdate.resolved_gates || []),
+    ]);
+    nextResolvedGates = Array.from(set);
+  }
+
   const nextState = {
     version: stateUpdate.version || existing.version || CURRENT_STATE_VERSION,
     session_id: stateUpdate.session_id || existing.session_id || `init-${randomUUID()}`,
@@ -62,6 +100,9 @@ export function saveCheckpoint(root, stateUpdate = {}) {
     skipped_steps: Array.isArray(stateUpdate.skipped_steps)
       ? stateUpdate.skipped_steps
       : (existing.skipped_steps || []),
+    ...(nextResolvedGates !== undefined ? { resolved_gates: nextResolvedGates } : {}),
+    ...(nextDialogue !== undefined ? { dialogue_history: nextDialogue } : {}),
+    ...(nextTraitMatrix !== undefined ? { trait_matrix: nextTraitMatrix } : {}),
     context_data: mergedContext,
     started_at: existing.started_at || stateUpdate.started_at || new Date().toISOString(),
     updated_at: new Date().toISOString(),
@@ -135,9 +176,10 @@ export function hasActiveSession(root = process.cwd()) {
 export function getNextPendingStep(state, pipeline = []) {
   const completed = new Set(state?.completed_steps || []);
   const skipped = new Set(state?.skipped_steps || []);
+  const resolved = new Set(state?.resolved_gates || []);
 
   for (const step of pipeline) {
-    if (!completed.has(step.id) && !skipped.has(step.id)) {
+    if (!completed.has(step.id) && !skipped.has(step.id) && !resolved.has(step.id)) {
       return step;
     }
   }

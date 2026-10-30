@@ -9,7 +9,11 @@ import {
   getStepById,
   loadPipeline,
   runStepPipeline,
+  executeTier2PlanPhase,
+  orchestrateInitializationLifecycle,
+  evaluateAdaptiveQuestionRouting,
 } from '../../init/pipeline-runner.js';
+import { generateInitializationPlan } from '../../init/init-plan-generator.js';
 import { loadState, saveCheckpoint } from '../../init/session-state.js';
 
 describe('Unit U4 — Declarative Step Pipeline Registry & Pluggable Runner', () => {
@@ -178,6 +182,145 @@ describe('Unit U4 — Declarative Step Pipeline Registry & Pluggable Runner', ()
       expect(state.completed_steps).toContain('gate_1_problem_space');
       expect(state.context_data.valueProp).toBe('Autonomous AI Initializer');
       expect(result.nextStepId).toBe('gate_2_actors_rbac');
+    });
+  });
+
+  describe('Unit U18 — Plan-Driven Multi-Skill Orchestrator & Adaptive Routing (REQ-INIT3-18)', () => {
+    it('TS-U18-02 (L2): orchestrates execution through all 5 phases of Tier 2 init plan suite', async () => {
+      // 1. Generate real Tier 2 plan suite in tempDir
+      const context = {
+        projectName: 'OrchestratorTestApp',
+        productThesis: 'Enterprise collaboration engine',
+        valueProp: 'Streamlines cross-functional approvals',
+      };
+      const traitMatrix = {
+        identity: {
+          product_name: 'OrchestratorTestApp',
+          thesis: 'Enterprise collaboration engine',
+        },
+      };
+      generateInitializationPlan(tempDir, context, traitMatrix);
+
+      const planPath = path.join(tempDir, 'docs', 'plans', 'workspace-initialization');
+      expect(existsSync(path.join(planPath, 'plan-manifest.json'))).toBe(true);
+
+      // 2. Define phase handlers simulating skill delegations
+      const executed: string[] = [];
+      const handlers = {
+        P1: async (phase: any) => {
+          executed.push('P1');
+          return { prdSynthesized: true };
+        },
+        P2: async (phase: any) => {
+          executed.push('P2');
+          return { appScaffolded: true };
+        },
+        P3: async (phase: any) => {
+          executed.push('P3');
+          return { bibleSynthesized: true };
+        },
+        P4: async (phase: any) => {
+          executed.push('P4');
+          return { backlogEmitted: true };
+        },
+        P5: async (phase: any) => {
+          executed.push('P5');
+          return { steeringSynthesized: true };
+        },
+      };
+
+      // 3. Orchestrate full lifecycle
+      const progressPhases: string[] = [];
+      const result = await orchestrateInitializationLifecycle({
+        root: tempDir,
+        planPath,
+        handlers,
+        onPhaseProgress: async (phaseId) => {
+          progressPhases.push(phaseId);
+        },
+      });
+
+      expect(result.status).toBe('completed');
+      expect(result.completedPhases).toEqual(['P1', 'P2', 'P3', 'P4', 'P5']);
+      expect(executed).toEqual(['P1', 'P2', 'P3', 'P4', 'P5']);
+      expect(progressPhases).toEqual(['P1', 'P2', 'P3', 'P4', 'P5']);
+
+      // 4. Verify output state tracking
+      const statePath = path.join(planPath, 'output', 'state.json');
+      expect(existsSync(statePath)).toBe(true);
+      const state = JSON.parse(readFileSync(statePath, 'utf8'));
+      expect(state.phases.length).toBe(5);
+      for (const p of state.phases) {
+        expect(p.implementation).toBe('implemented');
+        expect(p.verification).toBe('passed');
+        expect(p.acceptance).toBe('complete');
+      }
+
+      // 5. Verify session checkpoint
+      const sessionState = loadState(tempDir)!;
+      expect(sessionState.context_data.completed_plan_phases).toEqual(['P1', 'P2', 'P3', 'P4', 'P5']);
+    });
+
+    it('AC-U18-03 (REQ-INIT3-18): skips resolved gates upon PRD ingestion with confirmation', () => {
+      const traitMatrix = {
+        actors_roles: {
+          roles: ['Admin', 'Manager', 'Member'],
+          score: 0.95,
+        },
+        security_posture: {
+          rls: true,
+          multiTenant: true,
+          compliance: ['GDPR'],
+          score: 0.95,
+        },
+      };
+
+      const routingActors = evaluateAdaptiveQuestionRouting({
+        gateId: 'gate_2_actors_rbac',
+        traitMatrix,
+      });
+      expect(routingActors.action).toBe('skip');
+      expect(routingActors.status).toBe('resolved');
+      expect(routingActors.confirmation).toBeDefined();
+      expect(routingActors.confidence).toBeGreaterThanOrEqual(0.8);
+
+      const routingSecurity = evaluateAdaptiveQuestionRouting({
+        gateId: 'gate_4_tenant_security',
+        traitMatrix,
+      });
+      expect(routingSecurity.action).toBe('skip');
+      expect(routingSecurity.status).toBe('resolved');
+    });
+
+    it('AC-U18-03 (REQ-INIT3-18): handles "explain simply" and "decide for me" 3-tier protocol inputs cleanly', () => {
+      // Test explain simply
+      const explainResult = evaluateAdaptiveQuestionRouting({
+        gateId: 'gate_4_tenant_security',
+        userInput: 'Can you explain simply what tenant security means?',
+      });
+      expect(explainResult.action).toBe('explain_simply');
+      expect(explainResult.layer).toBe(2);
+      expect(explainResult.analogy).toContain('apartment');
+      expect(explainResult.message).toContain('apartment complex');
+
+      // Test decide for me
+      const decideResult = evaluateAdaptiveQuestionRouting({
+        gateId: 'gate_4_tenant_security',
+        userInput: 'You decide for me, what is the best practice?',
+      });
+      expect(decideResult.action).toBe('decide_for_me');
+      expect(decideResult.layer).toBe(3);
+      expect(decideResult.autoPilot).toBe(true);
+      expect(decideResult.selectedOption).toContain('Row Level Security');
+
+      // Test standard response
+      const normalResult = evaluateAdaptiveQuestionRouting({
+        gateId: 'gate_4_tenant_security',
+        userInput: 'We need HIPAA and SOC2 compliance with single tenant isolation',
+      });
+      expect(normalResult.action).toBe('proceed');
+      expect(normalResult.layer).toBe(1);
+      expect(normalResult.answer).toBe('We need HIPAA and SOC2 compliance with single tenant isolation');
     });
   });
 });

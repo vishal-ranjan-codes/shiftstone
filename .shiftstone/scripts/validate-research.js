@@ -139,6 +139,63 @@ export function validateResearchDossier(dirPath, options = {}) {
     }
   }
 
+  // 5. Byte floors, code fences, and Mermaid diagrams (for non-templates) (REQ-INIT3-12)
+  if (!isTemplate) {
+    let totalDossierBytes = 0;
+    let combinedContent = '';
+
+    for (const file of REQUIRED_RESEARCH_FILES) {
+      const full = path.join(dirPath, file);
+      if (existsSync(full)) {
+        const stats = statSync(full);
+        totalDossierBytes += stats.size;
+        const text = readFileSync(full, 'utf8');
+        combinedContent += '\n' + text;
+
+        if (file === '02-FINDINGS.md' && stats.size < 4000) {
+          violations.push({
+            code: 'INSUFFICIENT_BYTE_SIZE',
+            file: path.join(relPath, file).replace(/\\/g, '/'),
+            message: `02-FINDINGS.md must be at least 4,000 bytes (found ${stats.size} bytes)`,
+          });
+        }
+
+        if (file === '05-IMPLEMENTATION.md') {
+          if (stats.size < 8000) {
+            violations.push({
+              code: 'INSUFFICIENT_BYTE_SIZE',
+              file: path.join(relPath, file).replace(/\\/g, '/'),
+              message: `05-IMPLEMENTATION.md must be at least 8,000 bytes (found ${stats.size} bytes)`,
+            });
+          }
+          if (!/(?:```typescript|```ts|```javascript|```js)/i.test(text)) {
+            violations.push({
+              code: 'MISSING_IMPLEMENTATION_CODE',
+              file: path.join(relPath, file).replace(/\\/g, '/'),
+              message: '05-IMPLEMENTATION.md must contain runnable TypeScript/JavaScript code fences',
+            });
+          }
+        }
+      }
+    }
+
+    if (totalDossierBytes < 18000) {
+      violations.push({
+        code: 'INSUFFICIENT_DOSSIER_SIZE',
+        file: relPath.replace(/\\/g, '/'),
+        message: `Total research dossier must be at least 18,000 bytes across all files (found ${totalDossierBytes} bytes)`,
+      });
+    }
+
+    if (!/```mermaid[\s\S]*?```/i.test(combinedContent)) {
+      violations.push({
+        code: 'MISSING_MERMAID_DIAGRAM',
+        file: relPath.replace(/\\/g, '/'),
+        message: 'Dossier must contain at least one Mermaid architecture or sequence diagram',
+      });
+    }
+  }
+
   // 5. Placeholder checks (for non-templates)
   if (!isTemplate) {
     for (const file of REQUIRED_RESEARCH_FILES) {

@@ -4,6 +4,9 @@ import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { validateAgainstSchema } from '../../init/schema-validate.js';
 import {
+  buildResumptionOptions,
+  getNextPendingStep,
+  handleResumptionChoice,
   hasActiveSession,
   loadState,
   purgeState,
@@ -172,3 +175,109 @@ describe('Unit U1 — State Schema & Persistence Helper', () => {
     });
   });
 });
+
+describe('Unit U3 — Conversational State Checkpointing, Trait Matrix & Transcript Retention', () => {
+  let tempDir: string;
+
+  beforeEach(() => {
+    tempDir = mkdtempSync(path.join(tmpdir(), 'u3-state-test-'));
+  });
+
+  afterEach(() => {
+    if (tempDir && existsSync(tempDir)) {
+      rmSync(tempDir, { recursive: true, force: true });
+    }
+  });
+
+  describe('TS-U3-01 (L1) — State checkpointer persists and restores multi-turn dialog history and trait matrix', () => {
+    it('persists and recovers dialogue_history, trait_matrix, and resolved_gates without data loss', () => {
+      const initialDialogue = [
+        { role: 'assistant', content: 'Welcome to ShiftStone! Tell me about what you are building.', timestamp: '2026-10-29T20:00:00Z' },
+        { role: 'user', content: 'Building a marketplace for tutors and students.', timestamp: '2026-10-29T20:01:00Z' },
+      ];
+      const initialTraits = {
+        identity: { text: 'Tutor marketplace', score: 0.9 },
+        actors_roles: { roles: ['tutor', 'student', 'admin'], score: 0.95 },
+      };
+
+      const saved = saveCheckpoint(tempDir, {
+        current_step: 'gate_1_problem_space',
+        dialogue_history: initialDialogue,
+        trait_matrix: initialTraits,
+        resolved_gates: ['gate_1_problem_space'],
+      });
+
+      expect(saved.dialogue_history).toEqual(initialDialogue);
+      expect(saved.trait_matrix).toEqual(initialTraits);
+      expect(saved.resolved_gates).toEqual(['gate_1_problem_space']);
+
+      const loaded = loadState(tempDir);
+      expect(loaded?.dialogue_history).toEqual(initialDialogue);
+      expect(loaded?.trait_matrix).toEqual(initialTraits);
+      expect(loaded?.resolved_gates).toEqual(['gate_1_problem_space']);
+    });
+
+    it('accumulates multi-turn dialogue history without overwriting previous turns', () => {
+      // First turn
+      saveCheckpoint(tempDir, {
+        dialogue_history: [
+          { role: 'assistant', content: 'Question 1', timestamp: '2026-10-29T20:00:00Z' },
+          { role: 'user', content: 'Answer 1', timestamp: '2026-10-29T20:01:00Z' },
+        ],
+      });
+
+      // Second turn with subsequent message
+      saveCheckpoint(tempDir, {
+        dialogue_history: [
+          { role: 'assistant', content: 'Question 2', timestamp: '2026-10-29T20:02:00Z' },
+          { role: 'user', content: 'Answer 2', timestamp: '2026-10-29T20:03:00Z' },
+        ],
+      });
+
+      const loaded = loadState(tempDir);
+      expect(loaded?.dialogue_history?.length).toBe(4);
+      expect(loaded?.dialogue_history?.[0]?.content).toBe('Question 1');
+      expect(loaded?.dialogue_history?.[3]?.content).toBe('Answer 2');
+    });
+  });
+
+  describe('TS-U3-02 (L2) — Resumption gate skips previously resolved gates', () => {
+    const pipeline = [
+      { id: 'gate_1_problem_space', title: "What You're Building & Why It Matters" },
+      { id: 'gate_2_actors_rbac', title: 'Who Uses Your App & Their Permissions' },
+      { id: 'gate_3_entity_modeling', title: 'Key Information Your App Stores & Critical Rules' },
+      { id: 'gate_4_tenant_security', title: 'Privacy, Security & Data Protection' },
+    ];
+
+    it('skips gates present in resolved_gates during getNextPendingStep', () => {
+      const state = {
+        status: 'in_progress',
+        completed_steps: [],
+        skipped_steps: [],
+        resolved_gates: ['gate_1_problem_space', 'gate_2_actors_rbac'],
+        context_data: {},
+      };
+
+      const next = getNextPendingStep(state, pipeline);
+      expect(next).not.toBeNull();
+      expect(next?.id).toBe('gate_3_entity_modeling');
+    });
+
+    it('restores context and sets current_step to next unresolved step on resume', () => {
+      saveCheckpoint(tempDir, {
+        resolved_gates: ['gate_1_problem_space'],
+        completed_steps: [],
+        trait_matrix: { identity: { score: 0.9 } },
+      });
+
+      const outcome = handleResumptionChoice('resume', tempDir, pipeline);
+      expect(outcome.action).toBe('resume');
+      expect(outcome.current_step).toBe('gate_2_actors_rbac');
+
+      const reloaded = loadState(tempDir);
+      expect(reloaded?.current_step).toBe('gate_2_actors_rbac');
+      expect(reloaded?.trait_matrix?.identity?.score).toBe(0.9);
+    });
+  });
+});
+

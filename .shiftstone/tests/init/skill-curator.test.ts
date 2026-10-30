@@ -18,6 +18,9 @@ import {
   evaluateCommunitySkills,
   evaluateSkillExclusions,
   applySkillCuration,
+  queryCommunitySkills,
+  installCommunitySkill,
+  autoInstallCommunitySkills,
 } from '../../init/skill-curator.js';
 import { makeWorkspace } from './workspace-fixture.js';
 
@@ -227,5 +230,92 @@ describe('Unit U11 — Domain-Aware Skill Curation (REQ-INIT-10, LOCK-INIT-12)',
     expect(agentsMd).not.toContain('- cloudflare-r2');
     expect(agentsMd).not.toContain('- storage');
     expect(agentsMd).toContain('stack');
+  });
+
+  describe('Unit U18 — Dynamic Community Skill Discovery (REQ-INIT3-18, LOCK-INIT3-08)', () => {
+    it('TS-U18-01 (L1): queryCommunitySkills resolves package descriptors for declared third-party services', async () => {
+      const services = ['stripe', 'resend', 'dodo-payments', 'unrecognized-service'];
+      const results = await queryCommunitySkills(services);
+
+      expect(Array.isArray(results)).toBe(true);
+      expect(results.length).toBe(4);
+
+      const stripe = results.find((r) => r.name === 'stripe');
+      expect(stripe).toBeDefined();
+      expect(stripe?.package).toBe('vercel-labs/agent-skills@stripe');
+      expect(stripe?.installs).toBeGreaterThanOrEqual(10000);
+      expect(stripe?.autoInstall).toBe(true);
+      expect(stripe?.status).toBe('auto_installed');
+      expect(stripe?.url).toContain('skills.sh/vercel-labs/agent-skills@stripe');
+      expect(stripe?.installCommand).toBe('npx skills add vercel-labs/agent-skills@stripe -g -y');
+
+      const resend = results.find((r) => r.name === 'resend');
+      expect(resend).toBeDefined();
+      expect(resend?.package).toBe('resend/skills@resend');
+      expect(resend?.autoInstall).toBe(true);
+
+      const dodo = results.find((r) => r.name === 'dodo-payments');
+      expect(dodo).toBeDefined();
+      expect(dodo?.package).toBe('dodo-payments/skills@dodo-payments');
+      expect(dodo?.autoInstall).toBe(true);
+
+      const unrecognized = results.find((r) => r.name === 'unrecognized-service');
+      expect(unrecognized).toBeDefined();
+      expect(unrecognized?.package).toBeNull();
+      expect(unrecognized?.autoInstall).toBe(false);
+      expect(unrecognized?.status).toBe('scaffold_custom');
+    });
+
+    it('TS-U18-01 (L1): supports custom runner for dynamic ecosystem discovery without hardcoded package ceilings', async () => {
+      const mockRunner = async (query: string) => {
+        if (query === 'custom-ai-sdk') {
+          return {
+            name: 'custom-ai-sdk',
+            package: 'ai-ecosystem/skills@custom-ai-sdk',
+            installs: 18500,
+            description: 'Custom AI SDK skill',
+            category: 'ai',
+          };
+        }
+        return null;
+      };
+
+      const results = await queryCommunitySkills('custom-ai-sdk', { runner: mockRunner });
+      expect(results.length).toBe(1);
+      const skill = results[0];
+      expect(skill.package).toBe('ai-ecosystem/skills@custom-ai-sdk');
+      expect(skill.installs).toBe(18500);
+      expect(skill.autoInstall).toBe(true);
+      expect(skill.status).toBe('auto_installed');
+    });
+
+    it('automatically installs skills with >= 10,000 installs and links active IDE folders', async () => {
+      const root = await makeWorkspace();
+      const skills = [
+        {
+          name: 'stripe',
+          package: 'vercel-labs/agent-skills@stripe',
+          installs: 28500,
+          autoInstall: true,
+          description: 'Stripe payments skill',
+        },
+        {
+          name: 'twilio',
+          package: 'twilio-community/skills@twilio',
+          installs: 4200,
+          autoInstall: false,
+          description: 'Twilio SMS skill',
+        },
+      ];
+
+      const installed = await autoInstallCommunitySkills({ root, skills });
+      expect(installed.length).toBe(1);
+      expect(installed[0].skill).toBe('stripe');
+
+      const installedPath = path.join(root, '.agents', 'skills', 'stripe', 'SKILL.md');
+      expect(existsSync(installedPath)).toBe(true);
+      const content = readFileSync(installedPath, 'utf8');
+      expect(content).toContain('name: stripe');
+    });
   });
 });

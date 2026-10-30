@@ -2,7 +2,7 @@
 apiVersion: context/v1
 kind: SkillsManifest
 metadata:
-  generated: 2026-10-27T14:42:58.119Z
+  generated: 2026-10-30T14:22:56.279Z
   coreVersion: 2.1.0
   activePacks:
     - rr8-supabase-cf
@@ -16,7 +16,7 @@ spec:
       tier: path-scoped
       paths:
         - docs/backlog/**
-      tokenCost: 384
+      tokenCost: 372
       depends_on: []
       description: Instructions for parsing, logging, and updating backlog files,
         tasks, and issues catalogs in {{PROJECT_NAME}}.
@@ -28,7 +28,7 @@ spec:
       paths:
         - .github/workflows/**
         - wrangler.jsonc
-      tokenCost: 533
+      tokenCost: 512
       depends_on:
         - cloudflare-workers
       description: GitHub Actions CI/CD workflows, automated testing, Cloudflare
@@ -41,7 +41,7 @@ spec:
       paths: &a1
         - workers/**
         - wrangler.jsonc
-      tokenCost: 763
+      tokenCost: 738
       depends_on:
         - cloudflare-workers
       description: Cloudflare Scheduled Workers (cron triggers), scheduled() handler
@@ -54,7 +54,7 @@ spec:
       pack: rr8-supabase-cf
       tier: path-scoped
       paths: *a1
-      tokenCost: 357
+      tokenCost: 344
       depends_on:
         - cloudflare-workers
       description: Cloudflare D1 serverless edge SQL database, SQLite edge
@@ -66,7 +66,7 @@ spec:
       pack: rr8-supabase-cf
       tier: path-scoped
       paths: *a1
-      tokenCost: 526
+      tokenCost: 507
       depends_on:
         - cloudflare-workers
       description: Cloudflare KV global edge storage, key-value caching, TTL
@@ -78,7 +78,7 @@ spec:
       pack: rr8-supabase-cf
       tier: path-scoped
       paths: *a1
-      tokenCost: 571
+      tokenCost: 547
       depends_on:
         - cloudflare-workers
       description: Cloudflare Queues asynchronous message queueing, background task
@@ -90,7 +90,7 @@ spec:
       pack: rr8-supabase-cf
       tier: path-scoped
       paths: *a1
-      tokenCost: 837
+      tokenCost: 809
       depends_on:
         - cloudflare-workers
       description: Cloudflare R2 object storage integration, S3-compatible client
@@ -103,7 +103,7 @@ spec:
       pack: rr8-supabase-cf
       tier: path-scoped
       paths: *a1
-      tokenCost: 682
+      tokenCost: 661
       depends_on:
         - stack
       description: Cloudflare Workers edge runtime execution, V8 isolates, memory
@@ -119,7 +119,7 @@ spec:
         - apps/web/app/components/**
         - apps/web/app/routes/**/*.tsx
         - "**/*.css"
-      tokenCost: 561
+      tokenCost: 547
       depends_on: []
       description: Strict semantic design tokens (theme-bg-color, theme-fg-color,
         theme-fc-*), automatic dark mode support, and eliminating hardcoded raw
@@ -144,7 +144,7 @@ spec:
       paths: &a2
         - apps/web/app/middleware/**
         - workers/**
-      tokenCost: 547
+      tokenCost: 530
       depends_on:
         - stack
       description: Graceful degradation pattern enabling public marketing and design
@@ -155,7 +155,7 @@ spec:
       pack: rr8-supabase-cf
       tier: path-scoped
       paths: *a1
-      tokenCost: 770
+      tokenCost: 742
       depends_on:
         - cloudflare-workers
       description: Cloudflare Scheduled Workers, cron triggers, and background worker
@@ -169,7 +169,7 @@ spec:
       paths:
         - e2e/**
         - playwright.config.ts
-      tokenCost: 233
+      tokenCost: 223
       depends_on:
         - vitest-testing
       description: Playwright end-to-end browser testing, verifying authentication
@@ -180,7 +180,7 @@ spec:
       pack: rr8-supabase-cf
       tier: path-scoped
       paths: *a2
-      tokenCost: 568
+      tokenCost: 550
       depends_on:
         - stack
       description: Cloudflare Workers edge rate limiting middleware, IP-based sliding
@@ -193,7 +193,7 @@ spec:
       paths: &a3
         - apps/web/app/routes.ts
         - apps/web/app/routes/**
-      tokenCost: 1152
+      tokenCost: 1117
       depends_on:
         - stack
         - react-router-routing
@@ -207,7 +207,7 @@ spec:
       pack: rr8-supabase-cf
       tier: path-scoped
       paths: *a3
-      tokenCost: 946
+      tokenCost: 914
       depends_on:
         - stack
         - react-router-routing
@@ -221,7 +221,7 @@ spec:
       pack: rr8-supabase-cf
       tier: path-scoped
       paths: *a3
-      tokenCost: 847
+      tokenCost: 821
       depends_on:
         - stack
         - react-router-routing
@@ -237,7 +237,7 @@ spec:
       tier: path-scoped
       paths:
         - apps/web/app/middleware/**
-      tokenCost: 1256
+      tokenCost: 1217
       depends_on:
         - stack
         - react-router-routing
@@ -252,7 +252,7 @@ spec:
       pack: rr8-supabase-cf
       tier: path-scoped
       paths: *a3
-      tokenCost: 902
+      tokenCost: 878
       depends_on:
         - stack
       description: React Router 8 route tree declaration, nested layouts, route
@@ -267,7 +267,7 @@ spec:
       tier: path-scoped
       paths:
         - apps/web/**
-      tokenCost: 694
+      tokenCost: 672
       depends_on:
         - stack
         - react-router-routing
@@ -282,7 +282,7 @@ spec:
       tier: path-scoped
       paths:
         - docs/research/**
-      tokenCost: 420
+      tokenCost: 410
       depends_on: []
       description: Research methodology, document structure, and writing standards for
         {{PROJECT_NAME}}. Defines the 8-file numbered structure, multi-topic
@@ -293,7 +293,7 @@ spec:
       pack: rr8-supabase-cf
       tier: path-scoped
       paths: *a2
-      tokenCost: 588
+      tokenCost: 571
       depends_on:
         - stack
       description: Security headers middleware, Content Security Policy (CSP), CORS
@@ -304,7 +304,7 @@ spec:
       pack: rr8-supabase-cf
       tier: path-scoped
       paths: *a4
-      tokenCost: 564
+      tokenCost: 548
       depends_on:
         - tailwind-v4
         - design-tokens
@@ -324,6 +324,17 @@ spec:
       tags:
         - shiftstone
         - core
+    - name: ss-backlog
+      pack: core
+      tier: manual-load
+      tokenCost: 1084
+      depends_on: []
+      description: Actionable task backlog authoring and capacity engine — generates
+        phased, user-story-driven task cards from PRDs with capacity balancing
+        (<= 12 tasks per phase) and zero stale seeds.
+      tags:
+        - shiftstone
+        - core
     - name: ss-backlog-sync
       pack: core
       tier: manual-load
@@ -332,6 +343,17 @@ spec:
       description: Backlog maintenance & capacity balancer — sweep all task backlogs
         in docs/backlog/, detect overloaded sub-phases (> 12 tasks), split
         phases, and sync verified closures.
+      tags:
+        - shiftstone
+        - core
+    - name: ss-bible
+      pack: core
+      tier: manual-load
+      tokenCost: 1295
+      depends_on: []
+      description: Development Bible & PRD authoring engine — synthesizes modular
+        technical chapters, ecosystem and phase PRDs, product vision, and
+        ingests research dossiers with zero placeholders.
       tags:
         - shiftstone
         - core
@@ -436,7 +458,7 @@ spec:
     - name: ss-execute-plan
       pack: core
       tier: manual-load
-      tokenCost: 943
+      tokenCost: 2912
       depends_on: []
       description: Execute approved implementation plans unit-by-unit with bounded
         context (<= 4,500 tokens), Red-First TDD, and Two-Stage Review (Spec
@@ -457,7 +479,7 @@ spec:
     - name: ss-init
       pack: core
       tier: manual-load
-      tokenCost: 2297
+      tokenCost: 3130
       depends_on: []
       description: Autonomous product-architecting and workspace initialization engine
         — runs 5-Gate Socratic interview, Gate 4.5 brand naming, mechanical
@@ -533,11 +555,11 @@ spec:
     - name: ss-plan
       pack: core
       tier: manual-load
-      tokenCost: 1787
+      tokenCost: 2599
       depends_on: []
-      description: Creates and structures implementation plans, ICM Stage Contracts
-        (CONTEXT.md), and plan units in docs/plans/. Associated with /ss-plan
-        and /new-plan.
+      description: Creates, evolves, and structures implementation plans, ICM Stage
+        Contracts (CONTEXT.md), and plan-manifest/v1 suites in docs/plans/.
+        Associated with /ss-plan and /new-plan.
       tags:
         - shiftstone
         - core
@@ -617,6 +639,18 @@ spec:
       tags:
         - shiftstone
         - core
+    - name: ss-steering
+      pack: core
+      tier: manual-load
+      tokenCost: 1449
+      depends_on: []
+      description: Universal AI steering and multi-IDE orientation engine — generates
+        and maintains slim AGENTS.md router (<= 60 lines), static rules,
+        path-scoped rules catalog, IDE orientation shims, and multi-IDE
+        directory junctions.
+      tags:
+        - shiftstone
+        - core
     - name: ss-sync-bible
       pack: core
       tier: manual-load
@@ -677,7 +711,7 @@ spec:
     - name: stack
       pack: rr8-supabase-cf
       tier: always-load
-      tokenCost: 1520
+      tokenCost: 1476
       depends_on: []
       description: React Router 8 + Supabase SSR + Cloudflare Workers code patterns.
         Load before writing any route loaders, actions, middleware, or Supabase
@@ -691,7 +725,7 @@ spec:
       paths:
         - apps/web/app/routes/api/storage/**
         - workers/**
-      tokenCost: 725
+      tokenCost: 700
       depends_on:
         - cloudflare-r2
       description: Cloudflare R2 object storage integration, S3 client patterns, and
@@ -705,7 +739,7 @@ spec:
       paths: &a5
         - supabase/**
         - apps/web/app/lib/supabase/**
-      tokenCost: 691
+      tokenCost: 673
       depends_on:
         - stack
       description: Supabase 2025/2026 API keys standard (sb_publishable_... and
@@ -719,7 +753,7 @@ spec:
       pack: rr8-supabase-cf
       tier: path-scoped
       paths: *a5
-      tokenCost: 1109
+      tokenCost: 1074
       depends_on:
         - stack
         - supabase-postgres
@@ -734,7 +768,7 @@ spec:
       pack: rr8-supabase-cf
       tier: path-scoped
       paths: *a5
-      tokenCost: 570
+      tokenCost: 551
       depends_on:
         - supabase-postgres
       description: Supabase CLI database migration workflows, schema file versioning,
@@ -747,7 +781,7 @@ spec:
       pack: rr8-supabase-cf
       tier: path-scoped
       paths: *a5
-      tokenCost: 802
+      tokenCost: 772
       depends_on:
         - stack
       description: PostgreSQL data modeling, UUID primary keys, automatic profiles
@@ -761,7 +795,7 @@ spec:
       pack: rr8-supabase-cf
       tier: path-scoped
       paths: *a5
-      tokenCost: 637
+      tokenCost: 619
       depends_on:
         - stack
         - supabase-auth
@@ -776,7 +810,7 @@ spec:
       pack: rr8-supabase-cf
       tier: path-scoped
       paths: *a5
-      tokenCost: 840
+      tokenCost: 810
       depends_on:
         - supabase-postgres
         - supabase-migrations
@@ -790,7 +824,7 @@ spec:
     - name: swarm
       pack: rr8-supabase-cf
       tier: manual-load
-      tokenCost: 441
+      tokenCost: 430
       depends_on: []
       description: Codified standard federated swarm roles for parallel AI subagent
         spawning in {{PROJECT_NAME}}. Load this skill when delegating parallel
@@ -801,7 +835,7 @@ spec:
       pack: rr8-supabase-cf
       tier: path-scoped
       paths: *a4
-      tokenCost: 673
+      tokenCost: 650
       depends_on:
         - design-tokens
       description: Tailwind CSS v4 setup, @theme CSS blocks, @utility directives, Vite
@@ -814,7 +848,7 @@ spec:
       pack: rr8-supabase-cf
       tier: path-scoped
       paths: *a4
-      tokenCost: 736
+      tokenCost: 711
       depends_on:
         - design-tokens
       description: Custom theme management (app/lib/theme.ts) replacing next-themes,
@@ -827,7 +861,7 @@ spec:
       pack: rr8-supabase-cf
       tier: path-scoped
       paths: *a4
-      tokenCost: 1282
+      tokenCost: 1258
       depends_on:
         - design-tokens
         - tailwind-v4
@@ -844,7 +878,7 @@ spec:
         - "**/*.test.ts"
         - "**/*.test.tsx"
         - vitest.config.ts
-      tokenCost: 563
+      tokenCost: 541
       depends_on:
         - stack
       description: Vitest unit and integration testing in React Router 8, React
@@ -856,7 +890,7 @@ spec:
       pack: rr8-supabase-cf
       tier: path-scoped
       paths: *a4
-      tokenCost: 137
+      tokenCost: 133
       depends_on:
         - ui
       description: Review UI code for Web Interface Guidelines compliance. Use when
@@ -870,7 +904,7 @@ spec:
       tier: path-scoped
       paths:
         - apps/web/**
-      tokenCost: 445
+      tokenCost: 429
       depends_on:
         - stack
       description: Zod validation schemas for form actions, URL search params, JSON

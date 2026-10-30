@@ -126,8 +126,15 @@ function checkApprovalCovers(approval, file, actorId) {
     const norm = file.replace(/\\/g, '/').replace(/^\.\//, '');
     return Boolean(
       approval.scopePaths?.some((sp) => {
-        const spNorm = sp.replace(/\/$/, '');
-        return norm === spNorm || norm.startsWith(`${spNorm}/`) || sp === '**' || sp === '.';
+        const cleanSp = sp.replace(/\/\*\*?$/, '').replace(/\/$/, '');
+        return (
+          norm === sp ||
+          norm === cleanSp ||
+          norm.startsWith(`${cleanSp}/`) ||
+          sp === '**' ||
+          sp === '.' ||
+          cleanSp === ''
+        );
       })
     );
   } catch (_) {
@@ -350,6 +357,16 @@ export function projectPhase(root, plan, phase, handoff, options = {}) {
     (approvals.some((item) => item.valid) &&
       approvalPaths.every((file) => approvals.some((item) => item.valid && checkApprovalCovers(item.approval, file, handoff.actor?.id))));
 
+  if (humanGateRequired && !approvalValid) {
+    const unapprovedPaths = approvalPaths.filter(
+      (file) => !approvals.some((item) => item.valid && checkApprovalCovers(item.approval, file, handoff.actor?.id))
+    );
+    note(
+      'PROTECTED_ACTION_UNAPPROVED',
+      `Protected action gate failed: path(s) [${unapprovedPaths.join(', ')}] require active human approval in .shiftstone/governance/approvals/`
+    );
+  }
+
   const seen = new Set();
   for (const observation of handoff.checks || []) {
     if (seen.has(observation.checkId)) note('DUPLICATE_RESULT', observation.checkId);
@@ -363,6 +380,9 @@ export function projectPhase(root, plan, phase, handoff, options = {}) {
     const result = handoff.checks?.find((item) => item.checkId === check.id);
     if (!result) {
       checks.push({ id: check.id, required: check.required, result: 'missing', fresh: false });
+      if (check.required) {
+        note('CHECK_MISSING', `Required check '${check.id}' was not reported in handoff checks`);
+      }
       continue;
     }
     let valid = verifyRefs(result.evidenceRefs);
@@ -403,6 +423,9 @@ export function projectPhase(root, plan, phase, handoff, options = {}) {
       note('CHECK_EXIT', `${check.id}: failed automated run requires actual nonzero exit`);
     }
     if (result.result !== 'not-run' && !fresh) note('STALE_CHECK', check.id);
+    if (check.required && result.result !== 'passed') {
+      note('CHECK_FAILED', `Required check '${check.id}' has status '${result.result}' (expected 'passed')`);
+    }
     checks.push({ id: check.id, required: check.required, result: result.result, fresh: fresh && valid });
   }
 
@@ -431,6 +454,22 @@ export function projectPhase(root, plan, phase, handoff, options = {}) {
     humanApprovalValid: approvalValid && definitionFresh && sourceFresh,
     blockingIssue,
   });
+
+  if (phase.requiredReview && (!selectedReview || !['APPROVED', 'pass'].includes(selectedReview.report?.status || selectedReview.report?.verdict))) {
+    note(
+      'REVIEW_UNMET',
+      `Phase requires independent review; current verdict is '${selectedReview?.report?.status || selectedReview?.report?.verdict || 'none'}' (expected 'APPROVED')`
+    );
+  }
+
+  if (handoff.implementation !== 'implemented') {
+    note('IMPLEMENTATION_INCOMPLETE', `Implementation status is '${handoff.implementation}' (expected 'implemented')`);
+  }
+
+  if (blockingIssue) {
+    const blockers = issues.filter((i) => i.blockingPhaseIds?.includes(phase.phaseId)).map((i) => i.id);
+    note('BLOCKING_ISSUE', `Open blocking issue(s) prevent acceptance: ${blockers.join(', ')}`);
+  }
 
   if (diagnostics.some((item) => !['STALE_CHECK', 'STALE_PHASE_SOURCE', 'REVIEW_STALE', 'STALE_DEFINITION'].includes(item.code))) {
     axes.acceptance = 'open';

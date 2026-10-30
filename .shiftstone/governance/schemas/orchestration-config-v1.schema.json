@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://universal-workspace.local/schemas/orchestration-config-v1.schema.json",
+  "title": "Agent Orchestration Configuration v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "executionMode"
+  ],
+  "properties": {
+    "schema": {
+      "type": "string",
+      "const": "orchestration-config/v1"
+    },
+    "executionMode": {
+      "type": "string",
+      "enum": [
+        "sequential-ephemeral",
+        "parallel-worktree"
+      ]
+    },
+    "workerIntakeMaxTokens": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 4500
+    },
+    "stagnationRetries": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 3
+    },
+    "parallelCheckers": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/CheckerLens"
+      },
+      "uniqueItems": true
+    },
+    "worktreePrefix": {
+      "type": "string",
+      "default": ".shiftstone/.worktrees/"
+    }
+  },
+  "$defs": {
+    "CheckerLens": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    }
+  }
+}

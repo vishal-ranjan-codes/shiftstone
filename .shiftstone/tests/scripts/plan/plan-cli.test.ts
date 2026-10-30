@@ -330,4 +330,123 @@ describe('Unit U9 — Plan CLI Orchestrator & README Span Renderer (REQ-09)', ()
     expect(output).toContain('Suite: sample');
     expect(output).toContain('| Phase | Implementation | Verification | Review | Acceptance |');
   });
+
+  it('TS-U9-05: close emits verbose diagnostics when acceptance fails and auto-binds active governance approvals', () => {
+    const { root, suite } = makeSyntheticSuite(1);
+    const snap = snapshot(root, ['source.txt'], ['node-version']);
+
+    const factsFile = `${suite}/output/unverified-facts.json`;
+    write(
+      root,
+      factsFile,
+      JSON.stringify(
+        {
+          actor: { id: 'synthetic-maker', role: 'maker' },
+          summary: 'Incomplete implementation',
+          changes: [{ path: 'source.txt', reason: 'Attempt 1', unitIds: ['U1'] }],
+          checks: [
+            {
+              checkId: 'check-1',
+              result: 'failed',
+              observedAt: new Date().toISOString(),
+              sourceDigest: snap.scopeDigest,
+              environmentDigest: snap.environmentDigest,
+              exitCode: 1,
+              evidenceRefs: [],
+              reason: 'Failed test',
+            },
+          ],
+        },
+        null,
+        2
+      )
+    );
+
+    const errors: string[] = [];
+    const origError = console.error;
+    console.error = (msg: string) => {
+      errors.push(msg);
+    };
+
+    try {
+      const code = runCli(['node', 'plan.js', 'close', suite, '--phase', 'P1', '--facts', factsFile], root);
+      expect(code).toBe(2);
+      const combined = errors.join('\n');
+      expect(combined).toContain('Close blocked: acceptance is open for phase P1.');
+      expect(combined).toContain('Unmet gate checklist:');
+      expect(combined).toContain('verification:   failed (expected: passed)');
+    } finally {
+      console.error = origError;
+    }
+  });
+
+  it('TS-U9-06: close auto-binds active governance approval for protected action paths', () => {
+    const { root, suite } = makeSyntheticSuite(1);
+
+    const unit1Path = path.join(root, `${suite}/plan-units/U1.json`);
+    const unit1 = JSON.parse(fs.readFileSync(unit1Path, 'utf8'));
+    unit1.targetFiles = ['.shiftstone/governance/rules.md'];
+    fs.writeFileSync(unit1Path, JSON.stringify(unit1, null, 2) + '\n');
+
+    const manifestPath = path.join(root, `${suite}/plan-manifest.json`);
+    const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+    manifest.phases[0].sourcePaths = ['.shiftstone/governance/rules.md'];
+    manifest.phases[0].checks[0].sourcePaths = ['.shiftstone/governance/rules.md'];
+    manifest.phases[0].requiredReview = false;
+    fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + '\n');
+
+    const approvalsDir = path.join(root, '.shiftstone/governance/approvals');
+    fs.mkdirSync(approvalsDir, { recursive: true });
+    const approval = {
+      schemaVersion: 'protected-action-approval/v1',
+      approvalId: 'APR-20261030-999',
+      actionClass: 'core-governance-override',
+      scopePaths: ['.shiftstone/governance/**'],
+      gitTreeHash: 'workspace-head',
+      approver: 'lead-architect@shiftstone.dev',
+      approvedAt: new Date().toISOString(),
+      expiresAt: new Date(Date.now() + 86400000).toISOString(),
+      justification: 'Automated test approval',
+      status: 'active',
+    };
+    write(root, '.shiftstone/governance/approvals/APR-20261030-999.json', JSON.stringify(approval, null, 2) + '\n');
+
+    write(root, '.shiftstone/governance/rules.md', '# Protected rules');
+    write(root, `${suite}/output/checks/check-1.txt`, 'evidence\n');
+    const evRef = {
+      path: `${suite}/output/checks/check-1.txt`,
+      sha256: sha256(Buffer.from('evidence\n')),
+    };
+    const snap = snapshot(root, ['.shiftstone/governance/rules.md'], ['node-version']);
+
+    const facts = {
+      actor: { id: 'synthetic-maker', role: 'maker' },
+      summary: 'Updated governance rules',
+      changes: [{ path: '.shiftstone/governance/rules.md', reason: 'Rule update', unitIds: ['U1'] }],
+      checks: [
+        {
+          checkId: 'check-1',
+          result: 'passed',
+          observedAt: new Date().toISOString(),
+          sourceDigest: snap.scopeDigest,
+          environmentDigest: snap.environmentDigest,
+          exitCode: 0,
+          evidenceRefs: [evRef],
+          reason: 'Pass',
+        },
+      ],
+    };
+
+    const factsFile = `${suite}/output/gov-facts.json`;
+    write(root, factsFile, JSON.stringify(facts, null, 2) + '\n');
+
+    const code = runCli(['node', 'plan.js', 'close', suite, '--phase', 'P1', '--facts', factsFile], root);
+    expect(code).toBe(0);
+
+    const attempt1 = JSON.parse(
+      fs.readFileSync(path.join(root, `${suite}/output/handoffs/P1/attempt-001.json`), 'utf8')
+    );
+    expect(attempt1.approvalRefs.length).toBeGreaterThanOrEqual(1);
+    expect(attempt1.approvalRefs[0].path).toBe('.shiftstone/governance/approvals/APR-20261030-999.json');
+  });
 });

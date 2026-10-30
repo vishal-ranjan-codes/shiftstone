@@ -5,38 +5,38 @@
     {
       "id": "gate_1_problem_space",
       "phase": "discovery",
-      "title": "Problem Space & Value Proposition",
+      "title": "What You're Building & Why It Matters",
       "is_optional": false,
       "baseline_sec": 90,
       "substeps": ["value_proposition", "core_goals", "anti_goals"],
-      "description": "Elicit problem definition, value proposition, core goals, and anti-goals."
+      "description": "Elicit product vision, core problem solved, user workflows, and goals."
     },
     {
       "id": "gate_2_actors_rbac",
       "phase": "discovery",
-      "title": "Actors, Personas & RBAC Hierarchy",
+      "title": "Who Uses Your App & Their Permissions",
       "is_optional": false,
       "baseline_sec": 90,
       "substeps": ["user_personas", "tenancy_model", "permissions"],
-      "description": "Identify user personas, system actors, and RBAC hierarchy."
+      "description": "Identify user types, team roles, and account permissions."
     },
     {
       "id": "gate_3_entity_modeling",
       "phase": "discovery",
-      "title": "Domain Entity Modeling & Invariants",
+      "title": "Key Information Your App Stores & Critical Rules",
       "is_optional": false,
       "baseline_sec": 120,
       "substeps": ["primary_entities", "relationships", "business_invariants"],
-      "description": "Model primary domain entities and non-negotiable business rules."
+      "description": "Model primary items your app saves and non-negotiable business rules."
     },
     {
       "id": "gate_4_tenant_security",
       "phase": "discovery",
-      "title": "Tenant Isolation & Security Posture",
+      "title": "Privacy, Security & Data Protection",
       "is_optional": false,
       "baseline_sec": 90,
       "substeps": ["isolation_strategy", "compliance", "audit_logging"],
-      "description": "Determine database isolation, compliance, and security posture."
+      "description": "Determine user privacy boundaries, compliance standards, and data protection."
     },
     {
       "id": "step_5_branding",
@@ -66,8 +66,8 @@
       "title": "Pre-Scaffold Tech Research",
       "is_optional": true,
       "baseline_sec": 120,
-      "substeps": ["service_investigation", "dossier_synthesis"],
-      "description": "Conduct evidence-grounded research for third-party integrations.",
+      "substeps": ["service_investigation", "dossier_synthesis", "init_plan_generation"],
+      "description": "Conduct evidence-grounded research for third-party integrations and generate Tier 2 initialization plan.",
       "skip_behavior": {
         "prompt": "Skip pre-scaffold research?",
         "post_init_suggestion": "/ss-research"
@@ -79,7 +79,7 @@
       "title": "Mechanical Workspace Scaffolding",
       "is_optional": false,
       "baseline_sec": 60,
-      "substeps": ["pack_validation", "starter_scaffold", "repo_setup"],
+      "substeps": ["pack_validation", "starter_scaffold", "app_domain_scaffold", "repo_setup"],
       "description": "Execute init.js engine, seed governance, and establish git boundaries."
     },
     {

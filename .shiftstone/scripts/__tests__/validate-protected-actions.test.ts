@@ -196,4 +196,18 @@ describe('Unit U24 & U25: Protected Action Approvals & Enforcement Gate (UG-23, 
     expect(isEscalated({ status: 'ESCALATED' })).toBe(true);
     expect(isEscalated({ status: 'BLOCKED' })).toBe(false);
   });
+
+  it('TS-U25-05: verifies docs/bible/** is NOT a protected action, allowing standard TDD documentation updates', () => {
+    const bibleCheck = checkProtectedAction({
+      root: ROOT,
+      policy,
+      targetPath: 'docs/bible/07-frontend/design-tokens.md',
+      content: '# Design Tokens Specification',
+      approvals: [],
+      now: testNow,
+    });
+
+    expect(bibleCheck.ok).toBe(true);
+    expect(classifyProtectedAction({ targetPath: 'docs/bible/07-frontend/design-tokens.md', policy })).toBeNull();
+  });
 });

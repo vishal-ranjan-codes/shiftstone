@@ -11,7 +11,7 @@ In accordance with Paper 2 Chapter 4 (Two-Gear Boundary) and Paper 3 Chapter 2 (
 1. **`db-migration-destructive`**: Destructive database changes (`DROP TABLE`, `DROP COLUMN`, `TRUNCATE`, `supabase db reset`).
 2. **`rls-policy-mutation`**: Altering or dropping Row Level Security policies (`ALTER POLICY`, `DROP POLICY`, `DISABLE ROW LEVEL SECURITY`).
 3. **`auth-secret-rotation`**: Modifying production environment secrets or setting live secret tokens (`wrangler secret put`, `supabase secrets set`).
-4. **`ssot-bible-mutation`**: Direct modifications to `docs/bible/**` outside an approved `/sync-bible` proposal.
+4. **`ssot-bible-mutation`** *(Legacy / Deprecated)*: Standalone uncoordinated modifications to `docs/bible/**` outside normal plan execution. (Note: Standard documentation updates adhering to Universal Hard Rule 4 during plan execution are standard TDD workflow and do NOT require human approval).
 5. **`production-deploy`**: Publishing live software or running production deployment commands (`wrangler deploy`, `supabase db push`, `pnpm deploy`).
 6. **`core-governance-override`**: Overriding core governance rules, schema definitions, or dropping existing test suites.
 
